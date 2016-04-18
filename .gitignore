@@ -13,3 +13,6 @@ hs_err_pid*
 /.nb-gradle/
 /core/build/
 /desktop/build/
+
+#Gradle files ?
+/.gradle/2.10/taskArtifacts/
