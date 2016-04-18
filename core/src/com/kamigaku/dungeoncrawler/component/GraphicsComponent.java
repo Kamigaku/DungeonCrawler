@@ -11,7 +11,7 @@ public class GraphicsComponent {
         this._sprite = sprite;
     }
     
-    public void update(SpriteBatch batch, int x, int y) {
+    public void update(SpriteBatch batch, float x, float y) {
         batch.draw(this._sprite.getTexture(), x, y);
     }
 

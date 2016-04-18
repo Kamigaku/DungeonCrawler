@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.kamigaku.dungeoncrawler.level.implementation.TestLevel;
 import com.kamigaku.dungeoncrawler.singleton.ScreenManager;
 
 public class MainScreen implements Screen {
@@ -87,7 +88,7 @@ public class MainScreen implements Screen {
                 }
                 if(keycode == Keys.ENTER) {
                     if(currentChoice == 0) {
-                        ScreenManager.getScreenManger().changeScreen(new TestScreen());
+                        ScreenManager.getScreenManger().changeScreen(new GameScreen(new TestLevel()));
                     }
                     if(currentChoice == 1) {
                     }

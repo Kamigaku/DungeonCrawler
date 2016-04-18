@@ -4,24 +4,26 @@
  * and open the template in the editor.
  */
 
-package com.kamigaku.dungeoncrawler.entity;
+package com.kamigaku.dungeoncrawler.entity.implementation;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.kamigaku.dungeoncrawler.component.InputComponent;
+import com.kamigaku.dungeoncrawler.entity.AEntity;
 
-/**
- * 
- * @author Sammy Guergachi <sguergachi at gmail.com>
- */
 public class Player extends AEntity {
+    
+    private final InputComponent _input;
 
     public Player(Sprite sprite, float x, float y) {
         super.baseLoading(sprite, x, y);
+        this._input = new InputComponent(this);
     }
 
     @Override
     public void update(SpriteBatch batch) {
-        this._graphics.update(batch, 0, 0);
+        this._input.update();
+        this._graphics.update(batch, this.x, this.y);
     }
 
 }
