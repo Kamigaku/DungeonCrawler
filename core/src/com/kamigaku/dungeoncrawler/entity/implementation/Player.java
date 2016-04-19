@@ -8,6 +8,7 @@ package com.kamigaku.dungeoncrawler.entity.implementation;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.kamigaku.dungeoncrawler.component.InputComponent;
 import com.kamigaku.dungeoncrawler.entity.AEntity;
 
@@ -16,7 +17,7 @@ public class Player extends AEntity {
     private final InputComponent _input;
 
     public Player(Sprite sprite, float x, float y) {
-        super.baseLoading(sprite, x, y);
+        super.baseLoading(sprite, BodyType.DynamicBody, x, y);
         this._input = new InputComponent(this);
     }
 

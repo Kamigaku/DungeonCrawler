@@ -40,10 +40,14 @@ public class InputComponent {
 
             @Override
             public boolean keyUp(int keycode) {
-                if(keycode == Keys.Z || keycode == Keys.S)
-                    _entity.getPhysicsComponent().forceY = 0;
-                if(keycode == Keys.Q || keycode == Keys.D)
-                    _entity.getPhysicsComponent().forceX = 0;
+                if(keycode == Keys.Z)
+                    _entity.getPhysicsComponent().setForceY(-50);
+                if(keycode == Keys.S)
+                    _entity.getPhysicsComponent().setForceY(50);
+                if(keycode == Keys.Q)
+                    _entity.getPhysicsComponent().setForceX(50);
+                if(keycode == Keys.D)
+                    _entity.getPhysicsComponent().setForceX(-50);
                 return false;
             }
 
@@ -54,16 +58,14 @@ public class InputComponent {
 
             @Override
             public boolean keyDown(int keycode) {
-                if(keycode == Keys.Z) {
-                    System.out.println("ici up");
-                    _entity.getPhysicsComponent().forceY = 50;
-                }
+                if(keycode == Keys.Z)
+                    _entity.getPhysicsComponent().setForceY(50);
                 if(keycode == Keys.S)
-                    _entity.getPhysicsComponent().forceY = -50;
+                    _entity.getPhysicsComponent().setForceY(-50);
                 if(keycode == Keys.Q)
-                    _entity.getPhysicsComponent().forceX = -50;
+                    _entity.getPhysicsComponent().setForceX(-50);
                 if(keycode == Keys.D)
-                    _entity.getPhysicsComponent().forceX = 50;
+                    _entity.getPhysicsComponent().setForceX(50);
                 return false;
             }
             

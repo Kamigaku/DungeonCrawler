@@ -7,6 +7,7 @@
 package com.kamigaku.dungeoncrawler.entity;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.kamigaku.dungeoncrawler.component.GraphicsComponent;
 import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
 
@@ -18,9 +19,9 @@ public abstract class AEntity implements IEntity {
     protected PhysicsComponent _physics;
     
     // Initiliasation de différentes informations communes
-    protected void baseLoading(Sprite sprite, float x, float y) {
+    protected void baseLoading(Sprite sprite, BodyType bodyType, float x, float y) {
         this._graphics = new GraphicsComponent(sprite);
-        this._physics = new PhysicsComponent(x, y);
+        this._physics = new PhysicsComponent(x, y, bodyType);
     }
 
     @Override
