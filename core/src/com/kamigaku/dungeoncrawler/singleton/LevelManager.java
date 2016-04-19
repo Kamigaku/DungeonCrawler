@@ -27,6 +27,7 @@ public class LevelManager {
 
     public void setLevel(ILevel level) {
         this.currentLevel = level;
+        this.currentLevel.init();
     }
 
     public ILevel getLevel() {

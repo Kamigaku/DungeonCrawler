@@ -23,7 +23,8 @@ public class Player extends AEntity {
     @Override
     public void update(SpriteBatch batch) {
         this._input.update();
-        this._graphics.update(batch, this.x, this.y);
+        this._physics.update();
+        this._graphics.update(batch, this.getPhysicsComponent().getPosition().x, this.getPhysicsComponent().getPosition().y);
     }
 
 }

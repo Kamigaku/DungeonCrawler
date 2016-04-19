@@ -17,16 +17,20 @@ public abstract class AEntity implements IEntity {
     protected GraphicsComponent _graphics;
     protected PhysicsComponent _physics;
     
-    // Position stuff
-    public float x;
-    public float y;
-    
     // Initiliasation de différentes informations communes
     protected void baseLoading(Sprite sprite, float x, float y) {
         this._graphics = new GraphicsComponent(sprite);
         this._physics = new PhysicsComponent(x, y);
-        this.x = x;
-        this.y = y;
+    }
+
+    @Override
+    public GraphicsComponent getGraphicsComponent() {
+        return this._graphics;
+    }
+
+    @Override
+    public PhysicsComponent getPhysicsComponent() {
+        return this._physics;
     }
     
 }
