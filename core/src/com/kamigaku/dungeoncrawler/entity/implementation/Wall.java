@@ -8,7 +8,7 @@ import com.kamigaku.dungeoncrawler.entity.AEntity;
 public class Wall extends AEntity {
 
     public Wall(Sprite sprite, float x, float y) {
-        super.baseLoading(sprite, BodyType.StaticBody, x, y);
+        super.baseLoading(sprite, BodyType.StaticBody, x, y, 16, 16);
     }
 
     @Override

@@ -19,9 +19,10 @@ public abstract class AEntity implements IEntity {
     protected PhysicsComponent _physics;
     
     // Initiliasation de différentes informations communes
-    protected void baseLoading(Sprite sprite, BodyType bodyType, float x, float y) {
+    protected void baseLoading(Sprite sprite, BodyType bodyType, float x, float y,
+                                float width, float height) {
         this._graphics = new GraphicsComponent(sprite);
-        this._physics = new PhysicsComponent(x, y, bodyType);
+        this._physics = new PhysicsComponent(x, y, bodyType, width, height);
     }
 
     @Override

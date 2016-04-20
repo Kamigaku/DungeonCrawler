@@ -3,6 +3,8 @@ package com.kamigaku.dungeoncrawler.level.implementation;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.kamigaku.dungeoncrawler.comparator.RenderingComparator;
+import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
 import com.kamigaku.dungeoncrawler.entity.implementation.Wall;
 import com.kamigaku.dungeoncrawler.level.ALevel;
@@ -10,8 +12,8 @@ import java.util.ArrayList;
 
 public class TestLevel extends ALevel {
     
+    private ArrayList<IEntity> _entities;
     private Player _player;
-    private ArrayList<Wall> _walls;
 
     @Override
     public void init() {
@@ -20,11 +22,12 @@ public class TestLevel extends ALevel {
         //Chargement des textures
         this.textureLoading();
         
-        this._player = new Player(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 19f, 10f);
+        this._entities = new ArrayList<IEntity>();
+        this._player = new Player(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 1f, 2f);
+        this._entities.add(this._player);
         
-        this._walls = new ArrayList<Wall>();
         for(int i = 0; i < 10; i++) {
-            this._walls.add(new Wall(new Sprite((Texture)(this.assetManager.get("sprites/wall.png", Texture.class))), 0f, (float)i));
+            this._entities.add(new Wall(new Sprite((Texture)(this.assetManager.get("sprites/wall.png", Texture.class))), 0f, (float)i));
         }
         
     }
@@ -38,20 +41,18 @@ public class TestLevel extends ALevel {
     
     @Override
     public void render(SpriteBatch batch) {
-        /*this.mapRenderer.setView(camera);
-        this.mapRenderer.render();*/
         batch.setProjectionMatrix(this.camera.combined);
         this.world.step(1/60f, 6, 2);
-        batch.end();
-        //this.hud.draw();
-        batch.begin();
-        this._player.update(batch);
-        for(int i = 0; i < this._walls.size(); i++) {
-            this._walls.get(i).update(batch);
+        this._entities.sort(new RenderingComparator()); // Rendering on depthAxis
+        for(int i = 0; i < this._entities.size(); i++) {
+            this._entities.get(i).update(batch);
         }
-        /*this.camera.translate(LevelManager.getLevelManager().mainPlayer.getBody().getPosition().x - this.camera.position.x,
-        					  LevelManager.getLevelManager().mainPlayer.getBody().getPosition().y - this.camera.position.y);*/
+        this.camera.translate(this._player.getPhysicsComponent().getBody().getPosition().x - this.camera.position.x,
+                              this._player.getPhysicsComponent().getBody().getPosition().y - this.camera.position.y);
         this.camera.update();
+        batch.end();
+        this.hud.draw();
+        batch.begin();
     }
     
     @Override

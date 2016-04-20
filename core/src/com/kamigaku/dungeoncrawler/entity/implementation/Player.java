@@ -17,7 +17,7 @@ public class Player extends AEntity {
     private final InputComponent _input;
 
     public Player(Sprite sprite, float x, float y) {
-        super.baseLoading(sprite, BodyType.DynamicBody, x, y);
+        super.baseLoading(sprite, BodyType.DynamicBody, x, y, 8, 8);
         this._input = new InputComponent(this);
     }
 
@@ -25,7 +25,7 @@ public class Player extends AEntity {
     public void update(SpriteBatch batch) {
         this._input.update();
         this._physics.update();
-        this._graphics.update(batch, this.getPhysicsComponent().getPosition().x, this.getPhysicsComponent().getPosition().y);
+        this._graphics.update(batch, this.getPhysicsComponent().getPosition().x, this.getPhysicsComponent().getPosition().y + 8);
     }
 
 }
