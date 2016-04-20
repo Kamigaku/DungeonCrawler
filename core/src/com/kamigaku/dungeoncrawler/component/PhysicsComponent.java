@@ -1,24 +1,69 @@
 package com.kamigaku.dungeoncrawler.component;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.utils.Disposable;
+import com.kamigaku.dungeoncrawler.constants.Constants;
+import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 
-public class PhysicsComponent {
+public class PhysicsComponent implements Disposable {
     
-    public PhysicsComponent(float x, float y) {
+    private final Body _body;
+    
+    private float _forceX;
+    private float _forceY;
+    
+    public PhysicsComponent(float x, float y, BodyType bodyType, float width, float height) {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = bodyType;
+        bodyDef.position.set(x * Constants.TILE_WIDTH, y * Constants.TILE_HEIGHT);
         
-    }
-
-    public void update() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this._body = LevelManager.getLevelManager().getLevel().addBody(bodyDef);
+        
+        PolygonShape collider = new PolygonShape();
+        collider.setAsBox(width, height);
+        
+        FixtureDef fDef = new FixtureDef();
+        fDef.density = 0f;
+        fDef.friction = 0f;
+        fDef.restitution = 0f;
+        fDef.shape = collider;
+        
+        this._body.createFixture(fDef);
+        
+        collider.dispose();
     }
     
-    public BodyDef createBody(float x, float y, float angle) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void update() {
+        this._body.setLinearVelocity(this._forceX, this._forceY);
     }
-
+    
+    public void setForceY(float forceY) { // @TODO : changer les valeurs par des constantes
+        this._forceY += forceY;
+        if(this._forceY > 50f) this._forceY = 50f;
+        else if(this._forceY < -50f) this._forceY = -50f;
+    }
+    
+    public void setForceX(float forceX) { // @TODO : changer les valeurs par des constantes
+        this._forceX += forceX;
+        if(this._forceX > 50f) this._forceX = 50f;
+        else if(this._forceX < -50f) this._forceX = -50f;
+    }
+    
     public Body getBody() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this._body;
+    }
+    
+    public Vector2 getPosition() {
+        return this._body.getPosition();
+    }
+    
+    @Override
+    public void dispose() {
     }
 
 }
