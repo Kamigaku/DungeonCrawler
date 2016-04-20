@@ -58,6 +58,9 @@ public class TestLevel extends ALevel {
     @Override
     public void dispose() {
         super.dispose();
+        for(int i = 0; i < this._entities.size(); i++) {
+            this._entities.get(i).dispose();
+        }
     }
 
 }

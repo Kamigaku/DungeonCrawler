@@ -9,5 +9,6 @@ public interface IEntity {
 	void update(SpriteBatch batch);
 	PhysicsComponent getPhysicsComponent();
         GraphicsComponent getGraphicsComponent();
+        void dispose();
         
 }

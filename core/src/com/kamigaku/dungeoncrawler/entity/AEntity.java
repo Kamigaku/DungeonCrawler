@@ -35,4 +35,10 @@ public abstract class AEntity implements IEntity {
         return this._physics;
     }
     
+    @Override
+    public void dispose() {
+        this._physics.dispose();
+        this._graphics.dispose();
+    }
+    
 }

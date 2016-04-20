@@ -2,8 +2,9 @@ package com.kamigaku.dungeoncrawler.component;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Disposable;
 
-public class GraphicsComponent {
+public class GraphicsComponent implements Disposable {
 
     private final Sprite _sprite;
     private int _depthAxis = 0;
@@ -19,6 +20,11 @@ public class GraphicsComponent {
     
     public int getDepthAxis() {
         return this._depthAxis;
+    }
+    
+    @Override
+    public void dispose() {
+        this._sprite.getTexture().dispose();
     }
 
 }

@@ -6,10 +6,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.utils.Disposable;
 import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 
-public class PhysicsComponent {
+public class PhysicsComponent implements Disposable {
     
     private final Body _body;
     
@@ -59,6 +60,10 @@ public class PhysicsComponent {
     
     public Vector2 getPosition() {
         return this._body.getPosition();
+    }
+    
+    @Override
+    public void dispose() {
     }
 
 }

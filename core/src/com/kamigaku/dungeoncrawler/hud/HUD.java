@@ -15,14 +15,14 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class HUD {
 	
-	private Stage stage;
-	private Skin uiSkin;
-	private TextureAtlas atlas;
-	private BitmapFont font;
-	private NinePatch empty, full;
-	private Table table;
+	private final Stage stage;
+	private final Skin uiSkin;
+	private final TextureAtlas atlas;
+	private final BitmapFont font;
+	private final NinePatch empty, full, full_food;
+	private final Table table;
 	
-	private static int scaleXHp = 10;
+	private final static int SCALEXHP = 8;
 	
 	public HUD() {
 		this.stage = new Stage(new ScreenViewport());
@@ -35,30 +35,43 @@ public class HUD {
 		stage.addActor(table);
 		
 		Texture emptyT = new Texture(Gdx.files.internal("hud/empty2.png"));
-		
-		Texture fullT = new Texture(Gdx.files.internal("hud/full2.png"));
+		Texture fullT = new Texture(Gdx.files.internal("hud/full_health.png"));
+                Texture fullFood = new Texture(Gdx.files.internal("hud/full_food.png"));
 		
 		this.empty = new NinePatch(new TextureRegion(emptyT,24,24),7,7,7,7);
 		this.full = new NinePatch(new TextureRegion(fullT,24,24),7,7,7,7);
-		
+		this.full_food = new NinePatch(new TextureRegion(fullFood,24,24),7,7,7,7);
+                
 		this.table.bottom().left();
 		
 		//Hp bar
 		Group hpGroup = new Group();
 		Image img1 = new Image(this.empty);
 		Image img2 = new Image(this.full);
-		img1.setScale(scaleXHp, 1.5f);
-		img2.setScale(scaleXHp, 1.48f);
+		img1.setScale(SCALEXHP, 1f);
+		img2.setScale(SCALEXHP, 0.98f);
 		hpGroup.addActor(img1);
 		hpGroup.addActor(img2);
+                
+                //Food bar
+                Group foodGroup = new Group();
+		Image food_img_1 = new Image(this.empty);
+		Image food_img_2 = new Image(this.full_food);
+		food_img_1.setScale(SCALEXHP, 1f);
+		food_img_2.setScale(SCALEXHP, 0.98f);
+		foodGroup.addActor(food_img_1);
+		foodGroup.addActor(food_img_2);
 		
 		//Assemblage
-		this.table.add(hpGroup).padLeft(20).padBottom(55);
+		this.table.add(foodGroup).padLeft(20).padBottom(30);
+                this.table.row();
+                this.table.add(hpGroup).padLeft(20).padBottom(10);
+                
+                Inventory inv = new Inventory(stage, uiSkin);
 		
 	}
 	
 	public void draw() {
-
 		this.stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 		this.stage.draw();
 	}
@@ -68,6 +81,7 @@ public class HUD {
 		this.empty.getTexture().dispose();
 		this.font.dispose();
 		this.full.getTexture().dispose();
+                this.full_food.getTexture().dispose();
 		this.stage.dispose();
 		this.uiSkin.dispose();
 	}
