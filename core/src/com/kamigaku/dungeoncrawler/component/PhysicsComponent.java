@@ -17,7 +17,8 @@ public class PhysicsComponent implements Disposable {
     private float _forceX;
     private float _forceY;
     
-    public PhysicsComponent(float x, float y, BodyType bodyType, float width, float height) {
+    public PhysicsComponent(float x, float y, BodyType bodyType, short categoryBits, 
+                            short maskBits, float width, float height) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = bodyType;
         bodyDef.position.set(x * Constants.TILE_WIDTH, y * Constants.TILE_HEIGHT);
@@ -32,6 +33,8 @@ public class PhysicsComponent implements Disposable {
         fDef.friction = 0f;
         fDef.restitution = 0f;
         fDef.shape = collider;
+        fDef.filter.categoryBits = categoryBits;
+        fDef.filter.maskBits = maskBits;
         
         this._body.createFixture(fDef);
         

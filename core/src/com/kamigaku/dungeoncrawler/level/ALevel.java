@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.kamigaku.dungeoncrawler.SensorContactListener;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.hud.HUD;
 
@@ -21,7 +22,7 @@ public abstract class ALevel implements ILevel {
     protected OrthographicCamera camera;
     protected AssetManager assetManager;
     protected OrthogonalTiledMapRenderer mapRenderer;
-    private Box2DDebugRenderer debugRenderer;
+    protected Box2DDebugRenderer debugRenderer;
     private InputMultiplexer multiplexer;
     
     @Override
@@ -60,6 +61,7 @@ public abstract class ALevel implements ILevel {
     
     public void baseLoading() {
         this.world = new World(new Vector2(0, 0), true);
+        this.world.setContactListener(new SensorContactListener());
         this.hud = new HUD();
         this.multiplexer = new InputMultiplexer();
         float w = Gdx.graphics.getWidth();
@@ -67,6 +69,8 @@ public abstract class ALevel implements ILevel {
         this.camera = new OrthographicCamera(200, 200 * (h / w)); 
         this.camera.update();
         this.assetManager = new AssetManager();
+        
+        this.debugRenderer = new Box2DDebugRenderer();
     }
 
 }

@@ -42,6 +42,7 @@ public class TestLevel extends ALevel {
     @Override
     public void render(SpriteBatch batch) {
         batch.setProjectionMatrix(this.camera.combined);
+        this.debugRenderer.render(this.world, this.camera.combined);
         this.world.step(1/60f, 6, 2);
         this._entities.sort(new RenderingComparator()); // Rendering on depthAxis
         for(int i = 0; i < this._entities.size(); i++) {
