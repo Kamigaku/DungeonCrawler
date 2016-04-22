@@ -30,8 +30,9 @@ public abstract class AEntity implements IEntity {
                                 short maskBits, float x, float y, float width, 
                                 float height) {
         this._graphics = new GraphicsComponent(sprite);
-        this._physics = new PhysicsComponent(x, y, bodyType, categoryBits, maskBits, 
-                                            width, height);
+        this._physics = new PhysicsComponent(x, y, bodyType, categoryBits, 
+                                            maskBits, width, height);
+        this._physics.getBody().setUserData(this);
         this._sensors = new ArrayList<SensorComponent>();
     }
 

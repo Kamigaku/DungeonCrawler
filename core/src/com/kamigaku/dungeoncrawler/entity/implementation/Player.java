@@ -9,6 +9,9 @@ package com.kamigaku.dungeoncrawler.entity.implementation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.kamigaku.dungeoncrawler.component.InputComponent;
 import com.kamigaku.dungeoncrawler.component.SensorComponent;
 import com.kamigaku.dungeoncrawler.entity.AEntity;
@@ -33,6 +36,24 @@ public class Player extends AEntity {
         for(int i = 0;  i < this._sensors.size(); i++) {
             this._sensors.get(i).update(this.getPhysicsComponent().getPosition().x, this.getPhysicsComponent().getPosition().y);
         }
+    }
+
+    @Override
+    public void beginContact(Contact contact) {
+        System.out.println("the collision begin on the client side !");
+    }
+
+    @Override
+    public void endContact(Contact contact) {
+    }
+
+    @Override
+    public void preSolve(Contact contact, Manifold oldManifold) {
+    }
+    
+    @Override
+    public void postSolve(Contact contact, ContactImpulse impulse) {
+        
     }
 
 }

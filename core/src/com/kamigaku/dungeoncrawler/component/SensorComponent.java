@@ -27,10 +27,8 @@ public class SensorComponent {
     public SensorComponent(IEntity entity, BodyType bodyType, float width, 
                             short categoryBits, short maskBits, float height) {
         initBody(entity, bodyType);
-        
         PolygonShape collider = new PolygonShape();
         collider.setAsBox(width, height);
-        
         defineFixtureDef(collider, categoryBits, maskBits);
     }
     
@@ -89,6 +87,8 @@ public class SensorComponent {
     public void update(float x, float y) {
         this._body.setTransform(x, y, 0);
     }
+    
+    
     
 
 }
