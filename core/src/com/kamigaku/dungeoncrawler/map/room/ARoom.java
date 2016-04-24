@@ -10,7 +10,7 @@ package com.kamigaku.dungeoncrawler.map.room;
  * @author Kamigaku
  */
 public abstract class ARoom implements IRoom {
-    
+     
     public int x;
     public int y;
     public int width;
