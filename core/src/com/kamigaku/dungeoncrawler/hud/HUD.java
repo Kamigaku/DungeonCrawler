@@ -67,7 +67,7 @@ public class HUD {
                 this.table.row();
                 this.table.add(hpGroup).padLeft(20).padBottom(10);
                 
-                Inventory inv = new Inventory(stage, uiSkin);
+                Inventory inv = new Inventory("coucou", uiSkin, false);
 		
 	}
 	
