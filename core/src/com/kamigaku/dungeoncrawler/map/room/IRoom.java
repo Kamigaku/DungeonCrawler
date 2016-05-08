@@ -13,7 +13,6 @@ import com.kamigaku.dungeoncrawler.map.entity.IMapEntity;
  */
 public interface IRoom extends IMapEntity {
     
-    public void generate();
     public void displayMap();
     
 }

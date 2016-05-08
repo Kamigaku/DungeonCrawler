@@ -15,7 +15,7 @@ public abstract class ARoom implements IRoom {
     public int y;
     public int width;
     public int height;
-    public int[][] schema;
+    public char[][] schema;
 
     
 }

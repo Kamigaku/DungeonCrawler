@@ -16,12 +16,7 @@ public class Room extends ARoom {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.schema = new int[this.height][this.width];
-    }
-
-    @Override
-    public void generate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.schema = new char[this.height][this.width];
     }
 
     @Override

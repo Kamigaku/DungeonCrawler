@@ -9,7 +9,7 @@ import java.util.Random;
 public class Map {
     
     public ArrayList<IMapEntity> mapEntities;
-    public int[][][] map;
+    public char[][] map;
     public MapType mapType;
     public int width;
     public int height;
@@ -33,44 +33,101 @@ public class Map {
         }
         
         // Map type
+        int type = Integer.parseInt("" + this.infoMapSeed.charAt(this.infoMapSeed.length() - 1));
         this.mapType = Constants.MAP_POSSIBILITY[Integer.parseInt("" + this.infoMapSeed.charAt(this.infoMapSeed.length() - 1))];
-        
-        // Coordonnées première room
-        // x
-        int xFirstRoom = (Integer.parseInt("" + this.infoMapSeed.charAt(this.infoMapSeed.length() - 2)) + 
-                         (Integer.parseInt("" + this.infoMapSeed.charAt(this.infoMapSeed.length() - 3)) * 10) +
-                         (Integer.parseInt("" + this.infoMapSeed.charAt(this.infoMapSeed.length() - 4)) * 100)) %
-                         Constants.MAP_WIDTH;
-        
-        // y
-        int yFirstRoom = (Integer.parseInt("" + this.infoMapSeed.charAt(this.infoMapSeed.length() - 5)) + 
-                         (Integer.parseInt("" + this.infoMapSeed.charAt(this.infoMapSeed.length() - 6)) * 10) +
-                         (Integer.parseInt("" + this.infoMapSeed.charAt(this.infoMapSeed.length() - 7)) * 100)) %
-                        Constants.MAP_HEIGHT;
         
         int bit_decalage = 0; // bit de décalage
         
-        // Nombre d'étages
-        // [2 ; 9]
-        do {
-            this.numberLevel = "" + this.infoMapSeed.charAt(this.infoMapSeed.length() - 8 - bit_decalage);
-            bit_decalage += 1;
-        } while(Integer.parseInt(this.numberLevel) < 2);
-        
         // Nombre de room
         // [10 ; 99]
-        do {
-            if(this.infoMapSeed.charAt(this.infoMapSeed.length() - 8 - bit_decalage) != '0')
-                this.numberRoom = this.infoMapSeed.charAt(this.infoMapSeed.length() - 8 - bit_decalage) + this.numberRoom;
-            bit_decalage += 1;
-        } while(this.numberRoom.compareTo("") == 0 || Integer.parseInt(this.numberRoom) < 10);
-        
-        
-        if(this.numberLevel == "0" || this.numberLevel == "" || this.numberRoom == "0" || this.numberRoom == "") {
-            System.out.println("Erreur lors du générateur : " + this.numberLevel + " | " + this.numberRoom);
+        this.numberRoom = "" + this.infoMapSeed.charAt(this.infoMapSeed.length() - 8 - bit_decalage - 1) +
+                            this.infoMapSeed.charAt(this.infoMapSeed.length() - 8 - bit_decalage);
+        this.numberRoom = "" + ((Integer.parseInt(numberRoom) % (Constants.ROOM_SIZE[type][1] - Constants.ROOM_SIZE[type][0])) + Constants.ROOM_SIZE[type][0]);
+                
+        //this.map = new char[Integer.parseInt(this.numberLevel)][this.width][this.height];
+        this.map = new char[Constants.MAP_WIDTH + 200][Constants.MAP_HEIGHT + 200];
+        for(int i = 0; i < this.map.length; i++) {
+            for(int j = 0; j < this.map[i].length; j++) {
+                this.map[i][j] = '#';
+            }
         }
         
-        this.map = new int[Integer.parseInt(this.numberLevel)][this.width][this.height];
+        // Place room
+        for(int i = 0; i < Integer.parseInt(this.numberRoom); i++) {
+            addStringRoom(this.infoMapSeed);
+            this.infoMapSeed = "" + this.randomizer.nextLong();
+        }
+        
+        Floor f = new Floor(this.map, "", 0);
+            
+    }
+    
+    public void addStringRoom(String seed) {
+        int xRoom = (Integer.parseInt("" + seed.charAt(seed.length() - 2)) + 
+                    (Integer.parseInt("" + seed.charAt(seed.length() - 3)) * 10) +
+                    (Integer.parseInt("" + seed.charAt(seed.length() - 4)) * 100)) %
+                    Constants.MAP_WIDTH;
+        
+        // y
+        int yRoom = (Integer.parseInt("" + seed.charAt(seed.length() - 5)) + 
+                    (Integer.parseInt("" + seed.charAt(seed.length() - 6)) * 10) +
+                    (Integer.parseInt("" + seed.charAt(seed.length() - 7)) * 100)) %
+                    Constants.MAP_HEIGHT;
+        
+        // width
+        int widthRoom = Integer.parseInt("" + seed.charAt(seed.length() - 8)) + 
+                    (Integer.parseInt("" + seed.charAt(seed.length() - 9)) * 10);
+        
+        // height
+        int heightRoom = Integer.parseInt("" + seed.charAt(seed.length() - 10)) + 
+                    (Integer.parseInt("" + seed.charAt(seed.length() - 11)) * 10);
+        
+        for(int x = 0; x < widthRoom; x++) { // Ligne
+            if((x + xRoom) == Constants.MAP_WIDTH - 1) { // Si le x courant dépasse la taille maximum de la salle, 
+                                                                              // je fais un pas en arrière et je rajoute des murs
+                for(int y = 0; y < heightRoom; y++) { // Je reparcours tous les y précédents de la colonne
+                    if(yRoom + y >= Constants.MAP_HEIGHT)
+                        break;
+                    else
+                        map[x + xRoom][yRoom + y] = 'W'; // Je pose un mur
+                }
+                break;
+            }
+            for(int y = 0; y < heightRoom; y++) { // Colonne
+                if(y + yRoom == Constants.MAP_HEIGHT - 1) { // Si le y dépasse le haut, j'arrête et je reviens un cran en arrière
+                                                // pour y déposer des murs
+                    for(int xSub = 0; xSub < widthRoom; xSub++) { // Je reparcours les x précédents
+                        if(xRoom + xSub >= Constants.MAP_HEIGHT)
+                            break;
+                        else
+                            map[xSub + xRoom][y + yRoom] = 'W'; // Je pose un mur
+                    }
+                    break;
+                }
+                else {
+                    if(x == 0 || x == (widthRoom - 1) || y == 0 || y == (heightRoom - 1)) // Je positionne un mur aux extrémités
+                        map[x + xRoom][y + yRoom] = 'W'; // Je pose un mur
+                    else {
+                        if(map[x + xRoom][y + yRoom] != 'W') // Si la case courante n'est pas un mur
+                            map[x + xRoom][y + yRoom] = ' ';
+                    }
+                }
+            }
+        }
+
+            // Je pose mon espace vide si :
+            //  case courante = "-" => je ne pose pas
+            //  case courante = " " => je ne pose pas
+            //  case courante = "#" => je pose si
+            //          => la case +1 ou la case -1 n'est pas egale à "-"
+
+            // Je pose mon mur si :
+            //  case courante = "-" => je ne pose pas
+            //  case courante = " " => je pose ?
+            //  case courante = "#" => je pose 
+            
+            
+        
     }
     
     public void addAnEntity(IMapEntity entity) {
@@ -80,7 +137,13 @@ public class Map {
     
     //Display the map
     public void displayMap() {
-        
+        for(int i = 0; i < this.map.length; i++) {
+            //System.out.print(i + " - ");
+            for(int j = 0; j < this.map[i].length; j++) {
+                System.out.print(this.map[i][j]);
+            }
+            System.out.println("");
+        }
     }
     
     @Override
