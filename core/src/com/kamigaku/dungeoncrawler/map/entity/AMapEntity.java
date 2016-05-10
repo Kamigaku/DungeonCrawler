@@ -1,5 +1,6 @@
 package com.kamigaku.dungeoncrawler.map.entity;
 
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 
@@ -11,6 +12,7 @@ public abstract class AMapEntity implements IMapEntity {
     public int widthRoom;
     public int heightRoom;
     public ArrayList<AMapEntity> neighbors;
+    private Polygon _bounds;
     
     @Override
     public void displayEntity() {
@@ -24,14 +26,14 @@ public abstract class AMapEntity implements IMapEntity {
 
     @Override
     public void extractEntity(ArrayList<Vector2> coordinates) {
-        char[][] roomMap = new char[widthRoom + 2][heightRoom + 2]; // +2 pour ajouter les murs
+        char[][] roomMap = new char[heightRoom + 2][widthRoom + 2]; // +2 pour ajouter les murs
         for (char[] roomMap1 : roomMap) {
             for (int yR = 0; yR < roomMap1.length; yR++) {
                 roomMap1[yR] = '#';
             }
         }
         for(int i = 0; i < coordinates.size(); i++) {
-            roomMap[(int)coordinates.get(i).x - this.x + 1][(int)coordinates.get(i).y - this.y + 1] = ' ';
+            roomMap[(int)coordinates.get(i).y - this.y][(int)coordinates.get(i).x - this.x] = ' ';
         }
         for(int xR = 0; xR < roomMap.length; xR++) {
             for(int yR = 0; yR < roomMap[xR].length; yR++) {
@@ -48,6 +50,47 @@ public abstract class AMapEntity implements IMapEntity {
             }
         }
         this.schema = roomMap;
+        displayEntity();
+        
+        ArrayList<Vector2> tbounds = new ArrayList<Vector2>();
+        for(int yPos = 0; yPos < this.schema.length; yPos++) {
+            for(int xPos = 0; xPos < this.schema[yPos].length; xPos++) {
+                if(this.schema[yPos][xPos] == ' ') {
+                    if(this.schema[yPos - 1][xPos] == 'W' ||
+                        this.schema[yPos + 1][xPos] == 'W' ||
+                        this.schema[yPos][xPos - 1] == 'W' ||
+                        this.schema[yPos][xPos + 1] == 'W' ||
+                        this.schema[yPos - 1][xPos - 1] == 'W' ||
+                        this.schema[yPos + 1][xPos + 1] == 'W' ||
+                        this.schema[yPos - 1][xPos + 1] == 'W' ||
+                        this.schema[yPos + 1][xPos - 1] == 'W') {
+                        tbounds.add(new Vector2(xPos + this.x, yPos + this.y));
+                    }
+                }   
+            }
+        }
+        
+        ArrayList<Vector2> bounds = new ArrayList<Vector2>();
+        bounds.add(tbounds.get(0));
+        tbounds.remove(0);
+        boolean found;
+        do {
+            found = false;
+            for(int i = 0; i < tbounds.size(); i++) {
+                if((Math.abs(tbounds.get(i).x - bounds.get(bounds.size() - 1).x) == 1 && 
+                    Math.abs(tbounds.get(i).y - bounds.get(bounds.size() - 1).y) == 0) || 
+                    (Math.abs(tbounds.get(i).x - bounds.get(bounds.size() - 1).x) == 0 && 
+                    Math.abs(tbounds.get(i).y - bounds.get(bounds.size() - 1).y) == 1)) {
+                    bounds.add(tbounds.get(i));
+                    tbounds.remove(i);
+                    found = true;
+                    break;
+                }
+            }
+        } while(tbounds.size() > 0 && found);
+        
+        // A faire le polygone
+        
     }
 
     

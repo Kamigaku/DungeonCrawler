@@ -1,5 +1,7 @@
 package com.kamigaku.dungeoncrawler.map;
 
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.kamigaku.dungeoncrawler.dijkstra.Node;
@@ -28,22 +30,23 @@ public class Floor {
     
     private void splitRooms() {
         this._nodes = new Node[this._floorMap.length * this._floorMap[0].length];
-        for (int x = 0; x < this._floorMap.length; x++) {
-            for (int y = 0; y < this._floorMap[x].length; y++) {
-                if (this._floorMap[x][y] == ' ') {
+
+        for (int y = 0; y < this._floorMap.length; y++) {
+            for (int x = 0; x < this._floorMap[y].length; x++) {
+                if (this._floorMap[y][x] == ' ') {
 
                     // Ajout du neoud
                     int value = XYValue(x, y);
                     this._nodes[value] = new Node(value);
 
                     // Ajout des voisins avec vérification
-                    if (x - 1 >= 0 && this._floorMap[x - 1][y] == ' ')
+                    if (x - 1 >= 0 && this._floorMap[y][x - 1] == ' ')
                         this._nodes[value].addNeighbors(XYValue(x - 1, y));
-                    if (x + 1 < this._floorMap.length && this._floorMap[x + 1][y] == ' ')
+                    if (x + 1 < this._floorMap.length && this._floorMap[y][x + 1] == ' ')
                         this._nodes[value].addNeighbors(XYValue(x + 1, y));
-                    if (y - 1 >= 0 && this._floorMap[x][y - 1] == ' ')
+                    if (y - 1 >= 0 && this._floorMap[y - 1][x] == ' ')
                         this._nodes[value].addNeighbors(XYValue(x, y - 1));
-                    if (y + 1 < this._floorMap[x].length && this._floorMap[x][y + 1] == ' ')
+                    if (y + 1 < this._floorMap[x].length && this._floorMap[y + 1][x] == ' ')
                         this._nodes[value].addNeighbors(XYValue(x, y + 1));
                 }
             }
@@ -87,20 +90,21 @@ public class Floor {
         }
         
         // Liaison des rooms
+        Rectangle intersect = new Rectangle();
         for(IMapEntity current : this._entities) {
             AMapEntity aCurrent = (AMapEntity) current;
             for(IMapEntity other : this._entities) {
                 AMapEntity aOther   = (AMapEntity) other;
                 if(other != current && !aCurrent.neighbors.contains(aOther)) {
-                    Rectangle r1 = new Rectangle(aCurrent.x, aCurrent.y, aCurrent.widthRoom, aCurrent.heightRoom);
-                    Rectangle r2 = new Rectangle(aOther.x, aOther.y, aOther.widthRoom, aOther.heightRoom);
-                    if(r1.overlaps(r2) || r2.overlaps(r1)) {
+                    Rectangle r1 = new Rectangle(aCurrent.x, aCurrent.y, aCurrent.widthRoom + 2, aCurrent.heightRoom + 2);
+                    Rectangle r2 = new Rectangle(aOther.x, aOther.y, aOther.widthRoom + 2, aOther.heightRoom + 2);
+                    if(Intersector.intersectRectangles(r1, r2, intersect) && (intersect.width > 1 || intersect.height > 1)) {
                         aCurrent.neighbors.add(aOther);
                         aOther.neighbors.add(aCurrent);
                     }
                 }
             }
-            System.out.println("This room [" + aCurrent.x + "/" + aCurrent.y + "] (" + aCurrent.widthRoom + "/" + aCurrent.heightRoom + ") have : " + aCurrent.neighbors.size() + " connection(s).");
+            System.out.println("This room [" + aCurrent.y + "/" + aCurrent.x + "] (" + aCurrent.heightRoom + "/" + aCurrent.widthRoom + ") have : " + aCurrent.neighbors.size() + " connection(s).");
         }
         //displayFloor();
     }
@@ -129,8 +133,8 @@ public class Floor {
     
     public void displayFloor() {
         for (char[] _floorMap1 : this._floorMap) {
-            for (int y = 0; y < _floorMap1.length; y++) {
-                System.out.print(_floorMap1[y]);
+            for (int x = 0; x < _floorMap1.length; x++) {
+                System.out.print(_floorMap1[x]);
             }
             System.out.println("");
         }

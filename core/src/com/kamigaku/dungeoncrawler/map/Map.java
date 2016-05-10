@@ -43,10 +43,10 @@ public class Map {
                             this.infoMapSeed.charAt(this.infoMapSeed.length() - 8 - bit_decalage);
         this.numberRoom = "" + ((Integer.parseInt(numberRoom) % (Constants.ROOM_SIZE[type][1] - Constants.ROOM_SIZE[type][0])) + Constants.ROOM_SIZE[type][0]);
                 
-        char[][] floor = new char[Constants.MAP_WIDTH + 200][Constants.MAP_HEIGHT + 200];
-        for(int i = 0; i < floor.length; i++) {
-            for(int j = 0; j < floor[i].length; j++) {
-                floor[i][j] = '#';
+        char[][] floor = new char[Constants.MAP_HEIGHT + 200][Constants.MAP_WIDTH + 200];
+        for(int i_height = 0; i_height < floor.length; i_height++) {
+            for(int j_width = 0; j_width < floor[i_height].length; j_width++) {
+                floor[i_height][j_width] = '#';
             }
         }
         
@@ -54,6 +54,19 @@ public class Map {
         for(int i = 0; i < Integer.parseInt(this.numberRoom); i++) {
             addStringRoom(floor, infoMapSeed);
             this.infoMapSeed = "" + this.randomizer.nextLong();
+        }
+        
+        for(int yR = 0; yR < floor.length; yR++) {
+            for(int xR = 0; xR < floor[yR].length; xR++) {
+                if(floor[yR][xR] == 'W') {
+                    if(floor[yR - 1][xR] != ' ' && floor[yR + 1][xR] != ' ' &&
+                        floor[yR][xR - 1] != ' ' && floor[yR][xR + 1] != ' ' &&
+                        floor[yR - 1][xR + 1] != ' ' && floor[yR + 1][xR + 1] != ' ' &&
+                        floor[yR - 1][xR - 1] != ' ' && floor[yR + 1][xR - 1] != ' ') {
+                        floor[yR][xR] = '#';
+                    }
+                }
+            }
         }
         
         this._floors.add(new Floor(floor, "", 0));
@@ -79,39 +92,39 @@ public class Map {
         // height
         int heightRoom = Integer.parseInt("" + seed.charAt(seed.length() - 10)) + 
                     (Integer.parseInt("" + seed.charAt(seed.length() - 11)) * 10);
-        
-        for(int x = 0; x < widthRoom; x++) { // Ligne
-            if((x + xRoom) == Constants.MAP_WIDTH - 1) { // Si le x courant dépasse la taille maximum de la salle, 
+                
+        for(int y = 0; y < heightRoom; y++) { // Colonne
+            if((y + yRoom) == Constants.MAP_HEIGHT - 1) { // Si le x courant dépasse la taille maximum de la salle, 
                                                                               // je fais un pas en arrière et je rajoute des murs
-                for(int y = 0; y < heightRoom; y++) { // Je reparcours tous les y précédents de la colonne
-                    if(yRoom + y >= Constants.MAP_HEIGHT)
+                for(int x = 0; x < widthRoom; x++) { // Je reparcours tous les y précédents de la colonne
+                    if(xRoom + x >= Constants.MAP_WIDTH)
                         break;
                     else
-                        floor[x + xRoom][yRoom + y] = 'W'; // Je pose un mur
+                        floor[yRoom + y][x + xRoom] = 'W'; // Je pose un mur
                 }
                 break;
             }
-            for(int y = 0; y < heightRoom; y++) { // Colonne
-                if(y + yRoom == Constants.MAP_HEIGHT - 1) { // Si le y dépasse le haut, j'arrête et je reviens un cran en arrière
+            for(int x = 0; x < widthRoom; x++) { // Colonne
+                if(x + xRoom == Constants.MAP_WIDTH - 1) { // Si le y dépasse le haut, j'arrête et je reviens un cran en arrière
                                                 // pour y déposer des murs
-                    for(int xSub = 0; xSub < widthRoom; xSub++) { // Je reparcours les x précédents
-                        if(xRoom + xSub >= Constants.MAP_HEIGHT)
+                    for(int ySub = 0; ySub < heightRoom; ySub++) { // Je reparcours les x précédents
+                        if(yRoom + ySub >= Constants.MAP_WIDTH)
                             break;
                         else
-                            floor[xSub + xRoom][y + yRoom] = 'W'; // Je pose un mur
+                            floor[ySub + yRoom][x + xRoom] = 'W'; // Je pose un mur
                     }
                     break;
                 }
                 else {
                     if(x == 0 || x == (widthRoom - 1) || y == 0 || y == (heightRoom - 1)) // Je positionne un mur aux extrémités
-                        floor[x + xRoom][y + yRoom] = 'W'; // Je pose un mur
+                        floor[y + yRoom][x + xRoom] = 'W'; // Je pose un mur
                     else {
-                        if(floor[x + xRoom][y + yRoom] != 'W') // Si la case courante n'est pas un mur
-                            floor[x + xRoom][y + yRoom] = ' ';
+                        if(floor[y + yRoom][x + xRoom] != 'W') // Si la case courante n'est pas un mur
+                            floor[y + yRoom][x + xRoom] = ' ';
                     }
                 }
             }
-        }   
+        }
     }
     
     //Display the map
