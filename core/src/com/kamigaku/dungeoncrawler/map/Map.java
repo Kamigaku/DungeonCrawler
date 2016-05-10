@@ -2,14 +2,12 @@ package com.kamigaku.dungeoncrawler.map;
 
 import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.constants.Constants.MapType;
-import com.kamigaku.dungeoncrawler.map.entity.IMapEntity;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Map {
     
-    public ArrayList<IMapEntity> mapEntities;
-    public char[][] map;
+    private ArrayList<Floor> _floors;
     public MapType mapType;
     public int width;
     public int height;
@@ -24,6 +22,7 @@ public class Map {
     public Map(int x, int y) {
         this.width = Constants.MAP_WIDTH;
         this.height = Constants.MAP_HEIGHT;
+        this._floors = new ArrayList<Floor>();
         this.seed = x * 1000 + y;
         this.randomizer = new Random(this.seed);
         this.infoMapSeed = "" + this.randomizer.nextLong();
@@ -44,25 +43,24 @@ public class Map {
                             this.infoMapSeed.charAt(this.infoMapSeed.length() - 8 - bit_decalage);
         this.numberRoom = "" + ((Integer.parseInt(numberRoom) % (Constants.ROOM_SIZE[type][1] - Constants.ROOM_SIZE[type][0])) + Constants.ROOM_SIZE[type][0]);
                 
-        //this.map = new char[Integer.parseInt(this.numberLevel)][this.width][this.height];
-        this.map = new char[Constants.MAP_WIDTH + 200][Constants.MAP_HEIGHT + 200];
-        for(int i = 0; i < this.map.length; i++) {
-            for(int j = 0; j < this.map[i].length; j++) {
-                this.map[i][j] = '#';
+        char[][] floor = new char[Constants.MAP_WIDTH + 200][Constants.MAP_HEIGHT + 200];
+        for(int i = 0; i < floor.length; i++) {
+            for(int j = 0; j < floor[i].length; j++) {
+                floor[i][j] = '#';
             }
         }
         
         // Place room
         for(int i = 0; i < Integer.parseInt(this.numberRoom); i++) {
-            addStringRoom(this.infoMapSeed);
+            addStringRoom(floor, infoMapSeed);
             this.infoMapSeed = "" + this.randomizer.nextLong();
         }
         
-        Floor f = new Floor(this.map, "", 0);
+        this._floors.add(new Floor(floor, "", 0));
             
     }
     
-    public void addStringRoom(String seed) {
+    public void addStringRoom(char[][] floor, String seed) {
         int xRoom = (Integer.parseInt("" + seed.charAt(seed.length() - 2)) + 
                     (Integer.parseInt("" + seed.charAt(seed.length() - 3)) * 10) +
                     (Integer.parseInt("" + seed.charAt(seed.length() - 4)) * 100)) %
@@ -89,7 +87,7 @@ public class Map {
                     if(yRoom + y >= Constants.MAP_HEIGHT)
                         break;
                     else
-                        map[x + xRoom][yRoom + y] = 'W'; // Je pose un mur
+                        floor[x + xRoom][yRoom + y] = 'W'; // Je pose un mur
                 }
                 break;
             }
@@ -100,49 +98,26 @@ public class Map {
                         if(xRoom + xSub >= Constants.MAP_HEIGHT)
                             break;
                         else
-                            map[xSub + xRoom][y + yRoom] = 'W'; // Je pose un mur
+                            floor[xSub + xRoom][y + yRoom] = 'W'; // Je pose un mur
                     }
                     break;
                 }
                 else {
                     if(x == 0 || x == (widthRoom - 1) || y == 0 || y == (heightRoom - 1)) // Je positionne un mur aux extrémités
-                        map[x + xRoom][y + yRoom] = 'W'; // Je pose un mur
+                        floor[x + xRoom][y + yRoom] = 'W'; // Je pose un mur
                     else {
-                        if(map[x + xRoom][y + yRoom] != 'W') // Si la case courante n'est pas un mur
-                            map[x + xRoom][y + yRoom] = ' ';
+                        if(floor[x + xRoom][y + yRoom] != 'W') // Si la case courante n'est pas un mur
+                            floor[x + xRoom][y + yRoom] = ' ';
                     }
                 }
             }
-        }
-
-            // Je pose mon espace vide si :
-            //  case courante = "-" => je ne pose pas
-            //  case courante = " " => je ne pose pas
-            //  case courante = "#" => je pose si
-            //          => la case +1 ou la case -1 n'est pas egale à "-"
-
-            // Je pose mon mur si :
-            //  case courante = "-" => je ne pose pas
-            //  case courante = " " => je pose ?
-            //  case courante = "#" => je pose 
-            
-            
-        
-    }
-    
-    public void addAnEntity(IMapEntity entity) {
-        this.mapEntities.add(entity);
-        // fetch the schema of the map and add it to the current map
+        }   
     }
     
     //Display the map
     public void displayMap() {
-        for(int i = 0; i < this.map.length; i++) {
-            //System.out.print(i + " - ");
-            for(int j = 0; j < this.map[i].length; j++) {
-                System.out.print(this.map[i][j]);
-            }
-            System.out.println("");
+        for(int i = 0; i < this._floors.size(); i++) {
+            this._floors.get(i).displayFloor();
         }
     }
     

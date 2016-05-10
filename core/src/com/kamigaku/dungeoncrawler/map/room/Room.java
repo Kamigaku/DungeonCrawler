@@ -5,23 +5,23 @@
  */
 package com.kamigaku.dungeoncrawler.map.room;
 
+import com.badlogic.gdx.math.Vector2;
+import com.kamigaku.dungeoncrawler.map.entity.AMapEntity;
+import java.util.ArrayList;
+
 /**
  *
  * @author Kamigaku
  */
 public class Room extends ARoom {
     
-    public Room(int x, int y, int width, int height) {
+    public Room(ArrayList<Vector2> coordinates, int x, int y, int width, int height) {
+        this.widthRoom = width;
+        this.heightRoom = height;
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
-        this.schema = new char[this.height][this.width];
-    }
-
-    @Override
-    public void displayMap() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.neighbors = new ArrayList<AMapEntity>();
+        super.extractEntity(coordinates);
     }
     
 }

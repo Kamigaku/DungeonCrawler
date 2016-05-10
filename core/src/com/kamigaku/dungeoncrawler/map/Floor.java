@@ -1,17 +1,20 @@
 package com.kamigaku.dungeoncrawler.map;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.kamigaku.dungeoncrawler.dijkstra.Node;
+import com.kamigaku.dungeoncrawler.map.corridor.Corridor;
+import com.kamigaku.dungeoncrawler.map.entity.AMapEntity;
 import com.kamigaku.dungeoncrawler.map.entity.IMapEntity;
 import com.kamigaku.dungeoncrawler.map.room.Room;
 import java.util.ArrayList;
 
 public class Floor {
     
-    private ArrayList<IMapEntity> _entities;
-    private char[][] _floorMap;
-    private String _floorSeed;
-    private int _floorNumber;
+    private final ArrayList<IMapEntity> _entities;
+    private final String _floorSeed;
+    private final int _floorNumber;
+    private final char[][] _floorMap;
     
     private Node[] _nodes;
     
@@ -46,9 +49,7 @@ public class Floor {
             }
         }
         
-        // Je parcours tous les noeuds, quand j'en trouve un qui n'est pas vide
-        // je parcours tous ses voisins, eux-même parcours leurs voisins jusqu'a
-        // ne plus rien avoir
+        // Création des rooms
         for(int i = 0; i < this._nodes.length; i++) {
             if(this._nodes[i] != null && !this._nodes[i].fetched) {
                 this._nodes[i].fetched = true;
@@ -57,8 +58,7 @@ public class Floor {
                 for(int j = 0; j < this._nodes[i].neighbors.size(); j++) {
                     fetchNode(this._nodes[this._nodes[i].neighbors.get(j)], coordinates);
                 }
-                int widthRoom = 0;
-                int heightRoom = 0;
+                
                 int lowerHeight = (int)coordinates.get(0).y;
                 int higherHeight = (int)coordinates.get(0).y;
                 int lowerWidth = (int)coordinates.get(0).x;
@@ -73,15 +73,36 @@ public class Floor {
                     if(coordinates.get(j).x > higherWidth) 
                         higherWidth = (int)coordinates.get(j).x;                  
                 }
-                widthRoom = higherWidth - lowerWidth + 1;
-                heightRoom = higherHeight - lowerHeight + 1;
-                System.out.println("Width : " + widthRoom + " | Height : " + heightRoom);
-                char[][] roomMap = new char[widthRoom][heightRoom];
-                Room r = new Room(lowerWidth, lowerHeight, widthRoom, heightRoom);
-                this._entities.add(r);
-                System.out.println("Room created");
+                int widthRoom = higherWidth - lowerWidth + 1;
+                int heightRoom = higherHeight - lowerHeight + 1;
+                
+                if(widthRoom <= 3 || heightRoom <= 3) {
+                    this._entities.add(new Corridor(coordinates, lowerWidth - 1, lowerHeight - 1, widthRoom, heightRoom));
+                    System.out.println("Added a corridor");
+                }
+                else {
+                    this._entities.add(new Room(coordinates, lowerWidth - 1, lowerHeight - 1, widthRoom, heightRoom));
+                }
             }
         }
+        
+        // Liaison des rooms
+        for(IMapEntity current : this._entities) {
+            AMapEntity aCurrent = (AMapEntity) current;
+            for(IMapEntity other : this._entities) {
+                AMapEntity aOther   = (AMapEntity) other;
+                if(other != current && !aCurrent.neighbors.contains(aOther)) {
+                    Rectangle r1 = new Rectangle(aCurrent.x, aCurrent.y, aCurrent.widthRoom, aCurrent.heightRoom);
+                    Rectangle r2 = new Rectangle(aOther.x, aOther.y, aOther.widthRoom, aOther.heightRoom);
+                    if(r1.overlaps(r2) || r2.overlaps(r1)) {
+                        aCurrent.neighbors.add(aOther);
+                        aOther.neighbors.add(aCurrent);
+                    }
+                }
+            }
+            System.out.println("This room [" + aCurrent.x + "/" + aCurrent.y + "] (" + aCurrent.widthRoom + "/" + aCurrent.heightRoom + ") have : " + aCurrent.neighbors.size() + " connection(s).");
+        }
+        //displayFloor();
     }
     
     private void fetchNode(Node n, ArrayList<Vector2> coordinates) {
@@ -104,6 +125,15 @@ public class Floor {
 
     private int YValue(int value) {
         return (int)(value / this._floorMap.length);
-    } 
+    }
+    
+    public void displayFloor() {
+        for (char[] _floorMap1 : this._floorMap) {
+            for (int y = 0; y < _floorMap1.length; y++) {
+                System.out.print(_floorMap1[y]);
+            }
+            System.out.println("");
+        }
+    }
     
 }
