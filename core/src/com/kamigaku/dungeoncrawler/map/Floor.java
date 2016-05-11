@@ -1,19 +1,18 @@
 package com.kamigaku.dungeoncrawler.map;
 
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.kamigaku.dungeoncrawler.dijkstra.Node;
 import com.kamigaku.dungeoncrawler.map.corridor.Corridor;
 import com.kamigaku.dungeoncrawler.map.entity.AMapEntity;
 import com.kamigaku.dungeoncrawler.map.entity.IMapEntity;
 import com.kamigaku.dungeoncrawler.map.room.Room;
+import com.kamigaku.dungeoncrawler.utility.Utility;
 import java.util.ArrayList;
 
 public class Floor {
     
-    private final ArrayList<IMapEntity> _entities;
+    public final ArrayList<IMapEntity> _entities;
     private final String _floorSeed;
     private final int _floorNumber;
     private final char[][] _floorMap;
@@ -81,7 +80,6 @@ public class Floor {
                 
                 if(widthRoom <= 3 || heightRoom <= 3) {
                     this._entities.add(new Corridor(coordinates, lowerWidth - 1, lowerHeight - 1, widthRoom, heightRoom));
-                    System.out.println("Added a corridor");
                 }
                 else {
                     this._entities.add(new Room(coordinates, lowerWidth - 1, lowerHeight - 1, widthRoom, heightRoom));
@@ -90,22 +88,18 @@ public class Floor {
         }
         
         // Liaison des rooms
-        Rectangle intersect = new Rectangle();
-        for(IMapEntity current : this._entities) {
-            AMapEntity aCurrent = (AMapEntity) current;
-            for(IMapEntity other : this._entities) {
-                AMapEntity aOther   = (AMapEntity) other;
-                if(other != current && !aCurrent.neighbors.contains(aOther)) {
-                    Rectangle r1 = new Rectangle(aCurrent.x, aCurrent.y, aCurrent.widthRoom + 2, aCurrent.heightRoom + 2);
-                    Rectangle r2 = new Rectangle(aOther.x, aOther.y, aOther.widthRoom + 2, aOther.heightRoom + 2);
-                    if(Intersector.intersectRectangles(r1, r2, intersect) && (intersect.width > 1 || intersect.height > 1)) {
-                        aCurrent.neighbors.add(aOther);
-                        aOther.neighbors.add(aCurrent);
-                    }
+        for(int i = 0; i < this._entities.size(); i++) {
+            AMapEntity aCurrent = (AMapEntity) this._entities.get(i);
+            for(int j = i + 1; j < this._entities.size(); j++) {
+                AMapEntity aOther = (AMapEntity) this._entities.get(j);    
+                if(Utility.commonCoords(aCurrent.getTiles(), aOther.getTiles()).size() > 3) {
+                    aCurrent.neighbors.add(aOther);
+                    aOther.neighbors.add(aCurrent);
                 }
             }
             System.out.println("This room [" + aCurrent.y + "/" + aCurrent.x + "] (" + aCurrent.heightRoom + "/" + aCurrent.widthRoom + ") have : " + aCurrent.neighbors.size() + " connection(s).");
         }
+        Gdx.app.exit();
         //displayFloor();
     }
     

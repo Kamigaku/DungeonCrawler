@@ -7,5 +7,6 @@ public interface IMapEntity {
     
     public void displayEntity();
     public void extractEntity(ArrayList<Vector2> coordinates);
+    public ArrayList<Vector2> getTiles();
     
 }

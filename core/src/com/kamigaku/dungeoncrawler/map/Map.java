@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class Map {
     
-    private ArrayList<Floor> _floors;
+    public ArrayList<Floor> _floors;
     public MapType mapType;
     public int width;
     public int height;

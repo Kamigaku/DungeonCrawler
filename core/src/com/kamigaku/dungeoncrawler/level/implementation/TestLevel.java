@@ -3,6 +3,7 @@ package com.kamigaku.dungeoncrawler.level.implementation;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.kamigaku.dungeoncrawler.comparator.RenderingComparator;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
@@ -14,6 +15,8 @@ public class TestLevel extends ALevel {
     
     private ArrayList<IEntity> _entities;
     private Player _player;
+    
+    private ShapeRenderer sr;
 
     @Override
     public void init() {
@@ -29,7 +32,7 @@ public class TestLevel extends ALevel {
         for(int i = 0; i < 10; i++) {
             this._entities.add(new Wall(new Sprite((Texture)(this.assetManager.get("sprites/wall.png", Texture.class))), 0f, (float)i));
         }
-        
+        sr = new ShapeRenderer();
     }
     
     
@@ -41,7 +44,7 @@ public class TestLevel extends ALevel {
     
     @Override
     public void render(SpriteBatch batch) {
-        batch.setProjectionMatrix(this.camera.combined);
+        batch.setProjectionMatrix(this.camera.combined);   
         this.debugRenderer.render(this.world, this.camera.combined);
         this.world.step(1/60f, 6, 2);
         this._entities.sort(new RenderingComparator()); // Rendering on depthAxis
