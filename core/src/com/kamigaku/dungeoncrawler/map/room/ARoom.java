@@ -5,17 +5,12 @@
  */
 package com.kamigaku.dungeoncrawler.map.room;
 
+import com.kamigaku.dungeoncrawler.map.entity.AMapEntity;
+
 /**
  *
  * @author Kamigaku
  */
-public abstract class ARoom implements IRoom {
-     
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-    public int[][] schema;
+public abstract class ARoom extends AMapEntity {
 
-    
 }

@@ -63,12 +63,14 @@ public abstract class ALevel implements ILevel {
     
     public void baseLoading() {
         this.world = new World(new Vector2(0, 0), true);
-        for(int x = 0; x < 10; x++) {
-            for(int y = 0; y < 10; y++) {
+        
+        for(int x = 0; x < 1; x++) {
+            for(int y = 0; y < 1; y++) {
                 this.map = new Map(x, y);
-                System.out.println(this.map);       
+                //this.map.displayMap();
             }
         }
+        
         this.world.setContactListener(new WrapperContactListener());
         this.hud = new HUD();
         this.multiplexer = new InputMultiplexer();

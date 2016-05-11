@@ -10,7 +10,6 @@ public class WrapperContactListener implements ContactListener {
 
     @Override
     public void beginContact(Contact contact) {
-        System.out.println("1 : " + contact.getFixtureA().getUserData() + " 2 : " + contact.getFixtureB().getUserData());
         ((IEntity)contact.getFixtureA().getBody().getUserData()).beginContact(contact);
         ((IEntity)contact.getFixtureB().getBody().getUserData()).beginContact(contact);
     }
