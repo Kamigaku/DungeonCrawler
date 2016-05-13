@@ -1,5 +1,6 @@
 package com.kamigaku.dungeoncrawler.map;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.constants.Constants.MapType;
 import java.util.ArrayList;
@@ -124,6 +125,12 @@ public class Map {
                     }
                 }
             }
+        }
+    }
+    
+    public void render(SpriteBatch batch) {
+        for(int i = 0; i < this._floors.size(); i++) {
+            this._floors.get(i).render(batch);
         }
     }
     

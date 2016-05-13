@@ -1,4 +1,4 @@
-package com.kamigaku.dungeoncrawler.map.corridor;
+package com.kamigaku.dungeoncrawler.map.entity;
 
 import com.badlogic.gdx.math.Vector2;
 import com.kamigaku.dungeoncrawler.map.entity.AMapEntity;

@@ -1,4 +1,4 @@
-package com.kamigaku.dungeoncrawler.map.corridor;
+package com.kamigaku.dungeoncrawler.map.entity;
 
 import com.kamigaku.dungeoncrawler.map.entity.AMapEntity;
 

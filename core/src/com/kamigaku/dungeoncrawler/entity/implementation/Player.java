@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.kamigaku.dungeoncrawler.component.InputComponent;
 import com.kamigaku.dungeoncrawler.component.SensorComponent;
+import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.entity.AEntity;
 
 public class Player extends AEntity {
@@ -21,11 +22,21 @@ public class Player extends AEntity {
     private final InputComponent _input;
 
     public Player(Sprite sprite, float x, float y) {
-        super.baseLoading(sprite, BodyType.DynamicBody, CATEGORY_PLAYER,
-                (short) (CATEGORY_SCENERY | CATEGORY_MONSTER),
+        super.baseLoading(sprite, BodyType.DynamicBody, Constants.CATEGORY_PLAYER,
+                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER),
                 x, y, 8, 8);
         this._input = new InputComponent(this);
-        this._sensors.add(new SensorComponent(this, BodyType.DynamicBody, CATEGORY_PLAYER, CATEGORY_SCENERY, 20f));
+        this._sensors.add(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
+                                                Constants.CATEGORY_SCENERY, 20f));
+    }
+    
+    public Player(String sprite, float x, float y) {
+        super.baseLoading(sprite, BodyType.DynamicBody, Constants.CATEGORY_PLAYER,
+                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER),
+                x, y, 8, 8);
+        this._input = new InputComponent(this);
+        this._sensors.add(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
+                                                Constants.CATEGORY_SCENERY, 20f));
     }
 
     @Override

@@ -78,7 +78,6 @@ public abstract class ALevel implements ILevel {
         float h = Gdx.graphics.getHeight();
         this.camera = new OrthographicCamera(200, 200 * (h / w)); 
         this.camera.update();
-        this.assetManager = new AssetManager();
         
         this.debugRenderer = new Box2DDebugRenderer();
     }
