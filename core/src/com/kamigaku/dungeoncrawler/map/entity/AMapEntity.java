@@ -1,6 +1,8 @@
 package com.kamigaku.dungeoncrawler.map.entity;
 
 import com.badlogic.gdx.math.Vector2;
+import com.kamigaku.dungeoncrawler.constants.Constants;
+import com.kamigaku.dungeoncrawler.tile.*;
 import java.util.ArrayList;
 
 public abstract class AMapEntity implements IMapEntity {
@@ -13,7 +15,7 @@ public abstract class AMapEntity implements IMapEntity {
     public ArrayList<AMapEntity> neighbors;
     private char[][] schema;
     
-    private ArrayList<Vector2> _tiles;
+    private ArrayList<Tile> _tiles;
     
     @Override
     public void displayEntity() {
@@ -52,18 +54,32 @@ public abstract class AMapEntity implements IMapEntity {
         }
         this.schema = roomMap;
         
-        this._tiles = new ArrayList<Vector2>();
+        this._tiles = new ArrayList<Tile>();
         for(int yPos = 0; yPos < this.schema.length; yPos++) {
             for(int xPos = 0; xPos < this.schema[yPos].length; xPos++) {
                 if(this.schema[yPos][xPos] != '#') {
-                    this._tiles.add(new Vector2(xPos + this.x, yPos + this.y));
+                    if(this.schema[yPos][xPos] == ' ')
+                        this._tiles.add(new Ground("sprites/ground.png", xPos + this.x * Constants.TILE_WIDTH, yPos + this.y * Constants.TILE_HEIGHT));
+                    else if(this.schema[yPos][xPos] == 'W')
+                        this._tiles.add(new Wall("sprites/wall.png", xPos + this.x * Constants.TILE_WIDTH, yPos + this.y * Constants.TILE_HEIGHT));
                 }   
             }
         }
     }
     
     @Override
-    public ArrayList<Vector2> getTiles() {
+    public ArrayList<Tile> getTiles() {
         return this._tiles;
     }
+    
+    @Override
+    public ArrayList<Vector2> getTilesPosition() {
+        ArrayList<Vector2> v = new ArrayList<Vector2>();
+        for(Tile t : this._tiles) {
+            v.add(t.getPosition());
+        }
+        return v;
+    }
+    
+    
 }

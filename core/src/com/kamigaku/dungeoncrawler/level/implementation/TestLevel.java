@@ -1,13 +1,11 @@
 package com.kamigaku.dungeoncrawler.level.implementation;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.kamigaku.dungeoncrawler.comparator.RenderingComparator;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
-import com.kamigaku.dungeoncrawler.entity.implementation.Wall;
 import com.kamigaku.dungeoncrawler.level.ALevel;
 import java.util.ArrayList;
 
@@ -15,30 +13,25 @@ public class TestLevel extends ALevel {
     
     private ArrayList<IEntity> _entities;
     private Player _player;
-    
-    private ShapeRenderer sr;
 
     @Override
     public void init() {
-        super.baseLoading();
-        
         //Chargement des textures
         this.textureLoading();
         
+        super.baseLoading();
+       
         this._entities = new ArrayList<IEntity>();
-        this._player = new Player(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 1f, 2f);
+        this._player = new Player("sprites/player.png", 1f, 2f);
         this._entities.add(this._player);
-        
-        for(int i = 0; i < 10; i++) {
-            this._entities.add(new Wall(new Sprite((Texture)(this.assetManager.get("sprites/wall.png", Texture.class))), 0f, (float)i));
-        }
-        sr = new ShapeRenderer();
     }
     
     
     private void textureLoading() {
+        this.assetManager = new AssetManager();
         this.assetManager.load("sprites/player.png", Texture.class);
         this.assetManager.load("sprites/wall.png", Texture.class);
+        this.assetManager.load("sprites/ground.png", Texture.class);
         this.assetManager.finishLoading();
     }
     
@@ -48,6 +41,7 @@ public class TestLevel extends ALevel {
         this.debugRenderer.render(this.world, this.camera.combined);
         this.world.step(1/60f, 6, 2);
         this._entities.sort(new RenderingComparator()); // Rendering on depthAxis
+        this.map.render(batch);
         for(int i = 0; i < this._entities.size(); i++) {
             this._entities.get(i).update(batch);
         }

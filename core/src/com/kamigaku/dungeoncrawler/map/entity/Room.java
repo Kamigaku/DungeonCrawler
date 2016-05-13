@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.kamigaku.dungeoncrawler.map.room;
+package com.kamigaku.dungeoncrawler.map.entity;
 
 import com.badlogic.gdx.math.Vector2;
 import com.kamigaku.dungeoncrawler.map.entity.AMapEntity;

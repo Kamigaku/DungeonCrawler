@@ -1,8 +1,10 @@
 package com.kamigaku.dungeoncrawler.component;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
+import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 
 public class GraphicsComponent implements Disposable {
 
@@ -11,6 +13,10 @@ public class GraphicsComponent implements Disposable {
     
     public GraphicsComponent(Sprite sprite) {
         this._sprite = sprite;
+    }
+    
+    public GraphicsComponent(String sprite) {
+        this._sprite = new Sprite((Texture)LevelManager.getLevelManager().getAssetManager().get(sprite, Texture.class));
     }
     
     public void update(SpriteBatch batch, float x, float y) {

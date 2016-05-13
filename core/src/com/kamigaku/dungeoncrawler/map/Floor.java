@@ -1,12 +1,14 @@
 package com.kamigaku.dungeoncrawler.map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.kamigaku.dungeoncrawler.dijkstra.Node;
-import com.kamigaku.dungeoncrawler.map.corridor.Corridor;
+import com.kamigaku.dungeoncrawler.map.entity.Corridor;
 import com.kamigaku.dungeoncrawler.map.entity.AMapEntity;
 import com.kamigaku.dungeoncrawler.map.entity.IMapEntity;
-import com.kamigaku.dungeoncrawler.map.room.Room;
+import com.kamigaku.dungeoncrawler.map.entity.Room;
+import com.kamigaku.dungeoncrawler.tile.Tile;
 import com.kamigaku.dungeoncrawler.utility.Utility;
 import java.util.ArrayList;
 
@@ -92,7 +94,7 @@ public class Floor {
             AMapEntity aCurrent = (AMapEntity) this._entities.get(i);
             for(int j = i + 1; j < this._entities.size(); j++) {
                 AMapEntity aOther = (AMapEntity) this._entities.get(j);    
-                if(Utility.commonCoords(aCurrent.getTiles(), aOther.getTiles()).size() > 3) {
+                if(Utility.commonCoords(aCurrent.getTilesPosition(), aOther.getTilesPosition()).size() > 3) {
                     aCurrent.neighbors.add(aOther);
                     aOther.neighbors.add(aCurrent);
                 }
@@ -123,6 +125,15 @@ public class Floor {
 
     private int YValue(int value) {
         return (int)(value / this._floorMap.length);
+    }
+    
+    public void render(SpriteBatch batch) {
+        for(int i = 0; i < this._entities.size(); i++) {
+            for(int j = 0; j < this._entities.get(i).getTiles().size(); j++) {
+                Tile t = this._entities.get(i).getTiles().get(j);
+                t.getGraphicsComponent().update(batch, t.x, t.y);
+            }
+        }
     }
     
     public void displayFloor() {
