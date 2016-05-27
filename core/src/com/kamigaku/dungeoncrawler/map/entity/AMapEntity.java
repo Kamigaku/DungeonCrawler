@@ -1,5 +1,6 @@
 package com.kamigaku.dungeoncrawler.map.entity;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.tile.*;
@@ -12,10 +13,10 @@ public abstract class AMapEntity implements IMapEntity {
     public int widthRoom;
     public int heightRoom;
     
-    public ArrayList<AMapEntity> neighbors;
+    public ArrayList<Connection> neighbors;
     private char[][] schema;
     
-    private ArrayList<Tile> _tiles;
+    private Tile[][] _tiles;
     
     @Override
     public void displayEntity() {
@@ -54,32 +55,46 @@ public abstract class AMapEntity implements IMapEntity {
         }
         this.schema = roomMap;
         
-        this._tiles = new ArrayList<Tile>();
+        this._tiles = new Tile[this.schema.length][this.schema[0].length];
         for(int yPos = 0; yPos < this.schema.length; yPos++) {
             for(int xPos = 0; xPos < this.schema[yPos].length; xPos++) {
                 if(this.schema[yPos][xPos] != '#') {
                     if(this.schema[yPos][xPos] == ' ')
-                        this._tiles.add(new Ground("sprites/ground.png", xPos + this.x * Constants.TILE_WIDTH, yPos + this.y * Constants.TILE_HEIGHT));
+                        this._tiles[yPos][xPos] = new Ground("sprites/ground.png", (xPos + this.x), (yPos + this.y));
                     else if(this.schema[yPos][xPos] == 'W')
-                        this._tiles.add(new Wall("sprites/wall.png", xPos + this.x * Constants.TILE_WIDTH, yPos + this.y * Constants.TILE_HEIGHT));
+                        this._tiles[yPos][xPos] = new Wall("sprites/wall.png", (xPos + this.x), (yPos + this.y));
                 }   
             }
         }
     }
     
     @Override
-    public ArrayList<Tile> getTiles() {
+    public Tile[][] getTiles() {
         return this._tiles;
     }
     
     @Override
     public ArrayList<Vector2> getTilesPosition() {
         ArrayList<Vector2> v = new ArrayList<Vector2>();
-        for(Tile t : this._tiles) {
-            v.add(t.getPosition());
+        for(int i = 0; i < this._tiles.length; i++) {
+            for(int j = 0; j < this._tiles[i].length; j++) {
+                if(this._tiles[i][j] != null)
+                    v.add(this._tiles[i][j].getPosition());    
+            }
         }
         return v;
     }
     
+    @Override
+    public void render(SpriteBatch batch) {
+        for(int y_tile = 0; y_tile < this._tiles.length; y_tile++) {
+            for(int x_tile = 0; x_tile < this._tiles[y_tile].length; x_tile++) {
+                if(this._tiles[y_tile][x_tile] != null) {
+                    Tile t = this._tiles[y_tile][x_tile];
+                    t.getGraphicsComponent().update(batch, t.x * Constants.TILE_WIDTH, t.y * Constants.TILE_HEIGHT);
+                }
+            }
+        }
+    }
     
 }

@@ -20,7 +20,7 @@ public class Room extends ARoom {
         this.heightRoom = height;
         this.x = x;
         this.y = y;
-        this.neighbors = new ArrayList<AMapEntity>();
+        this.neighbors = new ArrayList<Connection>();
         super.extractEntity(coordinates);
     }
     

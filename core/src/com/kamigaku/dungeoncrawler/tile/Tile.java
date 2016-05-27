@@ -1,8 +1,6 @@
 package com.kamigaku.dungeoncrawler.tile;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.kamigaku.dungeoncrawler.component.GraphicsComponent;
 import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
 import com.kamigaku.dungeoncrawler.listener.CollisionListener;
@@ -28,9 +26,5 @@ public abstract class Tile implements CollisionListener {
     public Vector2 getPosition() {
         return new Vector2(x, y);
     }
-    
-    public void postSolve(Contact contact, ContactImpulse impulse) throws Exception {
-        throw new Exception("You have to redefine 'postSolve' in your tile extension!");
-    }
-    
+        
 }

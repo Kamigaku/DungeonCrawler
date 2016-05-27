@@ -30,6 +30,7 @@ public class InputComponent {
 
             @Override
             public boolean scrolled(int amount) {
+                LevelManager.getLevelManager().getCamera().zoom += amount;
                 return false;
             }
 

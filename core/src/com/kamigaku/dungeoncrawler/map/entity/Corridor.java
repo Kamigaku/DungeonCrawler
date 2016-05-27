@@ -1,7 +1,6 @@
 package com.kamigaku.dungeoncrawler.map.entity;
 
 import com.badlogic.gdx.math.Vector2;
-import com.kamigaku.dungeoncrawler.map.entity.AMapEntity;
 import java.util.ArrayList;
 
 public class Corridor extends ACorridor {
@@ -11,7 +10,7 @@ public class Corridor extends ACorridor {
         this.heightRoom = height;
         this.x = x;
         this.y = y;
-        this.neighbors = new ArrayList<AMapEntity>();
+        this.neighbors = new ArrayList<Connection>();
         super.extractEntity(coordinates);
     }
     

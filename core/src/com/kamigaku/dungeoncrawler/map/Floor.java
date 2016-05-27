@@ -1,16 +1,17 @@
 package com.kamigaku.dungeoncrawler.map;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.dijkstra.Node;
 import com.kamigaku.dungeoncrawler.map.entity.Corridor;
 import com.kamigaku.dungeoncrawler.map.entity.AMapEntity;
+import com.kamigaku.dungeoncrawler.map.entity.Connection;
 import com.kamigaku.dungeoncrawler.map.entity.IMapEntity;
 import com.kamigaku.dungeoncrawler.map.entity.Room;
-import com.kamigaku.dungeoncrawler.tile.Tile;
 import com.kamigaku.dungeoncrawler.utility.Utility;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Floor {
     
@@ -93,16 +94,24 @@ public class Floor {
         for(int i = 0; i < this._entities.size(); i++) {
             AMapEntity aCurrent = (AMapEntity) this._entities.get(i);
             for(int j = i + 1; j < this._entities.size(); j++) {
-                AMapEntity aOther = (AMapEntity) this._entities.get(j);    
-                if(Utility.commonCoords(aCurrent.getTilesPosition(), aOther.getTilesPosition()).size() > 3) {
-                    aCurrent.neighbors.add(aOther);
-                    aOther.neighbors.add(aCurrent);
+                AMapEntity aOther = (AMapEntity) this._entities.get(j);
+                ArrayList<Vector2> commonCoords = Utility.commonCoords(aCurrent.getTilesPosition(), aOther.getTilesPosition());
+                if(commonCoords.size() > 3) {
+                    Random r = new Random(commonCoords.size());
+                    int seed = Math.abs(r.nextInt());
+                    Connection c = new Connection((int)commonCoords.get(seed % commonCoords.size()).x, 
+                                                  (int)commonCoords.get(seed % commonCoords.size()).y, 
+                                                   aCurrent, aOther, 
+                                                   Constants.CONNECTION_POSSIBILITY[seed % Constants.CONNECTION_POSSIBILITY.length]);
+                    aCurrent.neighbors.add(c);
+                    aOther.neighbors.add(c);
                 }
             }
             System.out.println("This room [" + aCurrent.y + "/" + aCurrent.x + "] (" + aCurrent.heightRoom + "/" + aCurrent.widthRoom + ") have : " + aCurrent.neighbors.size() + " connection(s).");
         }
-        Gdx.app.exit();
         //displayFloor();
+        
+        
     }
     
     private void fetchNode(Node n, ArrayList<Vector2> coordinates) {
@@ -129,10 +138,7 @@ public class Floor {
     
     public void render(SpriteBatch batch) {
         for(int i = 0; i < this._entities.size(); i++) {
-            for(int j = 0; j < this._entities.get(i).getTiles().size(); j++) {
-                Tile t = this._entities.get(i).getTiles().get(j);
-                t.getGraphicsComponent().update(batch, t.x, t.y);
-            }
+            this._entities.get(i).render(batch);
         }
     }
     

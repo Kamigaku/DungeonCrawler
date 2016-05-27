@@ -2,7 +2,6 @@ package com.kamigaku.dungeoncrawler.singleton;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.kamigaku.dungeoncrawler.level.ILevel;
 
@@ -11,18 +10,11 @@ public class LevelManager {
     private static LevelManager levelManager;
 
     private ILevel currentLevel;
-    private final AssetManager assetManager;
 
     public static LevelManager getLevelManager() {
         if(levelManager == null)
             levelManager = new LevelManager();
         return levelManager;
-    }
-
-    public LevelManager() {
-        this.assetManager = new AssetManager();
-        this.assetManager.load("sprites/player.png", Texture.class);
-        this.assetManager.finishLoading();
     }
 
     public void setLevel(ILevel level) {
@@ -35,7 +27,7 @@ public class LevelManager {
     }
 
     public AssetManager getAssetManager() {
-        return this.assetManager;
+        return this.currentLevel.getAssetManager();
     }
 
     public void render(SpriteBatch batch) {

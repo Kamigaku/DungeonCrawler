@@ -1,5 +1,7 @@
 package com.kamigaku.dungeoncrawler.constants;
 
+import com.kamigaku.dungeoncrawler.map.entity.Connection.ConnectionType;
+
 public final class Constants {
 
     public enum MapType {
@@ -18,6 +20,10 @@ public final class Constants {
                                                 MapType.SHIP, MapType.SHIP,
                                                 MapType.LAB,
                                                 MapType.TODEFINE };
+    
+    public static final ConnectionType[] CONNECTION_POSSIBILITY = new ConnectionType[] {
+                                            ConnectionType.DOOR, ConnectionType.EMPTY, ConnectionType.LOCKED_DOOR
+                                        };
     
     
     public static final int SCREEN_WIDTH = 800;

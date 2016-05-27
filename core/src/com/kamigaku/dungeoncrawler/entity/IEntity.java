@@ -16,7 +16,6 @@ public interface IEntity extends CollisionListener {
 	PhysicsComponent getPhysicsComponent();
         GraphicsComponent getGraphicsComponent();
         ArrayList<SensorComponent> getSensorsComponent();
-        void dispose();
-        void postSolve(Contact contact, ContactImpulse impulse); // Contact
+        void dispose(); // Contact
         
 }
