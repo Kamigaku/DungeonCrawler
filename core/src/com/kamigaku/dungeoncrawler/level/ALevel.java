@@ -11,8 +11,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
 import com.kamigaku.dungeoncrawler.listener.WrapperContactListener;
-import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.hud.HUD;
 import com.kamigaku.dungeoncrawler.map.Map;
 
@@ -57,8 +57,8 @@ public abstract class ALevel implements ILevel {
     }
 
     @Override
-    public void removeBody(IEntity entity) {
-        this.world.destroyBody(entity.getPhysicsComponent().getBody());
+    public void removeBody(PhysicsComponent physics) {
+        this.world.destroyBody(physics.getBody());
     }
     
     public void baseLoading() {

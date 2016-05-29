@@ -8,7 +8,7 @@ import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 
 public class GraphicsComponent implements Disposable {
 
-    private final Sprite _sprite;
+    public final Sprite _sprite;
     private int _depthAxis = 0;
     
     public GraphicsComponent(Sprite sprite) {
@@ -21,7 +21,7 @@ public class GraphicsComponent implements Disposable {
     
     public void update(SpriteBatch batch, float x, float y) {
         this._depthAxis = (int)y;
-        batch.draw(this._sprite.getTexture(), x, y);
+        batch.draw(this._sprite.getTexture(), x - (this._sprite.getWidth() / 2), y - (this._sprite.getHeight() / 2));
     }
     
     public int getDepthAxis() {

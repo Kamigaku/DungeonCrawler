@@ -2,6 +2,7 @@ package com.kamigaku.dungeoncrawler.level.implementation;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.kamigaku.dungeoncrawler.comparator.RenderingComparator;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
@@ -22,7 +23,8 @@ public class TestLevel extends ALevel {
         super.baseLoading();
        
         this._entities = new ArrayList<IEntity>();
-        this._player = new Player("sprites/player.png", 1f, 2f);
+        //this._player = new Player("sprites/player.png", 1f, 2f);
+        this._player = new Player(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 150f, 143f);
         this._entities.add(this._player);
     }
     
@@ -37,8 +39,10 @@ public class TestLevel extends ALevel {
     
     @Override
     public void render(SpriteBatch batch) {
-        batch.setProjectionMatrix(this.camera.combined);   
+        batch.setProjectionMatrix(this.camera.combined);  
+        batch.end();
         this.debugRenderer.render(this.world, this.camera.combined);
+        batch.begin();
         this.world.step(1/60f, 6, 2);
         this._entities.sort(new RenderingComparator()); // Rendering on depthAxis
         this.map.render(batch);

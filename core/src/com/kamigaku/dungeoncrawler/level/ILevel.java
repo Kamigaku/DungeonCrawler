@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.kamigaku.dungeoncrawler.entity.IEntity;
+import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
 
 public interface ILevel {
 
@@ -17,6 +17,6 @@ public interface ILevel {
     AssetManager getAssetManager();
     OrthographicCamera getCamera();
     Body addBody(BodyDef bodyDef);
-    void removeBody(IEntity entity);
+    void removeBody(PhysicsComponent physics);
 	
 }

@@ -2,6 +2,7 @@ package com.kamigaku.dungeoncrawler.component;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.entity.AEntity;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 
@@ -30,6 +31,7 @@ public class InputComponent {
 
             @Override
             public boolean scrolled(int amount) {
+                LevelManager.getLevelManager().getCamera().zoom += amount;
                 return false;
             }
 
@@ -41,13 +43,13 @@ public class InputComponent {
             @Override
             public boolean keyUp(int keycode) {
                 if(keycode == Keys.Z)
-                    _entity.getPhysicsComponent().setForceY(-50);
+                    _entity.getPhysicsComponent().setForceY(-Constants.PLAYER_SPEED);
                 if(keycode == Keys.S)
-                    _entity.getPhysicsComponent().setForceY(50);
+                    _entity.getPhysicsComponent().setForceY(Constants.PLAYER_SPEED);
                 if(keycode == Keys.Q)
-                    _entity.getPhysicsComponent().setForceX(50);
+                    _entity.getPhysicsComponent().setForceX(Constants.PLAYER_SPEED);
                 if(keycode == Keys.D)
-                    _entity.getPhysicsComponent().setForceX(-50);
+                    _entity.getPhysicsComponent().setForceX(-Constants.PLAYER_SPEED);
                 return false;
             }
 
@@ -59,13 +61,13 @@ public class InputComponent {
             @Override
             public boolean keyDown(int keycode) {
                 if(keycode == Keys.Z)
-                    _entity.getPhysicsComponent().setForceY(50);
+                    _entity.getPhysicsComponent().setForceY(Constants.PLAYER_SPEED);
                 if(keycode == Keys.S)
-                    _entity.getPhysicsComponent().setForceY(-50);
+                    _entity.getPhysicsComponent().setForceY(-Constants.PLAYER_SPEED);
                 if(keycode == Keys.Q)
-                    _entity.getPhysicsComponent().setForceX(-50);
+                    _entity.getPhysicsComponent().setForceX(-Constants.PLAYER_SPEED);
                 if(keycode == Keys.D)
-                    _entity.getPhysicsComponent().setForceX(50);
+                    _entity.getPhysicsComponent().setForceX(Constants.PLAYER_SPEED);
                 return false;
             }
             
