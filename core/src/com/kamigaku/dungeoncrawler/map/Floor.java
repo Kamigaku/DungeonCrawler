@@ -103,8 +103,8 @@ public class Floor {
                                                   (int)commonCoords.get(seed % commonCoords.size()).y, 
                                                    aCurrent, aOther, 
                                                    Constants.CONNECTION_POSSIBILITY[seed % Constants.CONNECTION_POSSIBILITY.length]);
-                    aCurrent.neighbors.add(c);
-                    aOther.neighbors.add(c);
+                    aCurrent.addNeighbors(c);
+                    aOther.addNeighbors(c);
                 }
             }
             System.out.println("This room [" + aCurrent.y + "/" + aCurrent.x + "] (" + aCurrent.heightRoom + "/" + aCurrent.widthRoom + ") have : " + aCurrent.neighbors.size() + " connection(s).");

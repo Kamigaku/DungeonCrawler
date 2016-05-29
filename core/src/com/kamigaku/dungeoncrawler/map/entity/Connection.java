@@ -1,5 +1,8 @@
 package com.kamigaku.dungeoncrawler.map.entity;
 
+import com.kamigaku.dungeoncrawler.tile.Ground;
+import com.kamigaku.dungeoncrawler.tile.Tile;
+
 public class Connection {
 
     public int x;
@@ -18,6 +21,19 @@ public class Connection {
         this.e1 = e1;
         this.e2 = e2;
         this.connectionType = c;
+    }
+    
+    public Tile getConnectionTile() {
+        switch(this.connectionType) {
+            case DOOR:
+                return new Ground("sprites/ground.png", x, y);
+            case EMPTY:
+                return new Ground("sprites/ground.png", x, y);
+            case LOCKED_DOOR:
+                return new Ground("sprites/ground.png", x, y);
+            default:
+                return new Ground("sprites/ground.png", x, y);
+        }
     }
     
 }

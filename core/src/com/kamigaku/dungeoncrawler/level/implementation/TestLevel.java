@@ -24,7 +24,7 @@ public class TestLevel extends ALevel {
        
         this._entities = new ArrayList<IEntity>();
         //this._player = new Player("sprites/player.png", 1f, 2f);
-        this._player = new Player(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 1f, 2f);
+        this._player = new Player(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 150f, 143f);
         this._entities.add(this._player);
     }
     

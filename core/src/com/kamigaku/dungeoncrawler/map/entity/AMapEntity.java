@@ -3,6 +3,7 @@ package com.kamigaku.dungeoncrawler.map.entity;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.kamigaku.dungeoncrawler.constants.Constants;
+import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 import com.kamigaku.dungeoncrawler.tile.*;
 import java.util.ArrayList;
 
@@ -95,6 +96,14 @@ public abstract class AMapEntity implements IMapEntity {
                 }
             }
         }
+    }
+    
+    public void addNeighbors(Connection c) {
+        this.neighbors.add(c);
+        if(this._tiles[c.y - this.y][c.x - this.x] instanceof Wall) {
+            LevelManager.getLevelManager().getLevel().removeBody(this._tiles[c.y - this.y][c.x - this.x].getPhysicsComponent());
+        }
+        this._tiles[c.y - this.y][c.x - this.x] = c.getConnectionTile();
     }
     
 }

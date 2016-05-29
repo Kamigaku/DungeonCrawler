@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Disposable;
 import com.kamigaku.dungeoncrawler.constants.Constants;
-import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 
 public class PhysicsComponent implements Disposable {
@@ -48,14 +47,14 @@ public class PhysicsComponent implements Disposable {
     
     public void setForceY(float forceY) { // @TODO : changer les valeurs par des constantes
         this._forceY += forceY;
-        if(this._forceY > 50f) this._forceY = 50f;
-        else if(this._forceY < -50f) this._forceY = -50f;
+        if(this._forceY > Constants.PLAYER_SPEED) this._forceY = Constants.PLAYER_SPEED;
+        else if(this._forceY < -Constants.PLAYER_SPEED) this._forceY = -Constants.PLAYER_SPEED;
     }
     
     public void setForceX(float forceX) { // @TODO : changer les valeurs par des constantes
         this._forceX += forceX;
-        if(this._forceX > 50f) this._forceX = 50f;
-        else if(this._forceX < -50f) this._forceX = -50f;
+        if(this._forceX > Constants.PLAYER_SPEED) this._forceX = Constants.PLAYER_SPEED;
+        else if(this._forceX < -Constants.PLAYER_SPEED) this._forceX = -Constants.PLAYER_SPEED;
     }
     
     public Body getBody() {
