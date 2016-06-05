@@ -25,8 +25,9 @@ public final class Constants {
                                             ConnectionType.DOOR, ConnectionType.EMPTY, ConnectionType.LOCKED_DOOR
                                         };
     
-    public static final int PLAYER_SPEED = 20000;
+    public static final int PLAYER_SPEED = 10;
     
+    public static final int PIXELS_PER_METER = 32;
     
     public static final int SCREEN_WIDTH = 800;
     public static final int SCREEN_HEIGHT = 480;
@@ -36,6 +37,9 @@ public final class Constants {
     
     public static final int MAP_WIDTH = 400;
     public static final int MAP_HEIGHT = 400;
+    
+    public static final int CAMERA_WIDTH = 320;
+    public static final int CAMERA_HEIGHT = 240;
     
     public static final short CATEGORY_PLAYER = 0x0001;  // 0000000000000001 in binary
     public static final short CATEGORY_MONSTER = 0x0002; // 0000000000000010 in binary

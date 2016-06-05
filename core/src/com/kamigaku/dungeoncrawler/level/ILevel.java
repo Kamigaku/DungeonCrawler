@@ -16,6 +16,7 @@ public interface ILevel {
     void addInputProcessor(InputProcessor ip);
     AssetManager getAssetManager();
     OrthographicCamera getCamera();
+    OrthographicCamera getWorldCamera();
     Body addBody(BodyDef bodyDef);
     void removeBody(PhysicsComponent physics);
 	

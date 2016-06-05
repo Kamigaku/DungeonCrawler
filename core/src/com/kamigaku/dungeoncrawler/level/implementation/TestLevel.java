@@ -36,14 +36,14 @@ public class TestLevel extends ALevel {
         this.assetManager.load("sprites/ground.png", Texture.class);
         this.assetManager.finishLoading();
     }
-    
+    // PHYSIQUE OK, GRAPICHS POK
     @Override
     public void render(SpriteBatch batch) {
         batch.setProjectionMatrix(this.camera.combined);  
         batch.end();
         this.debugRenderer.render(this.world, this.camera.combined);
         batch.begin();
-        this.world.step(1/60f, 6, 2);
+        this.world.step(1/60f, 6, 2); 
         this._entities.sort(new RenderingComparator()); // Rendering on depthAxis
         this.map.render(batch);
         for(int i = 0; i < this._entities.size(); i++) {

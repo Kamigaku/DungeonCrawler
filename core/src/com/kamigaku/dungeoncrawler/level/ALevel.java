@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
+import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.listener.WrapperContactListener;
 import com.kamigaku.dungeoncrawler.hud.HUD;
 import com.kamigaku.dungeoncrawler.map.Map;
@@ -21,6 +22,7 @@ public abstract class ALevel implements ILevel {
     protected World world;
     protected HUD hud;
     protected OrthographicCamera camera;
+    protected OrthographicCamera b2dcam;
     protected AssetManager assetManager;
     protected OrthogonalTiledMapRenderer mapRenderer;
     protected Box2DDebugRenderer debugRenderer;
@@ -52,6 +54,11 @@ public abstract class ALevel implements ILevel {
     }
     
     @Override
+    public OrthographicCamera getWorldCamera() {
+        return this.b2dcam;
+    }
+    
+    @Override
     public Body addBody(BodyDef bodyDef) {
         return this.world.createBody(bodyDef);
     }
@@ -76,7 +83,9 @@ public abstract class ALevel implements ILevel {
         this.multiplexer = new InputMultiplexer();
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
-        this.camera = new OrthographicCamera(200, 200 * (h / w)); 
+        //this.camera = new OrthographicCamera(Constants.CAMERA_WIDTH / Constants.PIXELS_PER_METER, Constants.CAMERA_HEIGHT / Constants.PIXELS_PER_METER); 
+        this.camera = new OrthographicCamera(Constants.CAMERA_WIDTH / Constants.PIXELS_PER_METER, Constants.CAMERA_HEIGHT / Constants.PIXELS_PER_METER); 
+        
         this.camera.update();
         
         this.debugRenderer = new Box2DDebugRenderer();

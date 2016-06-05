@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
+import static com.kamigaku.dungeoncrawler.constants.Constants.PIXELS_PER_METER;
 
 public class SensorComponent {
     
@@ -28,7 +29,7 @@ public class SensorComponent {
                             short categoryBits, short maskBits, float height) {
         initBody(entity, bodyType);
         PolygonShape collider = new PolygonShape();
-        collider.setAsBox(width, height);
+        collider.setAsBox(width / PIXELS_PER_METER, height / PIXELS_PER_METER);
         defineFixtureDef(collider, categoryBits, maskBits);
     }
     
@@ -43,7 +44,7 @@ public class SensorComponent {
                             short maskBits, float radius) {
         initBody(entity, bodyType);
         CircleShape collider = new CircleShape();
-        collider.setRadius(radius);
+        collider.setRadius(radius / PIXELS_PER_METER);
         defineFixtureDef(collider, categoryBits, maskBits);
     }
     
@@ -65,8 +66,8 @@ public class SensorComponent {
     private void initBody(IEntity entity, BodyType bodyType) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = bodyType;
-        bodyDef.position.set(entity.getPhysicsComponent().getPosition().x * Constants.TILE_WIDTH,
-                            entity.getPhysicsComponent().getPosition().y * Constants.TILE_HEIGHT);
+        bodyDef.position.set((entity.getPhysicsComponent().getPosition().x * Constants.TILE_WIDTH) / PIXELS_PER_METER,
+                            (entity.getPhysicsComponent().getPosition().y * Constants.TILE_HEIGHT) / PIXELS_PER_METER);
         this._body = LevelManager.getLevelManager().getLevel().addBody(bodyDef);
         this._body.setUserData(entity);
     }

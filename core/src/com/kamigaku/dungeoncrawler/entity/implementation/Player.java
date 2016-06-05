@@ -43,7 +43,10 @@ public class Player extends AEntity {
     public void update(SpriteBatch batch) {
         this._input.update();
         this._physics.update();
-        this._graphics.update(batch, this.getPhysicsComponent().getPosition().x, this.getPhysicsComponent().getPosition().y + 8);
+        this._graphics.update(batch, this.getPhysicsComponent().getBody().getPosition().x, 
+                            this.getPhysicsComponent().getBody().getPosition().y);
+        System.out.println("Postion - x : " + this.getPhysicsComponent().getBody().getPosition().x  + " _ y : " + this.getPhysicsComponent().getBody().getPosition().y + " | " +
+                           "Body - x : " + this.getGraphicsComponent().getSprite().getX() + " _ y : " + this.getGraphicsComponent().getSprite().getY());
         for(int i = 0;  i < this._sensors.size(); i++) {
             this._sensors.get(i).update(this.getPhysicsComponent().getPosition().x, this.getPhysicsComponent().getPosition().y);
         }
