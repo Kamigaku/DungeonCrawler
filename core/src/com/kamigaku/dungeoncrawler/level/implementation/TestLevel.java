@@ -40,9 +40,6 @@ public class TestLevel extends ALevel {
     @Override
     public void render(SpriteBatch batch) {
         batch.setProjectionMatrix(this.camera.combined);  
-        batch.end();
-        this.debugRenderer.render(this.world, this.camera.combined);
-        batch.begin();
         this.world.step(1/60f, 6, 2); 
         this._entities.sort(new RenderingComparator()); // Rendering on depthAxis
         this.map.render(batch);
@@ -53,6 +50,7 @@ public class TestLevel extends ALevel {
                               this._player.getPhysicsComponent().getBody().getPosition().y - this.camera.position.y);
         this.camera.update();
         batch.end();
+        this.debugRenderer.render(this.world, this.camera.combined);
         this.hud.draw();
         batch.begin();
     }

@@ -21,7 +21,8 @@ public class PhysicsComponent implements Disposable {
                             short maskBits, float width, float height) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = bodyType;
-        bodyDef.position.set((x * Constants.TILE_WIDTH) / Constants.PIXELS_PER_METER, (y * Constants.TILE_HEIGHT) / Constants.PIXELS_PER_METER);
+        bodyDef.position.set((x * Constants.TILE_WIDTH) / Constants.PIXELS_PER_METER, 
+                             (y * Constants.TILE_HEIGHT) / Constants.PIXELS_PER_METER);
         //bodyDef.position.set((x * Constants.TILE_WIDTH), (y * Constants.TILE_HEIGHT));
         this._body = LevelManager.getLevelManager().getLevel().addBody(bodyDef);
         
