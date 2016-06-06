@@ -24,9 +24,9 @@ public class GraphicsComponent implements Disposable {
     
     public void update(SpriteBatch batch, float x, float y) {
         this._depthAxis = (int)y;
-        this._sprite.setPosition(x, y);
+        this._sprite.setPosition(x - (this._sprite.getWidth() / 2), 
+                                 y - (this._sprite.getHeight() / 2));
         this._sprite.draw(batch);
-        //batch.draw(this._sprite.getTexture(), x - (this._sprite.getWidth() / 2), y - (this._sprite.getHeight() / 2), 1, 1);
     }
     
     public int getDepthAxis() {

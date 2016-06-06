@@ -92,7 +92,9 @@ public abstract class AMapEntity implements IMapEntity {
             for(int x_tile = 0; x_tile < this._tiles[y_tile].length; x_tile++) {
                 if(this._tiles[y_tile][x_tile] != null) {
                     Tile t = this._tiles[y_tile][x_tile];
-                    t.getGraphicsComponent().update(batch, t.x * Constants.TILE_WIDTH, t.y * Constants.TILE_HEIGHT);
+                    t.getGraphicsComponent().update(batch, 
+                            (t.x * Constants.TILE_WIDTH) / Constants.PIXELS_PER_METER, 
+                            (t.y * Constants.TILE_HEIGHT) / Constants.PIXELS_PER_METER);
                 }
             }
         }
