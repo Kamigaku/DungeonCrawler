@@ -1,5 +1,7 @@
 package com.kamigaku.dungeoncrawler.level.implementation;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -31,26 +33,28 @@ public class TestLevel extends ALevel {
     
     private void textureLoading() {
         this.assetManager = new AssetManager();
+        //this.assetManager.setLoader(null, null);
         this.assetManager.load("sprites/player.png", Texture.class);
         this.assetManager.load("sprites/wall.png", Texture.class);
         this.assetManager.load("sprites/ground.png", Texture.class);
         this.assetManager.finishLoading();
     }
-    // PHYSIQUE OK, GRAPICHS POK
+    
     @Override
     public void render(SpriteBatch batch) {
-        batch.setProjectionMatrix(this.camera.combined);  
         this.world.step(1/60f, 6, 2); 
+        batch.setProjectionMatrix(this.camera.combined);
         this._entities.sort(new RenderingComparator()); // Rendering on depthAxis
         this.map.render(batch);
         for(int i = 0; i < this._entities.size(); i++) {
             this._entities.get(i).update(batch);
         }
-        this.camera.translate(this._player.getPhysicsComponent().getBody().getPosition().x - this.camera.position.x,
-                              this._player.getPhysicsComponent().getBody().getPosition().y - this.camera.position.y);
+        this.camera.position.set(this._player.getGraphicsComponent().getSprite().getX() + this._player.getGraphicsComponent().getSprite().getWidth() / 2,
+                              this._player.getGraphicsComponent().getSprite().getY() + this._player.getGraphicsComponent().getSprite().getHeight() / 2,
+                              this.camera.position.z);
         this.camera.update();
         batch.end();
-        this.debugRenderer.render(this.world, this.camera.combined);
+        //this.debugRenderer.render(this.world, this.camera.combined);
         this.hud.draw();
         batch.begin();
     }

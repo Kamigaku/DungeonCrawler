@@ -16,7 +16,7 @@ public class Player extends AEntity {
     private final InputComponent _input;
 
     public Player(Sprite sprite, float x, float y) {
-        super.baseLoading(sprite, BodyType.DynamicBody, Constants.CATEGORY_PLAYER,
+        super.baseLoading(sprite, 0, -0.25f, BodyType.DynamicBody, Constants.CATEGORY_PLAYER,
                 (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER),
                 x, y, 8, 8);
         this._input = new InputComponent(this);
@@ -25,7 +25,7 @@ public class Player extends AEntity {
     }
     
     public Player(String sprite, float x, float y) {
-        super.baseLoading(sprite, BodyType.DynamicBody, Constants.CATEGORY_PLAYER,
+        super.baseLoading(sprite, 0, 0, BodyType.DynamicBody, Constants.CATEGORY_PLAYER,
                 (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER),
                 x, y, 8, 8);
         this._input = new InputComponent(this);
@@ -37,10 +37,8 @@ public class Player extends AEntity {
     public void update(SpriteBatch batch) {
         this._input.update();
         this._physics.update();
-        this._graphics.update(batch, this.getPhysicsComponent().getBody().getPosition().x, 
-                            this.getPhysicsComponent().getBody().getPosition().y);
-        System.out.println("Postion - x : " + this.getPhysicsComponent().getBody().getPosition().x  + " _ y : " + this.getPhysicsComponent().getBody().getPosition().y + " | " +
-                           "Body - x : " + this.getGraphicsComponent().getSprite().getX() + " _ y : " + this.getGraphicsComponent().getSprite().getY());
+        this._graphics.update(batch, this.getPhysicsComponent().getBody().getTransform().getPosition().x, 
+                            this.getPhysicsComponent().getBody().getTransform().getPosition().y);
         for(int i = 0;  i < this._sensors.size(); i++) {
             this._sensors.get(i).update(this.getPhysicsComponent().getPosition().x, this.getPhysicsComponent().getPosition().y);
         }

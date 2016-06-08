@@ -25,4 +25,5 @@ public class GameLauncher extends Game {
 	public void dispose() {
             batch.dispose();
 	}
+        
 }
