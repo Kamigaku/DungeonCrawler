@@ -31,7 +31,12 @@ public class InputComponent {
 
             @Override
             public boolean scrolled(int amount) {
-                LevelManager.getLevelManager().getCamera().zoom += amount;
+                System.out.println(amount);
+                float oldValue = LevelManager.getLevelManager().getCamera().zoom;
+                LevelManager.getLevelManager().getCamera().zoom += ((float)amount / 5f);
+                System.out.println(LevelManager.getLevelManager().getCamera().zoom);
+                if(LevelManager.getLevelManager().getCamera().zoom < 0.2)
+                    LevelManager.getLevelManager().getCamera().zoom = oldValue;
                 return false;
             }
 
@@ -50,6 +55,7 @@ public class InputComponent {
                     _entity.getPhysicsComponent().setForceX(Constants.PLAYER_SPEED);
                 if(keycode == Keys.D)
                     _entity.getPhysicsComponent().setForceX(-Constants.PLAYER_SPEED);
+                LevelManager.getLevelManager().getCamera().update();
                 return false;
             }
 

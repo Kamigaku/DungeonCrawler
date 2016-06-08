@@ -21,13 +21,13 @@ public class PhysicsComponent implements Disposable {
                             short maskBits, float width, float height) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = bodyType;
-        bodyDef.position.set((x * Constants.TILE_WIDTH) / Constants.PIXELS_PER_METER, 
-                             (y * Constants.TILE_HEIGHT) / Constants.PIXELS_PER_METER);
-        //bodyDef.position.set((x * Constants.TILE_WIDTH), (y * Constants.TILE_HEIGHT));
+        /*bodyDef.position.set(x + 1 - (width / Constants.TILE_WIDTH), 
+                            y + 1 - (height / Constants.TILE_HEIGHT));*/
+        bodyDef.position.set(x, y);
         this._body = LevelManager.getLevelManager().getLevel().addBody(bodyDef);
         
         PolygonShape collider = new PolygonShape();
-        collider.setAsBox(width / Constants.PIXELS_PER_METER, height / Constants.PIXELS_PER_METER);
+        collider.setAsBox(width / Constants.TILE_WIDTH, height / Constants.TILE_HEIGHT);
         
         FixtureDef fDef = new FixtureDef();
         fDef.density = 0f;

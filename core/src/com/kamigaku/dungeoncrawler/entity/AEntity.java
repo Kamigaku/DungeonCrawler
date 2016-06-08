@@ -25,7 +25,14 @@ public abstract class AEntity implements IEntity {
     protected void baseLoading(Sprite sprite, BodyType bodyType, short categoryBits, 
                                 short maskBits, float x, float y, float width, 
                                 float height) {
-        this._graphics = new GraphicsComponent(sprite);
+        baseLoading(sprite, 0, 0, bodyType, categoryBits, maskBits, x, y, width, height);
+    }
+    
+    protected void baseLoading(Sprite sprite, float offsetX, float offsetY,
+                                BodyType bodyType, short categoryBits, 
+                                short maskBits, float x, float y, float width, 
+                                float height) {
+        this._graphics = new GraphicsComponent(sprite, offsetX, offsetY);
         this._physics = new PhysicsComponent(x, y, bodyType, categoryBits, 
                                             maskBits, width, height);
         this._physics.getBody().setUserData(this);
@@ -33,6 +40,13 @@ public abstract class AEntity implements IEntity {
     }
     
     protected void baseLoading(String sprite, BodyType bodyType, short categoryBits, 
+                                short maskBits, float x, float y, float width, 
+                                float height) {
+        baseLoading(sprite, 0, 0, bodyType, categoryBits, maskBits, x, y, width, height);
+    }
+    
+    protected void baseLoading(String sprite, int offsetX, int offsetY,
+                                BodyType bodyType, short categoryBits, 
                                 short maskBits, float x, float y, float width, 
                                 float height) {
         this._graphics = new GraphicsComponent(sprite);

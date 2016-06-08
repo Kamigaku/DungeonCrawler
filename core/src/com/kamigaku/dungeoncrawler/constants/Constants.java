@@ -7,7 +7,7 @@ public final class Constants {
     public enum MapType {
         RUINES, SHIP, HOUSE, LAB, TODEFINE
     }
-    
+        
     public static final int[][] ROOM_SIZE = new int[][] { { 10, 30 }, { 10, 30 }, { 10, 30 },
                                                           { 20, 50 }, { 20, 50 }, { 20, 50 },
                                                           { 30, 50 }, { 30, 50 },
@@ -25,10 +25,10 @@ public final class Constants {
                                             ConnectionType.DOOR, ConnectionType.EMPTY, ConnectionType.LOCKED_DOOR
                                         };
     
-    public static final int PLAYER_SPEED = 10;
+    public static final int VIRTUAL_HEIGHT = 20;
     
-    public static final int PIXELS_PER_METER = 32;
-    
+    public static final float PLAYER_SPEED = 10;
+        
     public static final int SCREEN_WIDTH = 800;
     public static final int SCREEN_HEIGHT = 480;
     
