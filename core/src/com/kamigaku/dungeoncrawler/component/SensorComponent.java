@@ -28,7 +28,7 @@ public class SensorComponent {
                             short categoryBits, short maskBits, float height) {
         initBody(entity, bodyType);
         PolygonShape collider = new PolygonShape();
-        collider.setAsBox(width, height);
+        collider.setAsBox(width / (Constants.TILE_WIDTH / 2), height / (Constants.TILE_HEIGHT / 2));
         defineFixtureDef(collider, categoryBits, maskBits);
     }
     
@@ -43,7 +43,7 @@ public class SensorComponent {
                             short maskBits, float radius) {
         initBody(entity, bodyType);
         CircleShape collider = new CircleShape();
-        collider.setRadius(radius);
+        collider.setRadius(radius / (Constants.TILE_WIDTH / 2));
         defineFixtureDef(collider, categoryBits, maskBits);
     }
     
@@ -65,8 +65,8 @@ public class SensorComponent {
     private void initBody(IEntity entity, BodyType bodyType) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = bodyType;
-        bodyDef.position.set(entity.getPhysicsComponent().getPosition().x * Constants.TILE_WIDTH,
-                            entity.getPhysicsComponent().getPosition().y * Constants.TILE_HEIGHT);
+        bodyDef.position.set((entity.getPhysicsComponent().getPosition().x * Constants.TILE_WIDTH),
+                            (entity.getPhysicsComponent().getPosition().y * Constants.TILE_HEIGHT));
         this._body = LevelManager.getLevelManager().getLevel().addBody(bodyDef);
         this._body.setUserData(entity);
     }

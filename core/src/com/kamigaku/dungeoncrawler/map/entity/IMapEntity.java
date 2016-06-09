@@ -11,6 +11,7 @@ public interface IMapEntity {
     public void extractEntity(ArrayList<Vector2> coordinates);
     public Tile[][] getTiles();
     public ArrayList<Vector2> getTilesPosition();
+    public ArrayList<Vector2> getBorders();
     public void render(SpriteBatch batch);
     
 }

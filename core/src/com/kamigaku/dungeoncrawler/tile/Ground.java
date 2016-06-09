@@ -9,14 +9,14 @@ import com.kamigaku.dungeoncrawler.component.GraphicsComponent;
 public class Ground extends Tile {
     
     public Ground(Sprite sprite, float x, float y) {
-        this._graphics = new GraphicsComponent(sprite);
+        this._graphics = new GraphicsComponent(sprite, 0f, 0f);
         this.x = x;
         this.y = y;
         this.isCrossable = true;
     }
     
     public Ground(String sprite, float x, float y) {
-        this._graphics = new GraphicsComponent(sprite);
+        this._graphics = new GraphicsComponent(sprite, -0f, 0f);
         this.x = x;
         this.y = y;
         this.isCrossable = true;

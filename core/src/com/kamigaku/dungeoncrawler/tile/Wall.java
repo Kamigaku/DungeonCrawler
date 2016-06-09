@@ -12,7 +12,7 @@ import com.kamigaku.dungeoncrawler.constants.Constants;
 public class Wall extends Tile {
 
     public Wall(Sprite sprite, float x, float y) {
-        this._graphics = new GraphicsComponent(sprite);
+        this._graphics = new GraphicsComponent(sprite, -0f, 0);
         this._physics = new PhysicsComponent(x, y, BodyType.StaticBody, Constants.CATEGORY_SCENERY,
                         (short) (Constants.CATEGORY_PLAYER | Constants.CATEGORY_MONSTER), 16f, 16f);
         this._physics.getBody().setUserData(this);
@@ -22,7 +22,7 @@ public class Wall extends Tile {
     }
     
     public Wall(String sprite, float x, float y) {
-        this._graphics = new GraphicsComponent(sprite);
+        this._graphics = new GraphicsComponent(sprite, -0f, 0f);
         this._physics = new PhysicsComponent(x, y, BodyType.StaticBody, Constants.CATEGORY_SCENERY,
                         (short) (Constants.CATEGORY_PLAYER | Constants.CATEGORY_MONSTER), 16f, 16f);
         this._physics.getBody().setUserData(this);

@@ -14,4 +14,17 @@ public abstract class Utility {
         return v3;
     }
     
+    public static boolean checkLinesSurrondings(char[][] map, int x_origin, 
+                                                int y_origin, char search) {
+        boolean xAxis = false;
+        boolean yAxis = false;
+        if(x_origin - 1 >= 0 && x_origin + 1 < map[y_origin].length)
+            xAxis = (map[y_origin][x_origin + 1] == search && 
+                    map[y_origin][x_origin - 1] == search);
+        if(y_origin - 1 >= 0 && y_origin + 1 < map.length)
+            yAxis = (map[y_origin + 1][x_origin] == search && 
+                    map[y_origin - 1][x_origin] == search);
+        return (xAxis || yAxis);
+    }
+    
 }

@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.kamigaku.dungeoncrawler.entity.implementation;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -22,7 +16,7 @@ public class Player extends AEntity {
     private final InputComponent _input;
 
     public Player(Sprite sprite, float x, float y) {
-        super.baseLoading(sprite, BodyType.DynamicBody, Constants.CATEGORY_PLAYER,
+        super.baseLoading(sprite, 0, -0.25f, BodyType.DynamicBody, Constants.CATEGORY_PLAYER,
                 (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER),
                 x, y, 8, 8);
         this._input = new InputComponent(this);
@@ -31,22 +25,16 @@ public class Player extends AEntity {
     }
     
     public Player(String sprite, float x, float y) {
-        super.baseLoading(sprite, BodyType.DynamicBody, Constants.CATEGORY_PLAYER,
+        super.baseLoading(sprite, 0, 0, BodyType.DynamicBody, Constants.CATEGORY_PLAYER,
                 (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER),
                 x, y, 8, 8);
         this._input = new InputComponent(this);
         this._sensors.add(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
                                                 Constants.CATEGORY_SCENERY, 20f));
     }
-
-    @Override
-    public void update(SpriteBatch batch) {
+    
+    public void updateInput() {
         this._input.update();
-        this._physics.update();
-        this._graphics.update(batch, this.getPhysicsComponent().getPosition().x, this.getPhysicsComponent().getPosition().y + 8);
-        for(int i = 0;  i < this._sensors.size(); i++) {
-            this._sensors.get(i).update(this.getPhysicsComponent().getPosition().x, this.getPhysicsComponent().getPosition().y);
-        }
     }
 
     @Override

@@ -21,12 +21,13 @@ public class PhysicsComponent implements Disposable {
                             short maskBits, float width, float height) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = bodyType;
-        bodyDef.position.set(x * Constants.TILE_WIDTH, y * Constants.TILE_HEIGHT);
-        
+        /*bodyDef.position.set(x + 1 - (width / Constants.TILE_WIDTH), 
+                            y + 1 - (height / Constants.TILE_HEIGHT));*/
+        bodyDef.position.set(x, y);
         this._body = LevelManager.getLevelManager().getLevel().addBody(bodyDef);
         
         PolygonShape collider = new PolygonShape();
-        collider.setAsBox(width, height);
+        collider.setAsBox(width / Constants.TILE_WIDTH, height / Constants.TILE_HEIGHT);
         
         FixtureDef fDef = new FixtureDef();
         fDef.density = 0f;
@@ -46,15 +47,11 @@ public class PhysicsComponent implements Disposable {
     }
     
     public void setForceY(float forceY) { // @TODO : changer les valeurs par des constantes
-        this._forceY += forceY;
-        if(this._forceY > Constants.PLAYER_SPEED) this._forceY = Constants.PLAYER_SPEED;
-        else if(this._forceY < -Constants.PLAYER_SPEED) this._forceY = -Constants.PLAYER_SPEED;
+        this._forceY = Math.min(Math.max(_forceY+forceY, -Constants.PLAYER_SPEED), Constants.PLAYER_SPEED);
     }
     
-    public void setForceX(float forceX) { // @TODO : changer les valeurs par des constantes
-        this._forceX += forceX;
-        if(this._forceX > Constants.PLAYER_SPEED) this._forceX = Constants.PLAYER_SPEED;
-        else if(this._forceX < -Constants.PLAYER_SPEED) this._forceX = -Constants.PLAYER_SPEED;
+    public void setForceX(float forceX) { // @TODO : changer les valeurs par des constantes    
+        this._forceX = Math.min(Math.max(_forceX+forceX, -Constants.PLAYER_SPEED), Constants.PLAYER_SPEED);
     }
     
     public Body getBody() {

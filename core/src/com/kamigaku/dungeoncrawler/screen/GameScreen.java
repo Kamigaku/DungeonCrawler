@@ -9,6 +9,7 @@ package com.kamigaku.dungeoncrawler.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.level.ILevel;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 import com.kamigaku.dungeoncrawler.singleton.ScreenManager;
@@ -36,7 +37,11 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        LevelManager.getLevelManager().getLevel().getCamera().setToOrtho(false, 
+                Constants.VIRTUAL_HEIGHT * width / (float)height, 
+                Constants.VIRTUAL_HEIGHT);
+        ScreenManager.game.batch.setProjectionMatrix(
+                LevelManager.getLevelManager().getLevel().getCamera().combined);
     }
 
     @Override

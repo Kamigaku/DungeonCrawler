@@ -2,9 +2,9 @@ package com.kamigaku.dungeoncrawler.map.entity;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 import com.kamigaku.dungeoncrawler.tile.*;
+import com.kamigaku.dungeoncrawler.utility.Utility;
 import java.util.ArrayList;
 
 public abstract class AMapEntity implements IMapEntity {
@@ -13,6 +13,9 @@ public abstract class AMapEntity implements IMapEntity {
     public int y;
     public int widthRoom;
     public int heightRoom;
+    
+    private ArrayList<Vector2> _borders;
+    private ArrayList<Vector2> _tilesPosition;
     
     public ArrayList<Connection> neighbors;
     private char[][] schema;
@@ -40,6 +43,7 @@ public abstract class AMapEntity implements IMapEntity {
         for(int i = 0; i < coordinates.size(); i++) {
             roomMap[(int)coordinates.get(i).y - this.y][(int)coordinates.get(i).x - this.x] = ' ';
         }
+        
         for(int xR = 0; xR < roomMap.length; xR++) {
             for(int yR = 0; yR < roomMap[xR].length; yR++) {
                 if(roomMap[xR][yR] == ' ') {
@@ -67,6 +71,21 @@ public abstract class AMapEntity implements IMapEntity {
                 }   
             }
         }
+        
+        extractBorders();
+    }
+    
+    private void extractBorders() {
+        this._borders = new ArrayList<Vector2>();
+        this._tilesPosition = new ArrayList<Vector2>();
+        for(int y = 0; y < this.schema.length; y++) {
+            for(int x = 0; x < this.schema[y].length; x++) {
+                if(this.schema[y][x] != '#')
+                    this._tilesPosition.add(this._tiles[y][x].getPosition());
+                if(this.schema[y][x] == 'W' && Utility.checkLinesSurrondings(this.schema, x, y, 'W'))
+                    this._borders.add(this._tiles[y][x].getPosition());
+            }
+        }
     }
     
     @Override
@@ -76,14 +95,12 @@ public abstract class AMapEntity implements IMapEntity {
     
     @Override
     public ArrayList<Vector2> getTilesPosition() {
-        ArrayList<Vector2> v = new ArrayList<Vector2>();
-        for(int i = 0; i < this._tiles.length; i++) {
-            for(int j = 0; j < this._tiles[i].length; j++) {
-                if(this._tiles[i][j] != null)
-                    v.add(this._tiles[i][j].getPosition());    
-            }
-        }
-        return v;
+        return this._tilesPosition;
+    }
+    
+    @Override
+    public ArrayList<Vector2> getBorders() {
+        return this._borders;
     }
     
     @Override
@@ -92,7 +109,7 @@ public abstract class AMapEntity implements IMapEntity {
             for(int x_tile = 0; x_tile < this._tiles[y_tile].length; x_tile++) {
                 if(this._tiles[y_tile][x_tile] != null) {
                     Tile t = this._tiles[y_tile][x_tile];
-                    t.getGraphicsComponent().update(batch, t.x * Constants.TILE_WIDTH, t.y * Constants.TILE_HEIGHT);
+                    t.getGraphicsComponent().update(batch, t.x, t.y);
                 }
             }
         }

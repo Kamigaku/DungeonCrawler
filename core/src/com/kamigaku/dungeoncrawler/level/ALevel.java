@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -18,6 +20,7 @@ import com.kamigaku.dungeoncrawler.map.Map;
 
 public abstract class ALevel implements ILevel {
     
+    protected ResolutionFileResolver fileResolver;
     protected World world;
     protected HUD hud;
     protected OrthographicCamera camera;
@@ -33,6 +36,7 @@ public abstract class ALevel implements ILevel {
         this.mapRenderer.dispose();
         this.assetManager.dispose();
         this.debugRenderer.dispose();
+        this.hud.dispose();
     }
 
     @Override
@@ -62,6 +66,10 @@ public abstract class ALevel implements ILevel {
     }
     
     public void baseLoading() {
+        this.fileResolver = new ResolutionFileResolver(new InternalFileHandleResolver(), 
+                new ResolutionFileResolver.Resolution(800, 480, "480"),
+                new ResolutionFileResolver.Resolution(1280, 720, "720"), 
+                new ResolutionFileResolver.Resolution(1920, 1080, "1080"));
         this.world = new World(new Vector2(0, 0), true);
         
         for(int x = 0; x < 1; x++) {
@@ -73,13 +81,9 @@ public abstract class ALevel implements ILevel {
         
         this.world.setContactListener(new WrapperContactListener());
         this.hud = new HUD();
-        this.multiplexer = new InputMultiplexer();
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
-        this.camera = new OrthographicCamera(200, 200 * (h / w)); 
-        this.camera.update();
-        
+        this.multiplexer = new InputMultiplexer();        
         this.debugRenderer = new Box2DDebugRenderer();
+        this.camera = new OrthographicCamera();
     }
 
 }

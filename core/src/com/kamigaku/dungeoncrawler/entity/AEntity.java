@@ -7,6 +7,7 @@
 package com.kamigaku.dungeoncrawler.entity;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.kamigaku.dungeoncrawler.component.GraphicsComponent;
 import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
@@ -25,7 +26,14 @@ public abstract class AEntity implements IEntity {
     protected void baseLoading(Sprite sprite, BodyType bodyType, short categoryBits, 
                                 short maskBits, float x, float y, float width, 
                                 float height) {
-        this._graphics = new GraphicsComponent(sprite);
+        baseLoading(sprite, 0, 0, bodyType, categoryBits, maskBits, x, y, width, height);
+    }
+    
+    protected void baseLoading(Sprite sprite, float offsetX, float offsetY,
+                                BodyType bodyType, short categoryBits, 
+                                short maskBits, float x, float y, float width, 
+                                float height) {
+        this._graphics = new GraphicsComponent(sprite, offsetX, offsetY);
         this._physics = new PhysicsComponent(x, y, bodyType, categoryBits, 
                                             maskBits, width, height);
         this._physics.getBody().setUserData(this);
@@ -35,11 +43,31 @@ public abstract class AEntity implements IEntity {
     protected void baseLoading(String sprite, BodyType bodyType, short categoryBits, 
                                 short maskBits, float x, float y, float width, 
                                 float height) {
+        baseLoading(sprite, 0, 0, bodyType, categoryBits, maskBits, x, y, width, height);
+    }
+    
+    protected void baseLoading(String sprite, int offsetX, int offsetY,
+                                BodyType bodyType, short categoryBits, 
+                                short maskBits, float x, float y, float width, 
+                                float height) {
         this._graphics = new GraphicsComponent(sprite);
         this._physics = new PhysicsComponent(x, y, bodyType, categoryBits, 
                                             maskBits, width, height);
         this._physics.getBody().setUserData(this);
         this._sensors = new ArrayList<SensorComponent>();
+    }
+    
+    @Override
+    public void updateGraphics(SpriteBatch batch) {
+        this._graphics.update(batch, this.getPhysicsComponent().getBody().getTransform().getPosition().x, 
+                              this.getPhysicsComponent().getBody().getTransform().getPosition().y);
+    }
+    
+    @Override
+    public void updatePhysics() {
+        this._physics.update();
+        for(int i = 0;  i < this._sensors.size(); i++)
+            this._sensors.get(i).update(this.getPhysicsComponent().getPosition().x, this.getPhysicsComponent().getPosition().y);
     }
 
     @Override
