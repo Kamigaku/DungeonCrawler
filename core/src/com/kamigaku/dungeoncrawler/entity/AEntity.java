@@ -7,6 +7,7 @@
 package com.kamigaku.dungeoncrawler.entity;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.kamigaku.dungeoncrawler.component.GraphicsComponent;
 import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
@@ -54,6 +55,19 @@ public abstract class AEntity implements IEntity {
                                             maskBits, width, height);
         this._physics.getBody().setUserData(this);
         this._sensors = new ArrayList<SensorComponent>();
+    }
+    
+    @Override
+    public void updateGraphics(SpriteBatch batch) {
+        this._graphics.update(batch, this.getPhysicsComponent().getBody().getTransform().getPosition().x, 
+                              this.getPhysicsComponent().getBody().getTransform().getPosition().y);
+    }
+    
+    @Override
+    public void updatePhysics() {
+        this._physics.update();
+        for(int i = 0;  i < this._sensors.size(); i++)
+            this._sensors.get(i).update(this.getPhysicsComponent().getPosition().x, this.getPhysicsComponent().getPosition().y);
     }
 
     @Override

@@ -28,8 +28,6 @@ public class WrapperContactListener implements ContactListener {
 
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
-        System.out.println("" + contact.getFixtureA().getBody().getUserData());
-        System.out.println("" + contact.getFixtureB().getBody().getUserData());
         ((CollisionListener)contact.getFixtureA().getBody().getUserData()).postSolve(contact, impulse);
         ((CollisionListener)contact.getFixtureB().getBody().getUserData()).postSolve(contact, impulse);
     }

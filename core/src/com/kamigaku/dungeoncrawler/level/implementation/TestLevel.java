@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.kamigaku.dungeoncrawler.comparator.RenderingComparator;
+import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
 import com.kamigaku.dungeoncrawler.level.ALevel;
@@ -42,19 +43,22 @@ public class TestLevel extends ALevel {
     
     @Override
     public void render(SpriteBatch batch) {
-        this.world.step(1/60f, 6, 2); 
+        this._player.updateInput(); // Input that impatch velocity
+        this.world.step(1/60f, 6, 2); // World physics
+        for(int i = 0; i < this._entities.size(); i++) // Update all the physics related bodies
+            this._entities.get(i).updatePhysics();
+        this.camera.position.set(this._player.getPhysicsComponent().getPosition().x,
+                              this._player.getPhysicsComponent().getPosition().y,
+                              this.camera.position.z); // Setting the camera position
+        this.camera.update(); // Updating the camera position
         batch.setProjectionMatrix(this.camera.combined);
         this._entities.sort(new RenderingComparator()); // Rendering on depthAxis
-        this.map.render(batch);
-        for(int i = 0; i < this._entities.size(); i++) {
-            this._entities.get(i).update(batch);
-        }
-        this.camera.position.set(this._player.getGraphicsComponent().getSprite().getX() + this._player.getGraphicsComponent().getSprite().getWidth() / 2,
-                              this._player.getGraphicsComponent().getSprite().getY() + this._player.getGraphicsComponent().getSprite().getHeight() / 2,
-                              this.camera.position.z);
-        this.camera.update();
+        this.map.render(batch); // Map graphics
+        for(int i = 0; i < this._entities.size(); i++) // Entities graphics
+            this._entities.get(i).updateGraphics(batch);
         batch.end();
-        //this.debugRenderer.render(this.world, this.camera.combined);
+        if(Constants.DEBUG)
+            this.debugRenderer.render(this.world, this.camera.combined);
         this.hud.draw();
         batch.begin();
     }

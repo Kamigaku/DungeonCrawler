@@ -55,6 +55,17 @@ public class Floor {
         }
         
         // Création des rooms
+        createRooms();
+        
+        // Liaison des rooms
+        linkRooms();
+        //displayFloor();
+        
+        
+    }
+    
+    private void createRooms() {
+        // Création des rooms
         for(int i = 0; i < this._nodes.length; i++) {
             if(this._nodes[i] != null && !this._nodes[i].fetched) {
                 this._nodes[i].fetched = true;
@@ -89,8 +100,9 @@ public class Floor {
                 }
             }
         }
-        
-        // Liaison des rooms
+    }
+    
+    private void linkRooms() {
         for(int i = 0; i < this._entities.size(); i++) {
             AMapEntity aCurrent = (AMapEntity) this._entities.get(i);
             for(int j = i + 1; j < this._entities.size(); j++) {
@@ -109,9 +121,6 @@ public class Floor {
             }
             System.out.println("This room [" + aCurrent.y + "/" + aCurrent.x + "] (" + aCurrent.heightRoom + "/" + aCurrent.widthRoom + ") have : " + aCurrent.neighbors.size() + " connection(s).");
         }
-        //displayFloor();
-        
-        
     }
     
     private void fetchNode(Node n, ArrayList<Vector2> coordinates) {

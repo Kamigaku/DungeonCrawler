@@ -32,16 +32,9 @@ public class Player extends AEntity {
         this._sensors.add(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
                                                 Constants.CATEGORY_SCENERY, 20f));
     }
-
-    @Override
-    public void update(SpriteBatch batch) {
+    
+    public void updateInput() {
         this._input.update();
-        this._physics.update();
-        this._graphics.update(batch, this.getPhysicsComponent().getBody().getTransform().getPosition().x, 
-                            this.getPhysicsComponent().getBody().getTransform().getPosition().y);
-        for(int i = 0;  i < this._sensors.size(); i++) {
-            this._sensors.get(i).update(this.getPhysicsComponent().getPosition().x, this.getPhysicsComponent().getPosition().y);
-        }
     }
 
     @Override

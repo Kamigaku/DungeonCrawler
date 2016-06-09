@@ -71,7 +71,6 @@ public class Map {
         }
         
         this._floors.add(new Floor(floor, "", 0));
-            
     }
     
     public void addStringRoom(char[][] floor, String seed) {
