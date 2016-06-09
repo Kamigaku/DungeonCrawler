@@ -4,7 +4,7 @@ import com.kamigaku.dungeoncrawler.map.entity.Connection.ConnectionType;
 
 public final class Constants {
     
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     public enum MapType {
         RUINES, SHIP, HOUSE, LAB, TODEFINE

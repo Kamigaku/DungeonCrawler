@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 import com.kamigaku.dungeoncrawler.tile.*;
+import com.kamigaku.dungeoncrawler.utility.Utility;
 import java.util.ArrayList;
 
 public abstract class AMapEntity implements IMapEntity {
@@ -12,6 +13,9 @@ public abstract class AMapEntity implements IMapEntity {
     public int y;
     public int widthRoom;
     public int heightRoom;
+    
+    private ArrayList<Vector2> _borders;
+    private ArrayList<Vector2> _tilesPosition;
     
     public ArrayList<Connection> neighbors;
     private char[][] schema;
@@ -67,6 +71,21 @@ public abstract class AMapEntity implements IMapEntity {
                 }   
             }
         }
+        
+        extractBorders();
+    }
+    
+    private void extractBorders() {
+        this._borders = new ArrayList<Vector2>();
+        this._tilesPosition = new ArrayList<Vector2>();
+        for(int y = 0; y < this.schema.length; y++) {
+            for(int x = 0; x < this.schema[y].length; x++) {
+                if(this.schema[y][x] != '#')
+                    this._tilesPosition.add(this._tiles[y][x].getPosition());
+                if(this.schema[y][x] == 'W' && Utility.checkLinesSurrondings(this.schema, x, y, 'W'))
+                    this._borders.add(this._tiles[y][x].getPosition());
+            }
+        }
     }
     
     @Override
@@ -76,29 +95,13 @@ public abstract class AMapEntity implements IMapEntity {
     
     @Override
     public ArrayList<Vector2> getTilesPosition() {
-        ArrayList<Vector2> v = new ArrayList<Vector2>();
-        for(int i = 0; i < this._tiles.length; i++) {
-            for(int j = 0; j < this._tiles[i].length; j++) {
-                if(this._tiles[i][j] != null)
-                    v.add(this._tiles[i][j].getPosition());    
-            }
-        }
-        return v;
+        return this._tilesPosition;
     }
     
     @Override
     public ArrayList<Vector2> getBorders() {
-        ArrayList<Vector2> v = new ArrayList<Vector2>();
-        for(int i = 0; i < this._tiles.length; i++) {
-            for(int j = 0; j < this._tiles[i].length; j++) {
-                if(this._tiles[i][j] != null)
-                    v.add(this._tiles[i][j].getPosition());    
-            }
-        }
-        return v;
+        return this._borders;
     }
-    
-    
     
     @Override
     public void render(SpriteBatch batch) {

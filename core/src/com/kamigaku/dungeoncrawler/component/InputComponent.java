@@ -53,7 +53,6 @@ public class InputComponent {
                     _entity.getPhysicsComponent().setForceX(Constants.PLAYER_SPEED);
                 if(keycode == Keys.D)
                     _entity.getPhysicsComponent().setForceX(-Constants.PLAYER_SPEED);
-                LevelManager.getLevelManager().getCamera().update();
                 return false;
             }
 

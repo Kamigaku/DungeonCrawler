@@ -107,7 +107,7 @@ public class Floor {
             AMapEntity aCurrent = (AMapEntity) this._entities.get(i);
             for(int j = i + 1; j < this._entities.size(); j++) {
                 AMapEntity aOther = (AMapEntity) this._entities.get(j);
-                ArrayList<Vector2> commonCoords = Utility.commonCoords(aCurrent.getTilesPosition(), aOther.getTilesPosition());
+                ArrayList<Vector2> commonCoords = Utility.commonCoords(aCurrent.getBorders(), aOther.getBorders());
                 if(commonCoords.size() > 3) {
                     Random r = new Random(commonCoords.size());
                     int seed = Math.abs(r.nextInt());
