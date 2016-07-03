@@ -2,6 +2,7 @@ package com.kamigaku.dungeoncrawler.map.entity;
 
 import com.kamigaku.dungeoncrawler.tile.Ground;
 import com.kamigaku.dungeoncrawler.tile.Tile;
+import com.kamigaku.dungeoncrawler.tile.Wall;
 
 public class Connection {
 
@@ -26,7 +27,7 @@ public class Connection {
     public Tile getConnectionTile() {
         switch(this.connectionType) {
             case DOOR:
-                return new Ground("sprites/ground.png", x, y);
+                return new Wall("sprites/door.png", x, y);
             case EMPTY:
                 return new Ground("sprites/ground.png", x, y);
             case LOCKED_DOOR:

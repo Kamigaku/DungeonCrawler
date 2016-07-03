@@ -12,8 +12,8 @@ public abstract class Tile implements CollisionListener {
     protected PhysicsComponent _physics;
     protected GraphicsComponent _graphics;
     public boolean isCrossable;
-    public float x;
-    public float y;
+    public int x;
+    public int y;
     
     public PhysicsComponent getPhysicsComponent() {
         return this._physics;

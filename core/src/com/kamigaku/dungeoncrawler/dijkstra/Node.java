@@ -14,15 +14,12 @@ import java.util.ArrayList;
     public class Node {
 
         public int value;
-        public int previous;
-        public int shortestDistance;
         public ArrayList<Integer> neighbors;
         public boolean fetched;
+        public boolean isCrossable;
 
         public Node(int value) {
             this.value = value;
-            this.previous = -1;
-            this.shortestDistance = -1;
             this.neighbors = new ArrayList<Integer>();
             this.fetched = false;
         }
@@ -31,11 +28,10 @@ import java.util.ArrayList;
             if(!this.neighbors.contains(value))
                 this.neighbors.add(value);
         }
-
-        public void reset() {
-            this.previous = -1;
-            this.shortestDistance = -1;
-            this.fetched = false;
+        
+        public void addNeighbors(int value) {
+            if(!this.neighbors.contains(value))
+                this.neighbors.add(value);
         }
 
     }

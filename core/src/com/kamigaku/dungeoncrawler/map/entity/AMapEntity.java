@@ -20,7 +20,7 @@ public abstract class AMapEntity implements IMapEntity {
     public ArrayList<Connection> neighbors;
     private char[][] schema;
     
-    private Tile[][] _tiles;
+    private ArrayList<Tile> _tiles;
     
     @Override
     public void displayEntity() {
@@ -60,14 +60,14 @@ public abstract class AMapEntity implements IMapEntity {
         }
         this.schema = roomMap;
         
-        this._tiles = new Tile[this.schema.length][this.schema[0].length];
+        this._tiles = new ArrayList<Tile>();
         for(int yPos = 0; yPos < this.schema.length; yPos++) {
             for(int xPos = 0; xPos < this.schema[yPos].length; xPos++) {
                 if(this.schema[yPos][xPos] != '#') {
                     if(this.schema[yPos][xPos] == ' ')
-                        this._tiles[yPos][xPos] = new Ground("sprites/ground.png", (xPos + this.x), (yPos + this.y));
+                        this._tiles.add(new Ground("sprites/ground.png", (xPos + this.x), (yPos + this.y)));
                     else if(this.schema[yPos][xPos] == 'W')
-                        this._tiles[yPos][xPos] = new Wall("sprites/wall.png", (xPos + this.x), (yPos + this.y));
+                        this._tiles.add(new Wall("sprites/wall.png", (xPos + this.x), (yPos + this.y)));
                 }   
             }
         }
@@ -81,15 +81,15 @@ public abstract class AMapEntity implements IMapEntity {
         for(int y = 0; y < this.schema.length; y++) {
             for(int x = 0; x < this.schema[y].length; x++) {
                 if(this.schema[y][x] != '#')
-                    this._tilesPosition.add(this._tiles[y][x].getPosition());
-                if(this.schema[y][x] == 'W' && Utility.checkLinesSurrondings(this.schema, x, y, 'W'))
-                    this._borders.add(this._tiles[y][x].getPosition());
+                    this._tilesPosition.add(new Vector2(x + this.x, y + this.y));
+                if(this.schema[y][x] == 'W' && Utility.checkLineSurrondings(this.schema, x, y, 'W'))
+                    this._borders.add(new Vector2(x + this.x, y + this.y));
             }
         }
     }
     
     @Override
-    public Tile[][] getTiles() {
+    public ArrayList<Tile> getTiles() {
         return this._tiles;
     }
     
@@ -105,22 +105,21 @@ public abstract class AMapEntity implements IMapEntity {
     
     @Override
     public void render(SpriteBatch batch) {
-        for(int y_tile = 0; y_tile < this._tiles.length; y_tile++) {
-            for(int x_tile = 0; x_tile < this._tiles[y_tile].length; x_tile++) {
-                if(this._tiles[y_tile][x_tile] != null) {
-                    Tile t = this._tiles[y_tile][x_tile];
-                    t.getGraphicsComponent().update(batch, t.x, t.y);
-                }
-            }
+        for(int i = 0; i < this._tiles.size(); i++) {
+            this._tiles.get(i).getGraphicsComponent().update(batch, 
+                this._tiles.get(i).x, this._tiles.get(i).y);
         }
     }
     
     public void addNeighbors(Connection c) {
         this.neighbors.add(c);
-        if(this._tiles[c.y - this.y][c.x - this.x] instanceof Wall) {
-            LevelManager.getLevelManager().getLevel().removeBody(this._tiles[c.y - this.y][c.x - this.x].getPhysicsComponent());
+        for(Tile t : this._tiles) {
+            if(t.y == c.y && t.x == c.x && t instanceof Wall) {
+                LevelManager.getLevelManager().getLevel().removeBody(t.getPhysicsComponent());
+                t = new Ground("sprites/ground.png", t.x, t.y);
+            }
         }
-        this._tiles[c.y - this.y][c.x - this.x] = c.getConnectionTile();
+        this._tiles.add(c.getConnectionTile());
     }
     
 }

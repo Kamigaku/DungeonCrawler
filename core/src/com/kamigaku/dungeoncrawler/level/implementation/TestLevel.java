@@ -27,17 +27,17 @@ public class TestLevel extends ALevel {
        
         this._entities = new ArrayList<IEntity>();
         //this._player = new Player("sprites/player.png", 1f, 2f);
-        this._player = new Player(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 150f, 143f);
+        this._player = new Player(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 0, 0);
         this._entities.add(this._player);
     }
     
     
     private void textureLoading() {
         this.assetManager = new AssetManager();
-        //this.assetManager.setLoader(null, null);
         this.assetManager.load("sprites/player.png", Texture.class);
         this.assetManager.load("sprites/wall.png", Texture.class);
         this.assetManager.load("sprites/ground.png", Texture.class);
+        this.assetManager.load("sprites/door.png", Texture.class);
         this.assetManager.finishLoading();
     }
     
