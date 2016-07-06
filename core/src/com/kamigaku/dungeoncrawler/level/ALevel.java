@@ -74,13 +74,9 @@ public abstract class ALevel implements ILevel {
                 new ResolutionFileResolver.Resolution(1920, 1080, "1080"));
         this.world = new World(new Vector2(0, 0), true);
         
-        for(int x = 0; x < 1; x++) {
-            for(int y = 0; y < 1; y++) {
-                //this.map = new Map(x, y);
-                this.map = new GeneratorMap(x * 1000 + y).getMap();
-                //this.map.displayMap();
-            }
-        }
+        int x = 36;
+        int y = 50;
+        this.map = new GeneratorMap(x * 1000 + y).getMap();
         
         this.world.setContactListener(new WrapperContactListener());
         this.hud = new HUD();

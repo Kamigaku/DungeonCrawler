@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public abstract class Utility {
-    
+        
     public static void fillArray(char[][] obj, char filler) {
         for(int i = 0; i < obj.length; i++) {
             for(int j = 0; j < obj[i].length; j++) {
@@ -74,6 +74,48 @@ public abstract class Utility {
         else if(left_top_2_right_bot) return 1;
         else if(right_top_2_left_bot) return -1;
         return 0;
+    }
+    
+    public static int numberSquareSurrondings(char[][] map, int x_origin, int y_origin,
+                                               char search, int direction_x, int direction_y)  {
+        int numberSurronding = 0;
+        if(x_origin - 1 >= 0 && y_origin + 1 < map.length &&
+           y_origin - 1 >= 0 && x_origin + 1 < map[y_origin].length) {
+            if(map[y_origin + (1 * direction_y)][x_origin] == search)
+                numberSurronding++;
+            if(map[y_origin + (1 * direction_y)][x_origin + (1 * direction_x)] == search)
+                numberSurronding++;
+            if(map[y_origin][x_origin + (1 * direction_x)] == search)
+                numberSurronding++;
+            if(map[y_origin][x_origin] == search)
+                numberSurronding++;
+        }
+        return numberSurronding;
+    }
+    
+    public static int numberAllAroundSurrondings(char[][] map, int x_origin, int y_origin,
+                                               char search)  {
+        int numberSurronding = 0;
+        if(x_origin - 1 >= 0 && y_origin + 1 < map.length &&
+           y_origin - 1 >= 0 && x_origin + 1 < map[y_origin - 1].length) {
+            if(map[y_origin + 1][x_origin + 1] == search)
+                numberSurronding++;
+            if(map[y_origin + 1][x_origin - 1] == search)
+                numberSurronding++;
+            if(map[y_origin + 1][x_origin] == search)
+                numberSurronding++;
+            if(map[y_origin - 1][x_origin + 1] == search)
+                numberSurronding++;
+            if(map[y_origin - 1][x_origin - 1] == search)
+                numberSurronding++;
+            if(map[y_origin - 1][x_origin] == search)
+                numberSurronding++;
+            if(map[y_origin][x_origin + 1] == search)
+                numberSurronding++;
+            if(map[y_origin][x_origin - 1] == search)
+                numberSurronding++;
+        }
+        return numberSurronding;
     }
         
     public static int nextInt(Random random, int min, int max) {

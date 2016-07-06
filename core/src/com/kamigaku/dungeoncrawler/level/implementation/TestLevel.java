@@ -1,7 +1,5 @@
 package com.kamigaku.dungeoncrawler.level.implementation;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -11,6 +9,7 @@ import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
 import com.kamigaku.dungeoncrawler.level.ALevel;
+import com.kamigaku.dungeoncrawler.tile.Tile;
 import java.util.ArrayList;
 
 public class TestLevel extends ALevel {
@@ -27,7 +26,8 @@ public class TestLevel extends ALevel {
        
         this._entities = new ArrayList<IEntity>();
         //this._player = new Player("sprites/player.png", 1f, 2f);
-        this._player = new Player(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 0, 0);
+        Tile randomTile = this.map.getEntryRoom().getRandomFloorTiles();
+        this._player = new Player(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), randomTile.x, randomTile.y);
         this._entities.add(this._player);
     }
     

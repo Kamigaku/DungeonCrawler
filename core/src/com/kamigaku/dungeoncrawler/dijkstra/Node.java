@@ -33,5 +33,17 @@ import java.util.ArrayList;
             if(!this.neighbors.contains(value))
                 this.neighbors.add(value);
         }
+        
+        public static int XYValue(int x, int y, int size) {
+            return x + (y * size);
+        }
+
+        public static int XValue(int value, int size) {
+            return (int)(value % size);
+        }
+
+        public static int YValue(int value, int size) {
+            return (int)(value / size);
+        } 
 
     }

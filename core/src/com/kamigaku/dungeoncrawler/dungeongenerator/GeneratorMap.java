@@ -5,8 +5,9 @@
  */
 package com.kamigaku.dungeoncrawler.dungeongenerator;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.kamigaku.dungeoncrawler.dijkstra.Node;
+import com.kamigaku.dungeoncrawler.dijkstra.Square;
 import com.kamigaku.dungeoncrawler.utility.Utility;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class GeneratorMap {
         }
         borders.clear();
         this.reduceMap(map);
-        Utility.displayEntity(this._map);
+        Utility.displayEntity(_map);
         this.createRooms();
         this.m = new Map(this._map, this.tRoom);
     }
@@ -84,8 +85,9 @@ public class GeneratorMap {
     private void placeRoom(char[][] map, GeneratorRoom r, int x_ori, int y_ori) {
         for(int y = 0; y < r._map.length; y++) {
             for(int x = 0; x < r._map[y].length; x++) {
-                if(r._map[y][x] != '#')
+                if(r._map[y][x] != '#') {
                     map[y + y_ori][x + x_ori] = r._map[y][x];
+                }
             }
         }
         r.setOriginXY(x_ori, y_ori);
@@ -115,6 +117,29 @@ public class GeneratorMap {
         for(int y = heightMinRoom; y <= heightMaxRoom; y++) {
             for(int x = widthMinRoom; x <= widthMaxRoom; x++) {
                 this._map[y - heightMinRoom][x - widthMinRoom] = map[y][x];
+            }
+        }
+        
+        // Second part
+        for(int y = 1; y < this._map.length - 1; y++) {
+            for(int x = 1; x < this._map[y].length - 1; x++) {
+                if(this._map[y][x] == 'W') {
+                    char[][] square = new char[3][3];
+                    for(int i = 0; i < 3; i++)
+                        for(int j = 0; j < 3; j++)
+                            square[i][j] = this._map[y + (-1 + i)][x + (-1 + j)];
+                    Square preUpdate = new Square(square.length);
+                    preUpdate.applycharMap(square);
+                    square[1][1] = ' ';
+                    Square postUpdate = new Square(square.length);
+                    postUpdate.applycharMap(square);
+                    if(Square.compareSquare(preUpdate, postUpdate)) {
+                        if(Utility.checkLineSurrondings(this._map, x, y, ' '))
+                            this._map[y][x] = ' ';
+                        else
+                            this._map[y][x] = '#';
+                    }
+                }
             }
         }
     }
@@ -178,20 +203,37 @@ public class GeneratorMap {
         System.out.println(this.tRoom.size());
     }
     
-    private void fetchNode(Node origin, ArrayList<Point> ground, ArrayList<Point> wall, Node[] nodes) {
-            origin.fetched = true;
-            for(int i = 0; i < origin.neighbors.size(); i++) {
-                Point p = new Point(XValue(origin.neighbors.get(i)), YValue(origin.neighbors.get(i)));
-                if(this._map[p.y][p.x] == 'W') {
-                    if(!wall.contains(p))
-                        wall.add(p);
-                }
-                else if(this._map[p.y][p.x] == ' ' && !nodes[origin.neighbors.get(i)].fetched) {
-                    ground.add(p);
-                    fetchNode(nodes[origin.neighbors.get(i)], ground, wall, nodes);
+    public void createEntrance() {
+        Point indexRooms = new Point();
+        int valueDistance = 0;
+        for(int i = 0; i < this.tRoom.size(); i++) {
+            for(int j = i + 1; j < this.tRoom.size(); j++) {
+                Vector2 p1 = this.tRoom.get(i).getRandomFloorTiles().getPosition();
+                Vector2 p2 = this.tRoom.get(j).getRandomFloorTiles().getPosition();
+                if(Point.distance(p1.x, p1.y, p2.x, p2.y) > valueDistance) {
+                    indexRooms.x = i;
+                    indexRooms.y = j;
                 }
             }
         }
+        this.tRoom.get(indexRooms.x).isEntry = true;
+        this.tRoom.get(indexRooms.x).isExit = true;
+    }
+    
+    private void fetchNode(Node origin, ArrayList<Point> ground, ArrayList<Point> wall, Node[] nodes) {
+        origin.fetched = true;
+        for(int i = 0; i < origin.neighbors.size(); i++) {
+            Point p = new Point(XValue(origin.neighbors.get(i)), YValue(origin.neighbors.get(i)));
+            if(this._map[p.y][p.x] == 'W') {
+                if(!wall.contains(p))
+                    wall.add(p);
+            }
+            else if(this._map[p.y][p.x] == ' ' && !nodes[origin.neighbors.get(i)].fetched) {
+                ground.add(p);
+                fetchNode(nodes[origin.neighbors.get(i)], ground, wall, nodes);
+            }
+        }
+    }
     
     private int XYValue(int x, int y) {
         return x + (y * this._map[y].length);

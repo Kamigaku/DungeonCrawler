@@ -7,8 +7,10 @@ package com.kamigaku.dungeoncrawler.dungeongenerator;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.kamigaku.dungeoncrawler.tile.*;
+import com.kamigaku.dungeoncrawler.utility.Utility;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
@@ -18,7 +20,8 @@ public class Room {
  
     private ArrayList<Tile> _floorTiles;
     private ArrayList<Tile> _wallTiles;
-    private char[][] _map;
+    public boolean isEntry = false;
+    public boolean isExit = false;
     
     public Room(ArrayList<Point> floor, ArrayList<Point> walls) {
         this._floorTiles = new ArrayList<Tile>();
@@ -40,6 +43,18 @@ public class Room {
             this._wallTiles.get(i).getGraphicsComponent().update(batch, 
                     this._wallTiles.get(i).x, this._wallTiles.get(i).y);
         }
+    }
+    
+    public ArrayList<Tile> getFloorTiles() {
+        return this._floorTiles;
+    }
+    
+    public ArrayList<Tile> getWallTiles() {
+        return this._wallTiles;
+    }
+    
+    public Tile getRandomFloorTiles() {
+        return this._floorTiles.get(Utility.nextInt(new Random(this._floorTiles.size()), 0, this._floorTiles.size()));
     }
     
 }
