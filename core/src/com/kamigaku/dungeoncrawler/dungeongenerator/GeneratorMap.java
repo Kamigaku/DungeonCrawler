@@ -1,30 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.kamigaku.dungeoncrawler.dungeongenerator;
 
 import com.badlogic.gdx.math.Vector2;
-import com.kamigaku.dungeoncrawler.dijkstra.Node;
-import com.kamigaku.dungeoncrawler.dijkstra.Square;
+import com.kamigaku.dungeoncrawler.dijkstra.*;
 import com.kamigaku.dungeoncrawler.utility.Utility;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- *
- * @author Kamigaku
- */
 public class GeneratorMap {
     
     private char[][] _map;
-    private ArrayList<GeneratorRoom> _rooms;
-    private long _seed;
-    private Random _random;
+    private final ArrayList<GeneratorRoom> _rooms;
+    private final long _seed;
+    private final Random _random;
     
-    private Map m;
+    private final Map m;
     private ArrayList<Room> tRoom;
     
     public GeneratorMap(long seed) {
@@ -45,8 +35,9 @@ public class GeneratorMap {
         int numberRoom = Utility.nextInt(_random, 30, 50);
         for(int i = 0; i < numberRoom; i++) {
             GeneratorRoom r = new GeneratorRoom(this._random.nextLong());
-            if(r.isValid)
+            if(r.isValid) {
                 this._rooms.add(r);
+            }
             else
                 i--;
         }
@@ -61,14 +52,23 @@ public class GeneratorMap {
         for(int i = 0; i < this._rooms.size(); i++) {
             this.placeRoom(map, this._rooms.get(i), x, y);
             borders.addAll(this._rooms.get(i).getWorldBorders());
+            for(int j = 0; j < borders.size(); j++) {
+                if(Utility.numberAllAroundSurrondings(map, borders.get(i).x, borders.get(i).y, '#') < 2) {
+                    borders.remove(j);
+                    j--;
+                }
+                
+            }
             Point p = borders.get(Utility.nextInt(_random, 0, borders.size()));
             x = p.x;
             y = p.y;
         }
         borders.clear();
         this.reduceMap(map);
+        this.removeUnnecessaryWalls();
         Utility.displayEntity(_map);
         this.createRooms();
+        this.createEntrance();
         this.m = new Map(this._map, this.tRoom);
     }
         
@@ -119,8 +119,9 @@ public class GeneratorMap {
                 this._map[y - heightMinRoom][x - widthMinRoom] = map[y][x];
             }
         }
-        
-        // Second part
+    }
+    
+    private void removeUnnecessaryWalls() {
         for(int y = 1; y < this._map.length - 1; y++) {
             for(int x = 1; x < this._map[y].length - 1; x++) {
                 if(this._map[y][x] == 'W') {
@@ -128,11 +129,9 @@ public class GeneratorMap {
                     for(int i = 0; i < 3; i++)
                         for(int j = 0; j < 3; j++)
                             square[i][j] = this._map[y + (-1 + i)][x + (-1 + j)];
-                    Square preUpdate = new Square(square.length);
-                    preUpdate.applycharMap(square);
+                    Square preUpdate = new Square(square);
                     square[1][1] = ' ';
-                    Square postUpdate = new Square(square.length);
-                    postUpdate.applycharMap(square);
+                    Square postUpdate = new Square(square);
                     if(Square.compareSquare(preUpdate, postUpdate)) {
                         if(Utility.checkLineSurrondings(this._map, x, y, ' '))
                             this._map[y][x] = ' ';
@@ -144,58 +143,19 @@ public class GeneratorMap {
         }
     }
     
-    private void createRooms() {
-        Node[] nodes = new Node[this._map.length * this._map[0].length];
-        for(int y = 0; y < this._map.length; y++) {
-            for(int x = 0; x < this._map[y].length; x++) {
-                if(this._map[y][x] == ' ') {
-                    int value = XYValue(x, y);
-                    nodes[value] = new Node(value);
-                    // Droite
-                    if(x + 1 < this._map[y].length && (this._map[y][x + 1] == ' ' || this._map[y][x + 1] == 'W'))
-                        nodes[value].addNeighbors(XYValue(x + 1, y));
-                    // Gauche
-                    if(x - 1 >= 0 && (this._map[y][x - 1] == ' ' || this._map[y][x - 1] == 'W'))
-                        nodes[value].addNeighbors(XYValue(x - 1, y));
-                    // Haut
-                    if(y + 1 < this._map.length && (this._map[y + 1][x] == ' '  || this._map[y + 1][x] == 'W'))
-                        nodes[value].addNeighbors(XYValue(x, y + 1));
-                    // Bas
-                    if(y - 1 >= 0 && (this._map[y - 1][x] == ' ' || this._map[y - 1][x] == 'W'))
-                        nodes[value].addNeighbors(XYValue(x, y - 1));
-
-                    // Haut gauche
-                    if(y + 1 < this._map.length &&
-                       x - 1 >= 0 &&
-                       this._map[y + 1][x - 1] == 'W')
-                        nodes[value].addNeighbors(XYValue(x - 1, y + 1));
-
-                    // Haut droite
-                    if(y + 1 < this._map.length &&
-                       x + 1 < this._map[y].length &&
-                       this._map[y + 1][x + 1] == 'W')
-                        nodes[value].addNeighbors(XYValue(x + 1, y + 1));
-
-                    // Bas gauche
-                    if(y - 1 >= 0 &&
-                       x - 1 >= 0 &&
-                       this._map[y - 1][x - 1] == 'W')
-                        nodes[value].addNeighbors(XYValue(x - 1, y - 1));
-
-                    // Bas droite
-                    if(y - 1 >= 0 &&
-                       x + 1 < this._map[y].length &&
-                       this._map[y - 1][x + 1] == 'W')
-                        nodes[value].addNeighbors(XYValue(x + 1, y - 1));
-                }
-            }
-        }
+    private void createRooms() {        
+        Dijkstra d = new Dijkstra(this._map);
+        d.addRule(new Rule(' ', 'W', true, true));
+        d.addRule(new Rule(' ', ' ', true, false));
+        d.createNodes(true);
+        Node[] nodes = d.getNodes();
         this.tRoom = new ArrayList<Room>();
         for(int i = 0; i < nodes.length; i++) {
                 if(nodes[i] != null && !nodes[i].fetched) {
                     ArrayList<Point> ground = new ArrayList<Point>();
                     ArrayList<Point> wall = new ArrayList<Point>();
-                    ground.add(new Point(XValue(i), YValue(i)));
+                    ground.add(new Point(Dijkstra.XValue(i, this._map[0].length), 
+                                         Dijkstra.YValue(i, this._map[0].length)));
                     fetchNode(nodes[i], ground, wall, nodes);
                     this.tRoom.add(new Room(ground, wall));
                 }
@@ -203,7 +163,7 @@ public class GeneratorMap {
         System.out.println(this.tRoom.size());
     }
     
-    public void createEntrance() {
+    private void createEntrance() {
         Point indexRooms = new Point();
         int valueDistance = 0;
         for(int i = 0; i < this.tRoom.size(); i++) {
@@ -223,7 +183,8 @@ public class GeneratorMap {
     private void fetchNode(Node origin, ArrayList<Point> ground, ArrayList<Point> wall, Node[] nodes) {
         origin.fetched = true;
         for(int i = 0; i < origin.neighbors.size(); i++) {
-            Point p = new Point(XValue(origin.neighbors.get(i)), YValue(origin.neighbors.get(i)));
+            Point p = new Point(Dijkstra.XValue(origin.neighbors.get(i), this._map[0].length), 
+                                Dijkstra.YValue(origin.neighbors.get(i), this._map[0].length));
             if(this._map[p.y][p.x] == 'W') {
                 if(!wall.contains(p))
                     wall.add(p);
@@ -234,18 +195,6 @@ public class GeneratorMap {
             }
         }
     }
-    
-    private int XYValue(int x, int y) {
-        return x + (y * this._map[y].length);
-    }
-
-    private int XValue(int value) {
-        return (int)(value % this._map[0].length);
-    }
-
-    private int YValue(int value) {
-        return (int)(value / this._map[0].length);
-    }    
     
     public Map getMap() {
         return this.m;

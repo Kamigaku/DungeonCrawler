@@ -18,8 +18,8 @@ import java.util.Random;
  */
 public class Room {
  
-    private ArrayList<Tile> _floorTiles;
-    private ArrayList<Tile> _wallTiles;
+    private final ArrayList<Tile> _floorTiles;
+    private final ArrayList<Tile> _wallTiles;
     public boolean isEntry = false;
     public boolean isExit = false;
     

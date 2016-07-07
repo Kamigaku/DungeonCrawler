@@ -43,7 +43,7 @@ public class TestLevel extends ALevel {
     
     @Override
     public void render(SpriteBatch batch) {
-        this._player.updateInput(); // Input that impatch velocity
+        this._player.updateInput(); // Input that impatct velocity
         this.world.step(1/60f, 6, 2); // World physics
         for(int i = 0; i < this._entities.size(); i++) // Update all the physics related bodies
             this._entities.get(i).updatePhysics();

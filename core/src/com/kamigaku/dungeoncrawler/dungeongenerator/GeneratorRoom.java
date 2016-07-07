@@ -143,7 +143,7 @@ public class GeneratorRoom {
         // Clear map from top to bottom
         for(int y = 0; y < map.length; y++) {
             for(int x = 0; x < map[y].length; x++) {
-                if(map[y][x] == ' ' && Utility.checkLineSurrondings(map, x, y, '#'))
+                if(map[y][x] == ' ' && (Utility.checkLineSurrondings(map, x, y, '#') || y  == 0 || y == map.length - 1))
                     map[y][x] = '#';
             }
         }
@@ -151,7 +151,7 @@ public class GeneratorRoom {
         // Clear map from bottom to top
         for(int y = map.length - 1; y >= 0; y--) {
             for(int x = 0; x < map[y].length; x++) {
-                if(map[y][x] == ' ' && Utility.checkLineSurrondings(map, x, y, '#'))
+                if(map[y][x] == ' ' && (Utility.checkLineSurrondings(map, x, y, '#') || y == 0 || y == map.length - 1))
                     map[y][x] = '#';
             }
         }
