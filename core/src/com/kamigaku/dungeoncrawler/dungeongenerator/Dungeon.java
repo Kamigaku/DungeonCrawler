@@ -1,5 +1,7 @@
 package com.kamigaku.dungeoncrawler.dungeongenerator;
 
+import com.kamigaku.dungeoncrawler.dungeongenerator.generator.GeneratorMap;
+
 public class Dungeon {
 
     public Map map;

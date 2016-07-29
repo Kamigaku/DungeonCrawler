@@ -14,7 +14,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
-import com.kamigaku.dungeoncrawler.dungeongenerator.GeneratorMap;
+import com.kamigaku.dungeoncrawler.dungeongenerator.generator.GeneratorMap;
 import com.kamigaku.dungeoncrawler.dungeongenerator.Map;
 import com.kamigaku.dungeoncrawler.listener.WrapperContactListener;
 import com.kamigaku.dungeoncrawler.hud.HUD;

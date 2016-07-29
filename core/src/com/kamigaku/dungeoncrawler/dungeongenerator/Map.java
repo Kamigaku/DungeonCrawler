@@ -6,7 +6,9 @@
 package com.kamigaku.dungeoncrawler.dungeongenerator;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.kamigaku.dungeoncrawler.tile.Tile;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -16,10 +18,11 @@ public class Map {
     
     private char[][] _map;
     private ArrayList<Room> _rooms;
+    private HashMap<Integer, Tile> _mapTiles;
     private Room _entryRoom;
     private Room _exitRoom;
     
-    public Map(char[][] map, ArrayList<Room> rooms) {
+    public Map(char[][] map, ArrayList<Room> rooms, HashMap<Integer, Tile> walls) {
         this._rooms = rooms;
         this._map = map;
         for(int i = 0; i < rooms.size(); i++) {

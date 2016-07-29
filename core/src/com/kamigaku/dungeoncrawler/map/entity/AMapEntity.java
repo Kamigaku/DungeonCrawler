@@ -82,7 +82,7 @@ public abstract class AMapEntity implements IMapEntity {
             for(int x = 0; x < this.schema[y].length; x++) {
                 if(this.schema[y][x] != '#')
                     this._tilesPosition.add(new Vector2(x + this.x, y + this.y));
-                if(this.schema[y][x] == 'W' && Utility.checkLineSurrondings(this.schema, x, y, 'W'))
+                if(this.schema[y][x] == 'W' && Utility.checkXorYSurrondings(this.schema, x, y, 'W'))
                     this._borders.add(new Vector2(x + this.x, y + this.y));
             }
         }

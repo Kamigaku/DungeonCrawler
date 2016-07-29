@@ -23,22 +23,47 @@ public abstract class Utility {
         return v3;
     }
     
-        public static boolean checkLineSurrondings(char[][] map, int x_origin, 
-                                                int y_origin, char search) {
-        boolean xAxis = false;
-        boolean yAxis = false;
-        if(x_origin - 1 >= 0 && x_origin + 1 < map[y_origin].length)
-            xAxis = (map[y_origin][x_origin + 1] == search || 
-                    map[y_origin][x_origin - 1] == search);
-        if(y_origin - 1 >= 0 && y_origin + 1 < map.length)
-            yAxis = (map[y_origin + 1][x_origin] == search || 
-                    map[y_origin - 1][x_origin] == search);
+    /***
+     * Permet de vérifier si les cases proches (haut, bas, gauche et droite) possède l'élément recherché.
+     * @param map La carte
+     * @param x_origin L'origine X
+     * @param y_origin L'origine Y
+     * @param search L'élément recherché
+     * @return TRUE si l'élément est présent, FALSE si non.
+     */
+    public static boolean checkXorYSurrondings(char[][] map, int x_origin, 
+                                            int y_origin, char search) {
+        boolean xAxis = checkXSurrondings(map, x_origin, y_origin, search);
+        boolean yAxis = checkYSurrondings(map, x_origin, y_origin, search);
         return (xAxis || yAxis);
+    }
+    
+    public static boolean checkXandYSurrondings(char[][] map, int x_origin, 
+                                            int y_origin, char search) {
+        boolean xAxis = checkXSurrondings(map, x_origin, y_origin, search);
+        boolean yAxis = checkYSurrondings(map, x_origin, y_origin, search);
+        return (xAxis && yAxis);
+    }
+    
+    public static boolean checkYSurrondings(char[][] map, int x_origin, int y_origin,
+                                            char search) {
+        if(y_origin - 1 >= 0 && y_origin + 1 < map.length)
+            return (map[y_origin + 1][x_origin] == search || 
+                    map[y_origin - 1][x_origin] == search);
+        return false;
+    }
+    
+    public static boolean checkXSurrondings(char[][] map, int x_origin, int y_origin,
+                                            char search) {
+        if(x_origin - 1 >= 0 && x_origin + 1 < map[y_origin].length)
+            return (map[y_origin][x_origin + 1] == search || 
+                    map[y_origin][x_origin - 1] == search);
+        return false;
     }
     
     public static boolean checkSquareSurrondings(char[][] map, int x_origin,
                                                  int y_origin, char search) {
-        boolean lines = Utility.checkLineSurrondings(map, x_origin, y_origin, search);
+        boolean lines = Utility.checkXorYSurrondings(map, x_origin, y_origin, search);
         if(x_origin - 1 >= 0) {
             if(y_origin - 1 >= 0 && map[y_origin - 1][x_origin - 1] == search)
                 return true;
@@ -63,11 +88,11 @@ public abstract class Utility {
            y_origin - 1 >= 0 && x_origin + 1 < map[y_origin - 1].length) { // top left 2 bottom right
             if(map[y_origin + 1][x_origin - 1] == search && 
                map[y_origin - 1][x_origin + 1] == search &&
-               !Utility.checkLineSurrondings(map, x_origin, y_origin, ' '))
+               !Utility.checkXorYSurrondings(map, x_origin, y_origin, ' '))
                 left_top_2_right_bot = true;
             if(map[y_origin + 1][x_origin + 1] == search && 
                map[y_origin - 1][x_origin - 1] == search &&
-               !Utility.checkLineSurrondings(map, x_origin, y_origin, ' '))
+               !Utility.checkXorYSurrondings(map, x_origin, y_origin, ' '))
                 right_top_2_left_bot = true;
         }
         if(left_top_2_right_bot && right_top_2_left_bot) return 2;

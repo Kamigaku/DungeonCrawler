@@ -6,10 +6,13 @@
 package com.kamigaku.dungeoncrawler.dungeongenerator;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 import com.kamigaku.dungeoncrawler.tile.*;
 import com.kamigaku.dungeoncrawler.utility.Utility;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -17,44 +20,111 @@ import java.util.Random;
  * @author Kamigaku
  */
 public class Room {
- 
-    private final ArrayList<Tile> _floorTiles;
-    private final ArrayList<Tile> _wallTiles;
+     
+    private final ArrayList<Vector2> _bordersWithoutAngle;
+    private ArrayList<Connection> _connections;
+    private final ArrayList<Layer> _layers;
+    
     public boolean isEntry = false;
     public boolean isExit = false;
     
-    public Room(ArrayList<Point> floor, ArrayList<Point> walls) {
-        this._floorTiles = new ArrayList<Tile>();
-        this._wallTiles = new ArrayList<Tile>();
+    public Room(ArrayList<Point> floor, ArrayList<Point> walls, char[][] mainMap, HashMap<Integer, Tile> wallsMap) {
+        this._layers = new ArrayList<Layer>();
+        this._bordersWithoutAngle = new ArrayList<Vector2>();
+        
+        this._layers.add(0, new Layer(Layer.GROUND));
         for(int i = 0; i < floor.size(); i++) {
-            this._floorTiles.add(new Ground("sprites/ground.png", floor.get(i).x, floor.get(i).y));
+            this._layers.get(0).addTile(new Ground("sprites/ground.png", floor.get(i).x, floor.get(i).y));
         }
+        
+        //sthis._layers.add(1, new Layer(Layer.WALL));
         for(int i = 0; i < walls.size(); i++) {
-            this._wallTiles.add(new Wall("sprites/wall.png", walls.get(i).x, walls.get(i).y));
+            //this._layers.get(1).addTile(new Wall("sprites/wall.png", walls.get(i).x, walls.get(i).y));
+            if(!wallsMap.containsKey(walls.get(i).x + (walls.get(i).y * mainMap[0].length))) {
+                wallsMap.put(walls.get(i).x + (walls.get(i).y * mainMap[0].length), 
+                        new Wall("sprites/wall.png", walls.get(i).x, walls.get(i).y));
+            }
+            if(!Utility.checkXandYSurrondings(mainMap, walls.get(i).x, walls.get(i).y, 'W')) {
+                this._bordersWithoutAngle.add(new Vector2(walls.get(i).x, walls.get(i).y));
+            }
         }
     }
     
     public void render(SpriteBatch batch) {
-        for(int i = 0; i < this._floorTiles.size(); i++) {
-            this._floorTiles.get(i).getGraphicsComponent().update(batch, 
-                    this._floorTiles.get(i).x, this._floorTiles.get(i).y);
+        for(int i = 0; i < this._layers.size(); i++) {
+            ArrayList<Tile> layerTiles = this._layers.get(i).getTiles();
+            for(int j = 0; j < layerTiles.size(); j++) {
+                layerTiles.get(j).getGraphicsComponent().update(batch, 
+                    layerTiles.get(j).x, layerTiles.get(j).y);
+            }
         }
-        for(int i = 0; i < this._wallTiles.size(); i++) {
-            this._wallTiles.get(i).getGraphicsComponent().update(batch, 
-                    this._wallTiles.get(i).x, this._wallTiles.get(i).y);
+    }
+    
+    ////// ADD FUNCTION
+    
+    public void addTileLayer(int index, String layerName, ArrayList<Tile> tiles) {
+        this._layers.add(index, new Layer(layerName, tiles));
+    }
+    
+    public void addTileToLayer(int index, Tile tile) {
+        this._layers.get(index).addTile(tile);
+    }
+    
+    public void addTileToLayer(String layerName, Tile tile) {
+        for(int i = 0; i < this._layers.size(); i++) {
+            if(this._layers.get(i).getTitle().equals(layerName)) {
+                this._layers.get(i).addTile(tile);
+                return;
+            }
         }
     }
     
-    public ArrayList<Tile> getFloorTiles() {
-        return this._floorTiles;
+    ////// REMOVE FUNCTION
+    
+    public void removeTilesAtPosition(Vector2 pos, boolean allLayer, String layerName) {
+        if(allLayer) {
+            for(int i = 0; i < this._layers.size(); i++) {
+                removeTilesFromLayer(this._layers.get(i), pos);
+            }
+        }
+        else {
+            Layer l = this.getLayer(layerName);
+            removeTilesFromLayer(l, pos);
+        }
     }
     
-    public ArrayList<Tile> getWallTiles() {
-        return this._wallTiles;
+    public void removeTilesFromLayer(Layer l, Vector2 pos) {
+        ArrayList<Tile> tiles = l.getTiles();
+        for(int i = tiles.size() - 1; i >= 0; i--) {
+            Vector2 curPos = tiles.get(i).getPosition();
+            if(curPos.x == pos.x && curPos.y == pos.y) {
+                Tile t = tiles.get(i);
+                if(t.getPhysicsComponent() != null)
+                    LevelManager.getLevelManager().getLevel().removeBody(t.getPhysicsComponent());
+                tiles.remove(i);
+            }
+        }
     }
     
+    ////// GET FUNCTION
+    
+    public Layer getLayer(String layerName) {
+        for(int i = 0; i < this._layers.size(); i++) {
+            if(this._layers.get(i).getTitle().equals(layerName)) {
+                return this._layers.get(i);
+            }
+        }
+        return null;
+    }
+    
+    public ArrayList<Vector2> getBordersWithoutAngles() {
+        return this._bordersWithoutAngle;
+    }
+        
     public Tile getRandomFloorTiles() {
-        return this._floorTiles.get(Utility.nextInt(new Random(this._floorTiles.size()), 0, this._floorTiles.size()));
+        Layer ground = this.getLayer(Layer.GROUND);
+        return ground.getTile(Utility.nextInt(new Random(
+                ground.getTiles().size()), 0, ground.getTiles().size()));
     }
     
 }
