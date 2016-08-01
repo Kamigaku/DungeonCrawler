@@ -1,6 +1,6 @@
 package com.kamigaku.dungeoncrawler.utility;
 
-import com.badlogic.gdx.math.Vector2;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -14,9 +14,9 @@ public abstract class Utility {
         }
     }
 
-    public static ArrayList<Vector2> commonCoords(ArrayList<Vector2> v1, ArrayList<Vector2> v2) {
-        ArrayList<Vector2> v3 = new ArrayList<Vector2>();
-        for(Vector2 v : v1) {
+    public static ArrayList<Point> commonCoords(ArrayList<Point> v1, ArrayList<Point> v2) {
+        ArrayList<Point> v3 = new ArrayList<Point>();
+        for(Point v : v1) {
             if(v2.contains(v))
                 v3.add(v);
         }

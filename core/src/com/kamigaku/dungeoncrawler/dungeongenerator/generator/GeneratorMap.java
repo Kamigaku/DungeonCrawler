@@ -7,6 +7,7 @@ import com.kamigaku.dungeoncrawler.dungeongenerator.Room;
 import com.kamigaku.dungeoncrawler.tile.Ground;
 import com.kamigaku.dungeoncrawler.tile.Layer;
 import com.kamigaku.dungeoncrawler.tile.Tile;
+import com.kamigaku.dungeoncrawler.tile.Wall;
 import com.kamigaku.dungeoncrawler.utility.Utility;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -14,12 +15,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class GeneratorMap {
-    
-    // Il faut modifier la gestion des murs
-    // En quelque part doit être présent une HashMap des murs
-    // et quand une room est créer, elle doit ajouter le mur dans la HashMap si il n'existe pas (avec comme Hash la position
-    // et ajouter l'ajouter dans une reference interne
-    
+  
     private char[][] _map;
     private final ArrayList<GeneratorRoom> _rooms;
     private final long _seed;
@@ -29,7 +25,12 @@ public class GeneratorMap {
     private ArrayList<Room> tRoom;
     private HashMap<Integer, Tile> _wallsMap;
     
+    private final ArrayList<Layer> _layers;
+    
     public GeneratorMap(long seed) {
+        this._layers = new ArrayList<Layer>();
+        
+        
         this._seed = seed;
         this._random = new Random(seed);
         this._rooms = new ArrayList<GeneratorRoom>();
@@ -77,14 +78,15 @@ public class GeneratorMap {
             y = p.y;
         }
         borders.clear();
+        
         this.reduceMap(map);
         this.removeUnnecessaryWalls();
         Utility.displayEntity(_map);
         this.createRooms();
         this.connectRooms();
         this.createEntrance();
-        this.boundRooms();
-        this.m = new Map(this._map, this.tRoom, this._wallsMap);
+        //this.boundRooms();
+        this.m = new Map(this._map, this.tRoom, this._layers);
     }
         
     private Point sumSizeRooms(ArrayList<GeneratorRoom> rooms) {
@@ -165,17 +167,23 @@ public class GeneratorMap {
         d.createNodes(true);
         Node[] nodes = d.getNodes();
         this.tRoom = new ArrayList<Room>();
+        
+        this._layers.add(0, new Layer(Layer.GROUND, this._map[0].length, this._map.length));
+        this._layers.add(1, new Layer(Layer.WALL, this._map[0].length, this._map.length));
         for(int i = 0; i < nodes.length; i++) {
-                if(nodes[i] != null && !nodes[i].fetched) {
-                    ArrayList<Point> ground = new ArrayList<Point>();
-                    ArrayList<Point> wall = new ArrayList<Point>();
-                    ground.add(new Point(Dijkstra.XValue(i, this._map[0].length), 
-                                         Dijkstra.YValue(i, this._map[0].length)));
-                    fetchNode(nodes[i], ground, wall, nodes);
-                    this.tRoom.add(new Room(ground, wall, this._map, this._wallsMap));
-                }
+            if(nodes[i] != null && !nodes[i].fetched) {
+                int xPos = Dijkstra.XValue(i, this._map[0].length);
+                int yPos = Dijkstra.YValue(i, this._map[0].length);
+                ArrayList<Point> wall = new ArrayList<Point>();
+                ArrayList<Point> ground = new ArrayList<Point>();
+                ground.add(new Point(xPos, yPos));
+                if(!this._layers.get(0).containsTile(this._layers.get(0).calculatePosition(xPos, yPos)))
+                    this._layers.get(0).addTile(new Ground("sprites/ground.png", xPos, yPos));
+                fetchNode(nodes[i], nodes, ground, wall);
+
+                this.tRoom.add(new Room(this._map, ground, wall));
             }
-        System.out.println(this.tRoom.size());
+        }
     }
     
     private void connectRooms() {
@@ -203,9 +211,9 @@ public class GeneratorMap {
         int valueDistance = 0;
         for(int i = 0; i < this.tRoom.size(); i++) {
             for(int j = i + 1; j < this.tRoom.size(); j++) {
-                Vector2 p1 = this.tRoom.get(i).getRandomFloorTiles().getPosition();
-                Vector2 p2 = this.tRoom.get(j).getRandomFloorTiles().getPosition();
-                if(Point.distance(p1.x, p1.y, p2.x, p2.y) > valueDistance) {
+                Point p1 = this.tRoom.get(i).getFirstFloorTilesPosition();
+                Point p2 = this.tRoom.get(j).getFirstFloorTilesPosition();
+                if(p1.distance(p2.x, p2.y) > valueDistance) {
                     indexRooms.x = i;
                     indexRooms.y = j;
                 }
@@ -215,38 +223,37 @@ public class GeneratorMap {
         this.tRoom.get(indexRooms.x).isExit = true;
     }
     
-    private void fetchNode(Node origin, ArrayList<Point> ground, ArrayList<Point> wall, Node[] nodes) {
+    private void fetchNode(Node origin, Node[] nodes, ArrayList<Point> ground, ArrayList<Point> wall) {
         origin.fetched = true;
         for(int i = 0; i < origin.neighbors.size(); i++) {
             Point p = new Point(Dijkstra.XValue(origin.neighbors.get(i), this._map[0].length), 
                                 Dijkstra.YValue(origin.neighbors.get(i), this._map[0].length));
             if(this._map[p.y][p.x] == 'W') {
-                if(!wall.contains(p))
-                    wall.add(p);
+                if(!this._layers.get(1).containsTile(this._layers.get(1).calculatePosition(p.x, p.y)))
+                    this._layers.get(1).addTile(new Wall("sprites/wall.png", p.x, p.y));
+                wall.add(p);                
             }
             else if(this._map[p.y][p.x] == ' ' && !nodes[origin.neighbors.get(i)].fetched) {
+                if(!this._layers.get(0).containsTile(this._layers.get(0).calculatePosition(p.x, p.y)))
+                    this._layers.get(0).addTile(new Ground("sprites/ground.png", p.x, p.y));
                 ground.add(p);
-                fetchNode(nodes[origin.neighbors.get(i)], ground, wall, nodes);
             }
         }
     }
     
+    // BUG ICI
     private void boundRooms() {
         for(int i = 0; i < this.tRoom.size(); i++) {
             Room r1 = this.tRoom.get(i);
             for(int j = i + 1; j < this.tRoom.size(); j++) {
                 Room r2 = this.tRoom.get(j);
-                ArrayList<Vector2> commonCoords = Utility.commonCoords(r1.getBordersWithoutAngles(),
+                ArrayList<Point> commonCoords = Utility.commonCoords(r1.getBordersWithoutAngles(),
                                                                        r2.getBordersWithoutAngles());
                 if(commonCoords.size() > 1) {
-                    // Petit soucis sur les coordoonnées communes, je pense qu'il ne prend que les angles, pas bon ! (inverse normalement !)
                     int wall = Utility.nextInt(new Random(commonCoords.size()), 0, commonCoords.size());
-                    r1.removeTilesAtPosition(commonCoords.get(wall), true, null);
-                    r2.removeTilesAtPosition(commonCoords.get(wall), true, null);
-                    r1.addTileToLayer(Layer.GROUND, new Ground("sprites/ground.png", 
+                    this._layers.get(1).removeTilesAtPosition(commonCoords.get(wall));
+                    this._layers.get(0).addTile(new Ground("sprites/ground.png", 
                             (int)commonCoords.get(wall).x, (int)commonCoords.get(wall).y));
-                    // ajouter une connection
-                    // supprimer l'ancien wall ?
                 }
             }
         }

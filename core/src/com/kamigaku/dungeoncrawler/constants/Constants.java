@@ -1,7 +1,5 @@
 package com.kamigaku.dungeoncrawler.constants;
 
-import com.kamigaku.dungeoncrawler.map.entity.Connection.ConnectionType;
-
 public final class Constants {
     
     public static final boolean DEBUG = false;
@@ -22,11 +20,7 @@ public final class Constants {
                                                 MapType.SHIP, MapType.SHIP,
                                                 MapType.LAB,
                                                 MapType.TODEFINE };
-    
-    public static final ConnectionType[] CONNECTION_POSSIBILITY = new ConnectionType[] {
-                                            ConnectionType.DOOR, ConnectionType.EMPTY, ConnectionType.LOCKED_DOOR
-                                        };
-    
+        
     public static final int VIRTUAL_HEIGHT = 20;
     
     public static final float PLAYER_SPEED = 10;

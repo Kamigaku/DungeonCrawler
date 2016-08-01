@@ -1,51 +1,86 @@
 package com.kamigaku.dungeoncrawler.tile;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.kamigaku.dungeoncrawler.singleton.LevelManager;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Layer {
     
-    // Changer Layer, dans le constructeur ajouter la taille X et Y de la map
-    
+    private int _sizeX;
+    private int _sizeY;
     
     public static final String WALL = "Wall";
     public static final String GROUND = "Ground";
  
-    private final String _title;
-    private final ArrayList<Tile> _tiles;
-    private final HashMap<Integer, Tile> _ttiles;
+    private String _title;
+    private final HashMap<Integer, Tile> _tiles;
     
-    public Layer(String title) {
-        this._title = title;
-        this._tiles = new ArrayList<Tile>();
-        this._ttiles = new HashMap<Integer, Tile>();
+    public Layer(String title, int sizeX, int sizeY) {
+        commonInit(title, sizeX, sizeY);
+        this._tiles = new HashMap<Integer, Tile>();
     }
     
-    public Layer(String title, ArrayList<Tile> tiles) {
-        this._title = title;
+    public Layer(String title, int sizeX, int sizeY, HashMap<Integer, Tile> tiles) {
+        commonInit(title, sizeX, sizeY);
         this._tiles = tiles;
-        this._ttiles = new HashMap<Integer, Tile>();
+    }
+    
+    private void commonInit(String title, int sizeX, int sizeY) {
+        this._title = title;
+        this._sizeX = sizeX;
+        this._sizeY = sizeY;
+    }
+    
+    public void render(SpriteBatch batch) {
+        //System.out.println("Je suis le layer " + this._title + " et j'ai " + _tiles.size());
+        for(Integer key : this._tiles.keySet()) {
+            this._tiles.get(key).getGraphicsComponent().update(batch, 
+                this._tiles.get(key).x, this._tiles.get(key).y);
+        }
     }
     
     public void addTile(Tile t) {
-        this._tiles.add(t);
-        //this._ttiles.put(, t)
+        this._tiles.put(calculatePosition(t.x, t.y), t);
     }
     
     public void addTiles(ArrayList<Tile> tiles) {
-        this._tiles.addAll(tiles);
+        for(int i = 0; i < tiles.size(); i++)
+            this._tiles.put(calculatePosition(tiles.get(i).x, tiles.get(i).y), 
+                    tiles.get(i));
     }
     
-    public ArrayList<Tile> getTiles() {
+    public void removeTilesAtPosition(Point pos) {
+        int key = this.calculatePosition(pos.x, pos.y);
+        Tile t = this._tiles.get(key);
+        if(t != null) {
+            if(t.getPhysicsComponent() != null) {
+                LevelManager.getLevelManager().getLevel().removeBody(t.getPhysicsComponent());
+            }
+            this._tiles.remove(key, t);
+        }
+    }
+    
+    public HashMap<Integer, Tile> getTiles() {
         return this._tiles;
     }
     
     public Tile getTile(int index) {
-        return this._tiles.get(index);
+        ArrayList<Integer> keys = new ArrayList<Integer>(this._tiles.keySet());
+        return this._tiles.get(keys.get(index));
     }
     
     public String getTitle() {
         return this._title;
+    }
+    
+    public boolean containsTile(int key) {
+        return this._tiles.containsKey(key);
+    }
+    
+    public int calculatePosition(int posX, int posY) {
+        return (posY * this._sizeX) + posX;
     }
     
     

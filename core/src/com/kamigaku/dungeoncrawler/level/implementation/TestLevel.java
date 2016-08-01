@@ -9,7 +9,7 @@ import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
 import com.kamigaku.dungeoncrawler.level.ALevel;
-import com.kamigaku.dungeoncrawler.tile.Tile;
+import java.awt.Point;
 import java.util.ArrayList;
 
 public class TestLevel extends ALevel {
@@ -19,15 +19,16 @@ public class TestLevel extends ALevel {
 
     @Override
     public void init() {
-        //Chargement des textures
+                                                                                //Chargement des textures
         this.textureLoading();
         
         super.baseLoading();
        
         this._entities = new ArrayList<IEntity>();
-        //this._player = new Player("sprites/player.png", 1f, 2f);
-        Tile randomTile = this.map.getEntryRoom().getRandomFloorTiles();
-        this._player = new Player(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), randomTile.x, randomTile.y);
+        Point randomTile = this.map.getEntryRoom().getFirstFloorTilesPosition();
+        this._player = new Player(
+                new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 
+                randomTile.x, randomTile.y);
         this._entities.add(this._player);
     }
     
@@ -43,18 +44,19 @@ public class TestLevel extends ALevel {
     
     @Override
     public void render(SpriteBatch batch) {
-        this._player.updateInput(); // Input that impatct velocity
-        this.world.step(1/60f, 6, 2); // World physics
-        for(int i = 0; i < this._entities.size(); i++) // Update all the physics related bodies
+        this._player.updateInput();                                             // Input that impatct velocity
+        this.world.step(1/60f, 6, 2);                                           // World physics
+        for(int i = 0; i < this._entities.size(); i++)                          // Update all the physics related bodies
             this._entities.get(i).updatePhysics();
-        this.camera.position.set(this._player.getPhysicsComponent().getPosition().x,
+        this.camera.position.set(
+                              this._player.getPhysicsComponent().getPosition().x,
                               this._player.getPhysicsComponent().getPosition().y,
-                              this.camera.position.z); // Setting the camera position
-        this.camera.update(); // Updating the camera position
+                              this.camera.position.z);                          // Setting the camera position
+        this.camera.update();                                                   // Updating the camera position
         batch.setProjectionMatrix(this.camera.combined);
-        this._entities.sort(new RenderingComparator()); // Rendering on depthAxis
-        this.map.render(batch); // Map graphics
-        for(int i = 0; i < this._entities.size(); i++) // Entities graphics
+        this._entities.sort(new RenderingComparator());                         // Rendering on depthAxis
+        this.map.render(batch);                                                 // Map graphics
+        for(int i = 0; i < this._entities.size(); i++)                          // Entities graphics
             this._entities.get(i).updateGraphics(batch);
         batch.end();
         if(Constants.DEBUG)
