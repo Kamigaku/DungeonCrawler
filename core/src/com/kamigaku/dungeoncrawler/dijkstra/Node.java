@@ -17,11 +17,15 @@ import java.util.ArrayList;
         public ArrayList<Integer> neighbors;
         public boolean fetched;
         public boolean isCrossable;
+        public int shortestDistance;
+        public int previous;
 
         public Node(int value) {
             this.value = value;
             this.neighbors = new ArrayList<Integer>();
             this.fetched = false;
+            this.shortestDistance = 0;
+            this.previous = -1;
         }
 
         public void addNeighbors(Integer value) {

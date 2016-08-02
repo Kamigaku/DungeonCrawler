@@ -44,19 +44,10 @@ public class GeneratorMap {
         // Map type
         int type = Integer.parseInt("" + infoMapSeed.charAt(infoMapSeed.length() - 1));
 
-        // Nombre de room
-        // [10 ; 99]
-        int numberRoom = Utility.nextInt(_random, 30, 50);
-        for(int i = 0; i < numberRoom; i++) {
-            GeneratorRoom r = new GeneratorRoom(this._random.nextLong());
-            if(r.isValid) {
-                this._rooms.add(r);
-            }
-            else
-                i--;
-        }
+        this.generateRooms();                                                   // Générer les rooms
         
         Point sizeMap = sumSizeRooms(_rooms);
+        
         char[][] map = new char[sizeMap.y][sizeMap.x];
         Utility.fillArray(map, '#');
         ArrayList<Point> borders = new ArrayList<Point>();
@@ -79,14 +70,29 @@ public class GeneratorMap {
         }
         borders.clear();
         
-        this.reduceMap(map);
-        this.removeUnnecessaryWalls();
-        Utility.displayEntity(_map);
-        this.createRooms();
-        this.connectRooms();
-        this.createEntrance();
-        //this.boundRooms();
+        this.reduceMap(map);                                                    // Réduit la taille de la carte
+        this.removeUnnecessaryWalls();                                          // Retire les murs qui ne sont pas nécessaires
+        this.createRooms();                                                     // Créer les vraies salles
+        this.connectRooms();                                                    // Connecte les salles entres elles
+        this.createEntrance();                                                  // Créer l'entrée du donjon
+        this.boundRooms();                                                      // Connecte les salles avec leurs voisines
+        this.entryToExit();                                                     // Détermine le chemin entre l'entrée et la salle finale
+        Utility.displayEntityReverseY(this._map);
         this.m = new Map(this._map, this.tRoom, this._layers);
+    }
+    
+    private void generateRooms() {
+        // Nombre de room
+        // [10 ; 99]
+        int numberRoom = Utility.nextInt(_random, 30, 50);
+        for(int i = 0; i < numberRoom; i++) {
+            GeneratorRoom r = new GeneratorRoom(this._random.nextLong());
+            if(r.isValid) {
+                this._rooms.add(r);
+            }
+            else
+                i--;
+        }
     }
         
     private Point sumSizeRooms(ArrayList<GeneratorRoom> rooms) {
@@ -181,7 +187,26 @@ public class GeneratorMap {
                     this._layers.get(0).addTile(new Ground("sprites/ground.png", xPos, yPos));
                 fetchNode(nodes[i], nodes, ground, wall);
 
-                this.tRoom.add(new Room(this._map, ground, wall));
+                this.tRoom.add(new Room(this._map, ground, wall, this._random));
+            }
+        }
+    }
+    
+    private void fetchNode(Node origin, Node[] nodes, ArrayList<Point> ground, ArrayList<Point> wall) {
+        origin.fetched = true;
+        for(int i = 0; i < origin.neighbors.size(); i++) {
+            Point p = new Point(Dijkstra.XValue(origin.neighbors.get(i), this._map[0].length), 
+                                Dijkstra.YValue(origin.neighbors.get(i), this._map[0].length));
+            if(this._map[p.y][p.x] == 'W') {
+                if(!this._layers.get(1).containsTile(this._layers.get(1).calculatePosition(p.x, p.y)))
+                    this._layers.get(1).addTile(new Wall("sprites/wall.png", p.x, p.y));
+                wall.add(p);                
+            }
+            else if(this._map[p.y][p.x] == ' ' && !nodes[origin.neighbors.get(i)].fetched) {
+                if(!this._layers.get(0).containsTile(this._layers.get(0).calculatePosition(p.x, p.y)))
+                    this._layers.get(0).addTile(new Ground("sprites/ground.png", p.x, p.y));
+                ground.add(p);
+                fetchNode(nodes[origin.neighbors.get(i)], nodes, ground, wall);
             }
         }
     }
@@ -222,28 +247,10 @@ public class GeneratorMap {
         this.tRoom.get(indexRooms.x).isEntry = true;
         this.tRoom.get(indexRooms.x).isExit = true;
     }
-    
-    private void fetchNode(Node origin, Node[] nodes, ArrayList<Point> ground, ArrayList<Point> wall) {
-        origin.fetched = true;
-        for(int i = 0; i < origin.neighbors.size(); i++) {
-            Point p = new Point(Dijkstra.XValue(origin.neighbors.get(i), this._map[0].length), 
-                                Dijkstra.YValue(origin.neighbors.get(i), this._map[0].length));
-            if(this._map[p.y][p.x] == 'W') {
-                if(!this._layers.get(1).containsTile(this._layers.get(1).calculatePosition(p.x, p.y)))
-                    this._layers.get(1).addTile(new Wall("sprites/wall.png", p.x, p.y));
-                wall.add(p);                
-            }
-            else if(this._map[p.y][p.x] == ' ' && !nodes[origin.neighbors.get(i)].fetched) {
-                if(!this._layers.get(0).containsTile(this._layers.get(0).calculatePosition(p.x, p.y)))
-                    this._layers.get(0).addTile(new Ground("sprites/ground.png", p.x, p.y));
-                ground.add(p);
-            }
-        }
-    }
-    
-    // BUG ICI
+
     private void boundRooms() {
         for(int i = 0; i < this.tRoom.size(); i++) {
+            boolean gotNeighboor = false;
             Room r1 = this.tRoom.get(i);
             for(int j = i + 1; j < this.tRoom.size(); j++) {
                 Room r2 = this.tRoom.get(j);
@@ -251,12 +258,54 @@ public class GeneratorMap {
                                                                        r2.getBordersWithoutAngles());
                 if(commonCoords.size() > 1) {
                     int wall = Utility.nextInt(new Random(commonCoords.size()), 0, commonCoords.size());
-                    this._layers.get(1).removeTilesAtPosition(commonCoords.get(wall));
+                    /*this._layers.get(1).removeTileAtPosition(commonCoords.get(wall));
                     this._layers.get(0).addTile(new Ground("sprites/ground.png", 
-                            (int)commonCoords.get(wall).x, (int)commonCoords.get(wall).y));
+                            commonCoords.get(wall).x, commonCoords.get(wall).y));*/
+                    r1.addNeighboorRoom(r2);
+                    r2.addNeighboorRoom(r1);
+                    gotNeighboor = true;
                 }
             }
+            if(!gotNeighboor) {
+                int indexClosestRoom = 0;
+                double shortestDistance = Double.MAX_VALUE;
+                for(int j = 0; j < this.tRoom.size(); j++) {
+                    if(j != i) {
+                        double v = this.tRoom.get(i).origin.distance(this.tRoom.get(j).origin);
+                        indexClosestRoom = v < shortestDistance ? j : indexClosestRoom;
+                    }
+                }
+                Dijkstra d = new Dijkstra(this._map);
+                d.addRule(new Rule('#', '#', true, false));
+                d.createNodes(false);
+                
+                int index1 = Utility.nextInt(new Random(this.tRoom.get(i).getSeed()), 0, 
+                        this.tRoom.get(i).getBordersWithoutAngles().size());
+                int index2 = Utility.nextInt(new Random(this.tRoom.get(indexClosestRoom).getSeed()), 0, 
+                        this.tRoom.get(indexClosestRoom).getBordersWithoutAngles().size());
+                Point p1 = this.tRoom.get(i).getBordersWithoutAngles().get(index1);
+                Point p2 = this.tRoom.get(indexClosestRoom).getBordersWithoutAngles().get(index2);
+                
+                if(p1.x - 1 <= 0 && this._map[p1.x - 1][p1.y] == '#') p1.x -= 1;
+                else if(p1.x + 1 > this._map[0].length && this._map[p1.x + 1][p1.y] == '#') p1.x += 1;
+                else if(p1.y - 1 <= 0 && this._map[p1.x][p1.y - 1] == '#') p1.x -= 1;
+                else if(p1.y + 1 > this._map.length && this._map[p1.x][p1.y + 1] == '#') p1.x += 1;
+                
+                if(p2.x - 1 <= 0 && this._map[p2.x - 1][p2.y] == '#') p2.x -= 1;
+                else if(p2.x + 1 > this._map[0].length && this._map[p2.x + 1][p2.y] == '#') p2.x += 1;
+                else if(p2.y - 1 <= 0 && this._map[p2.x][p2.y - 1] == '#') p2.x -= 1;
+                else if(p2.y + 1 > this._map.length && this._map[p2.x][p2.y + 1] == '#') p2.x += 1;
+                ArrayList<Point> corridor = d.shortestPathFromTo(p1, p2);
+                for(int k = 0; k < corridor.size(); k++)
+                    this._map[corridor.get(k).y][corridor.get(k).x] = 'C';
+            }
         }
+        
+        // TODO : parcourir les salles, si pas de voisin, tracer un chemin vers la plus proche
+    }
+    
+    private void entryToExit() {
+        
     }
     
     public Map getMap() {

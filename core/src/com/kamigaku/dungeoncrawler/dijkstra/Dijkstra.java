@@ -2,6 +2,7 @@ package com.kamigaku.dungeoncrawler.dijkstra;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Dijkstra {
 
@@ -14,7 +15,7 @@ public class Dijkstra {
         this._rules = new ArrayList<Rule>();
         this._nodes = new Node[this._map[0].length * this._map.length];
     }
-    
+        
     /**
      * Créer les noeuds pour le tableau passé
      * @param doAngles (boolean) : si TRUE, l'algorithme passera aussi dans les angles haut gauche, haut droite, bas gauche et bas droite.
@@ -61,8 +62,58 @@ public class Dijkstra {
     }
     
     public ArrayList<Point> shortestPathFromTo(Point from, Point to) {
-        ArrayList<Point> path = new ArrayList<Point>();
-        return path;
+        int valueOrigine = Dijkstra.XYValue(from.x, from.y, this._map[0].length);
+        int valueTarget = Dijkstra.XYValue(to.x, to.y, this._map[0].length);
+
+        resetDistance();
+
+        Node currentNode = this._nodes[valueOrigine];
+        currentNode.previous = valueOrigine;
+        boolean found = false;
+
+        ArrayList<Node> ordereredDistance = new ArrayList<Node>();
+        while (!found) {
+            int shortDistance = currentNode.shortestDistance + 1; // La valeur la plus petite possible
+            for (int i = 0; i < currentNode.neighbors.size(); i++) { // Je parcours tous mes voisins
+                Node neighbor = this._nodes[currentNode.neighbors.get(i)];
+                if (!neighbor.fetched) { // Est-ce qu'il n'a jamais été parcouru ?
+                    if (neighbor.shortestDistance > 0) { // Est-ce que le noeud voisin a déjà été parcouru ?
+                                                    if (neighbor.shortestDistance > shortDistance) { // Le noeud voisin possède un parcours qui était plus long
+                            neighbor.shortestDistance = shortDistance;
+                            neighbor.previous = currentNode.value;
+                        }
+                    }
+                    else { // Le noeud voisin n'a jamais été parcouru, j'initialise sa valeur et son précédent
+                                                    neighbor.shortestDistance = shortDistance;
+                        neighbor.previous = currentNode.value;
+                        ordereredDistance.add(neighbor);
+                    }
+                }
+            }
+
+            this._nodes[currentNode.value].fetched = true;
+            ordereredDistance.sort(new Comparator<Node>() {
+                @Override
+                public int compare(Node n1, Node n2) {
+                    return n1.shortestDistance - n2.shortestDistance;
+                }
+            });
+            currentNode = ordereredDistance.get(0);
+            ordereredDistance.remove(0);
+            if (currentNode.value == valueTarget) {
+                found = true;
+            }
+        }
+
+        // Parcours inversé
+        ArrayList<Point> reversePath = new ArrayList<Point>();
+        while (currentNode.value != valueOrigine) {
+            int yPrevious = Dijkstra.YValue(currentNode.value, this._map[0].length);
+            int xPrevious = Dijkstra.XValue(currentNode.value, this._map[0].length);
+            reversePath.add(new Point(xPrevious, yPrevious));
+            currentNode = this._nodes[currentNode.previous];
+        }
+        return reversePath;
     }
     
     /**
@@ -121,6 +172,14 @@ public class Dijkstra {
                 return true;
         }
         return false;
+    }
+    
+    public void resetDistance() {
+        for(int i = 0; i < this._nodes.length; i++)
+            if(this._nodes[i] != null) {
+                this._nodes[i].shortestDistance = 0;
+                this._nodes[i].previous = -1;
+            }
     }
     
     public void addRule(Rule r) {

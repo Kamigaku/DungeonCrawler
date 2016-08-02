@@ -51,14 +51,14 @@ public class Layer {
                     tiles.get(i));
     }
     
-    public void removeTilesAtPosition(Point pos) {
+    public void removeTileAtPosition(Point pos) {
         int key = this.calculatePosition(pos.x, pos.y);
         Tile t = this._tiles.get(key);
         if(t != null) {
             if(t.getPhysicsComponent() != null) {
                 LevelManager.getLevelManager().getLevel().removeBody(t.getPhysicsComponent());
             }
-            this._tiles.remove(key, t);
+            this._tiles.remove(key);
         }
     }
     
