@@ -1,6 +1,5 @@
 package com.kamigaku.dungeoncrawler.dungeongenerator.generator;
 
-import com.badlogic.gdx.math.Vector2;
 import com.kamigaku.dungeoncrawler.dijkstra.*;
 import com.kamigaku.dungeoncrawler.dungeongenerator.Map;
 import com.kamigaku.dungeoncrawler.dungeongenerator.Room;
@@ -76,8 +75,8 @@ public class GeneratorMap {
         this.connectRooms();                                                    // Connecte les salles entres elles
         this.createEntrance();                                                  // Créer l'entrée du donjon
         this.boundRooms();                                                      // Connecte les salles avec leurs voisines
+        Utility.displayEntity(this._map);
         this.entryToExit();                                                     // Détermine le chemin entre l'entrée et la salle finale
-        Utility.displayEntityReverseY(this._map);
         this.m = new Map(this._map, this.tRoom, this._layers);
     }
     
@@ -136,6 +135,10 @@ public class GeneratorMap {
                 }
             }
         }
+        widthMinRoom -= 1;
+        heightMinRoom -= 1;
+        widthMaxRoom += 1;
+        heightMaxRoom += 1;
         this._map = new char[heightMaxRoom - heightMinRoom + 1][widthMaxRoom - widthMinRoom + 1];
         for(int y = heightMinRoom; y <= heightMaxRoom; y++) {
             for(int x = widthMinRoom; x <= widthMaxRoom; x++) {
@@ -250,58 +253,74 @@ public class GeneratorMap {
 
     private void boundRooms() {
         for(int i = 0; i < this.tRoom.size(); i++) {
-            boolean gotNeighboor = false;
             Room r1 = this.tRoom.get(i);
             for(int j = i + 1; j < this.tRoom.size(); j++) {
                 Room r2 = this.tRoom.get(j);
                 ArrayList<Point> commonCoords = Utility.commonCoords(r1.getBordersWithoutAngles(),
                                                                        r2.getBordersWithoutAngles());
-                if(commonCoords.size() > 1) {
-                    int wall = Utility.nextInt(new Random(commonCoords.size()), 0, commonCoords.size());
+                if(commonCoords.size() > 0) {
+                    //int wall = Utility.nextInt(new Random(commonCoords.size()), 0, commonCoords.size());
                     /*this._layers.get(1).removeTileAtPosition(commonCoords.get(wall));
                     this._layers.get(0).addTile(new Ground("sprites/ground.png", 
                             commonCoords.get(wall).x, commonCoords.get(wall).y));*/
                     r1.addNeighboorRoom(r2);
                     r2.addNeighboorRoom(r1);
-                    gotNeighboor = true;
                 }
             }
-            if(!gotNeighboor) {
+            if(r1.getConnections().isEmpty()) { // Faire en sorte que les deux mêmes salles ne soient pas connectés
                 int indexClosestRoom = 0;
                 double shortestDistance = Double.MAX_VALUE;
                 for(int j = 0; j < this.tRoom.size(); j++) {
                     if(j != i) {
                         double v = this.tRoom.get(i).origin.distance(this.tRoom.get(j).origin);
-                        indexClosestRoom = v < shortestDistance ? j : indexClosestRoom;
+                        if(v < shortestDistance) {
+                            indexClosestRoom = j;
+                            shortestDistance = v;
+                        }                        
                     }
                 }
-                Dijkstra d = new Dijkstra(this._map);
-                d.addRule(new Rule('#', '#', true, false));
-                d.createNodes(false);
-                
-                int index1 = Utility.nextInt(new Random(this.tRoom.get(i).getSeed()), 0, 
-                        this.tRoom.get(i).getBordersWithoutAngles().size());
-                int index2 = Utility.nextInt(new Random(this.tRoom.get(indexClosestRoom).getSeed()), 0, 
-                        this.tRoom.get(indexClosestRoom).getBordersWithoutAngles().size());
-                Point p1 = this.tRoom.get(i).getBordersWithoutAngles().get(index1);
-                Point p2 = this.tRoom.get(indexClosestRoom).getBordersWithoutAngles().get(index2);
-                
-                if(p1.x - 1 <= 0 && this._map[p1.x - 1][p1.y] == '#') p1.x -= 1;
-                else if(p1.x + 1 > this._map[0].length && this._map[p1.x + 1][p1.y] == '#') p1.x += 1;
-                else if(p1.y - 1 <= 0 && this._map[p1.x][p1.y - 1] == '#') p1.x -= 1;
-                else if(p1.y + 1 > this._map.length && this._map[p1.x][p1.y + 1] == '#') p1.x += 1;
-                
-                if(p2.x - 1 <= 0 && this._map[p2.x - 1][p2.y] == '#') p2.x -= 1;
-                else if(p2.x + 1 > this._map[0].length && this._map[p2.x + 1][p2.y] == '#') p2.x += 1;
-                else if(p2.y - 1 <= 0 && this._map[p2.x][p2.y - 1] == '#') p2.x -= 1;
-                else if(p2.y + 1 > this._map.length && this._map[p2.x][p2.y + 1] == '#') p2.x += 1;
-                ArrayList<Point> corridor = d.shortestPathFromTo(p1, p2);
-                for(int k = 0; k < corridor.size(); k++)
-                    this._map[corridor.get(k).y][corridor.get(k).x] = 'C';
+                connectTwoRooms(this.tRoom.get(i), this.tRoom.get(indexClosestRoom));
             }
         }
-        
-        // TODO : parcourir les salles, si pas de voisin, tracer un chemin vers la plus proche
+    }
+    
+    private void connectTwoRooms(Room r1, Room r2) {
+        Dijkstra d = new Dijkstra(this._map);
+        d.addRule(new Rule('#', '#', true, false));
+        d.createNodes(false);
+        Random r = new Random(r1.getSeed());
+        Point p1 = null;
+        Point p2 = null;
+        Point tempPoint = null;
+        do {
+            int index1 = Utility.nextInt(r, 0, 
+                    r1.getBordersWithoutAngles().size());
+            p1 = r1.getBordersWithoutAngles().get(index1);
+            tempPoint = new Point(p1.x, p1.y);
+            if(p1.x - 1 >= 0 && this._map[p1.y][p1.x - 1] == '#') p1.x -= 1;
+            else if(p1.x + 1 < this._map[0].length && this._map[p1.y][p1.x + 1] == '#') p1.x += 1;
+            else if(p1.y - 1 >= 0 && this._map[p1.y - 1][p1.x] == '#') p1.y -= 1;
+            else if(p1.y + 1 < this._map.length && this._map[p1.y + 1][p1.x] == '#') p1.y += 1;
+        } while(p1.x == tempPoint.x && p1.y == tempPoint.y);
+
+        r = new Random(r2.getSeed());
+        do {
+            int index2 = Utility.nextInt(r, 0, 
+                    r2.getBordersWithoutAngles().size());
+            p2 = r2.getBordersWithoutAngles().get(index2);
+            tempPoint = new Point(p2.x, p2.y);
+            if(p2.x - 1 >= 0 && this._map[p2.y][p2.x - 1] == '#') p2.x -= 1;
+            else if(p2.x + 1 < this._map[0].length && this._map[p2.y][p2.x + 1] == '#') p2.x += 1;
+            else if(p2.y - 1 >= 0 && this._map[p2.y - 1][p2.x] == '#') p2.y -= 1;
+            else if(p2.y + 1 < this._map.length && this._map[p2.y + 1][p2.x] == '#') p2.y += 1;
+        } while(p2.x == tempPoint.x && p2.y == tempPoint.y);
+
+        System.out.println(p1 + " | " + p2);
+        ArrayList<Point> corridor = d.shortestPathFromTo(p1, p2);
+        for(int k = 0; k < corridor.size(); k++)
+            this._map[corridor.get(k).y][corridor.get(k).x] = 'C';
+        r1.addNeighboorRoom(r2);
+        r2.addNeighboorRoom(r1);
     }
     
     private void entryToExit() {
