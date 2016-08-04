@@ -47,23 +47,18 @@ public abstract class Utility {
     
     public static boolean checkYSurrondings(char[][] map, int x_origin, int y_origin,
                                             char search) {
-        if(y_origin - 1 >= 0 && y_origin + 1 < map.length)
-            return (map[y_origin + 1][x_origin] == search || 
-                    map[y_origin - 1][x_origin] == search);
-        return false;
+        return (y_origin - 1 >= 0 && map[y_origin - 1][x_origin] == search) || 
+               (y_origin + 1 < map.length && map[y_origin + 1][x_origin] == search);
     }
     
     public static boolean checkXSurrondings(char[][] map, int x_origin, int y_origin,
                                             char search) {
-        if(x_origin - 1 >= 0 && x_origin + 1 < map[y_origin].length)
-            return (map[y_origin][x_origin + 1] == search || 
-                    map[y_origin][x_origin - 1] == search);
-        return false;
+        return (x_origin - 1 >= 0 && map[y_origin][x_origin - 1] == search) || 
+               (x_origin + 1 < map[y_origin].length && map[y_origin][x_origin + 1] == search);
     }
     
     public static boolean checkSquareSurrondings(char[][] map, int x_origin,
                                                  int y_origin, char search) {
-        boolean lines = Utility.checkXorYSurrondings(map, x_origin, y_origin, search);
         if(x_origin - 1 >= 0) {
             if(y_origin - 1 >= 0 && map[y_origin - 1][x_origin - 1] == search)
                 return true;
@@ -73,10 +68,10 @@ public abstract class Utility {
         if(x_origin + 1 < map[y_origin].length) {
             if(y_origin - 1 >= 0 && map[y_origin - 1][x_origin + 1] == search)
                 return true;
-            else if(y_origin + 1 < map.length && map[y_origin + 1][x_origin + 1] == search)
+            if(y_origin + 1 < map.length && map[y_origin + 1][x_origin + 1] == search)
                 return true;
         }
-        return lines;
+        return Utility.checkXorYSurrondings(map, x_origin, y_origin, search);
     }
     
     public static int checkDiagonalsSurrondings(char[][] map, int x_origin,

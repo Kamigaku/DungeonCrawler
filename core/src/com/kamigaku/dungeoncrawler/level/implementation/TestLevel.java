@@ -19,8 +19,8 @@ public class TestLevel extends ALevel {
 
     @Override
     public void init() {
-                                                                                //Chargement des textures
-        this.textureLoading();
+                                                                                
+        this.textureLoading();                                                  //Chargement des textures
         
         super.baseLoading();
        

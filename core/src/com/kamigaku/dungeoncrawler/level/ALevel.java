@@ -74,8 +74,8 @@ public abstract class ALevel implements ILevel {
                 new ResolutionFileResolver.Resolution(1920, 1080, "1080"));
         this.world = new World(new Vector2(0, 0), true);
         
-        int x = 40;
-        int y = 75;
+        int x = 1;
+        int y = 15;
         this.map = new GeneratorMap(x * 1000 + y).getMap();
         
         this.world.setContactListener(new WrapperContactListener());

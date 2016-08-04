@@ -40,13 +40,10 @@ public class GeneratorMap {
             infoMapSeed = infoMapSeed.substring(1);
         }
 
-        // Map type
-        int type = Integer.parseInt("" + infoMapSeed.charAt(infoMapSeed.length() - 1));
-
+        int type = Integer.parseInt(
+                "" + infoMapSeed.charAt(infoMapSeed.length() - 1));             // Map type
         this.generateRooms();                                                   // Générer les rooms
-        
         Point sizeMap = sumSizeRooms(_rooms);
-        
         char[][] map = new char[sizeMap.y][sizeMap.x];
         Utility.fillArray(map, '#');
         ArrayList<Point> borders = new ArrayList<Point>();
@@ -68,15 +65,14 @@ public class GeneratorMap {
             y = p.y;
         }
         borders.clear();
-        
         this.reduceMap(map);                                                    // Réduit la taille de la carte
-        this.removeUnnecessaryWalls();                                          // Retire les murs qui ne sont pas nécessaires
+        this.cleanMap();                                                        // Retire les murs qui ne sont pas nécessaires
         this.createRooms();                                                     // Créer les vraies salles
         this.connectRooms();                                                    // Connecte les salles entres elles
         this.createEntrance();                                                  // Créer l'entrée du donjon
         this.boundRooms();                                                      // Connecte les salles avec leurs voisines
-        Utility.displayEntity(this._map);
         this.entryToExit();                                                     // Détermine le chemin entre l'entrée et la salle finale
+        Utility.displayEntity(this._map);
         this.m = new Map(this._map, this.tRoom, this._layers);
     }
     
@@ -147,7 +143,8 @@ public class GeneratorMap {
         }
     }
     
-    private void removeUnnecessaryWalls() {
+    private void cleanMap() {
+        // Je retire les murs qui n'ont pas lieu d'être et si un sol est mal placé
         for(int y = 1; y < this._map.length - 1; y++) {
             for(int x = 1; x < this._map[y].length - 1; x++) {
                 if(this._map[y][x] == 'W') {
@@ -226,8 +223,13 @@ public class GeneratorMap {
                             this._map[y + 1][x + (1 * result)] = this._map[y + 1][x + (2 * result)] = 'W';
                             this._map[y - 1][x + (-1 * result)] = this._map[y - 1][x + (-2 * result)] = 'W';
                             break;
-                        case 2:
-                            throw new UnsupportedOperationException();
+                        /*case 2:
+                            System.out.println("Implement 2 here");
+                            this._map[y][x] = 'G';
+                            Utility.displayEntity(this._map);
+                            System.out.println("");
+                            //throw new UnsupportedOperationException();
+                            break;*/
                     }
                 }
             }
@@ -259,8 +261,8 @@ public class GeneratorMap {
                 ArrayList<Point> commonCoords = Utility.commonCoords(r1.getBordersWithoutAngles(),
                                                                        r2.getBordersWithoutAngles());
                 if(commonCoords.size() > 0) {
-                    //int wall = Utility.nextInt(new Random(commonCoords.size()), 0, commonCoords.size());
-                    /*this._layers.get(1).removeTileAtPosition(commonCoords.get(wall));
+                    /*int wall = Utility.nextInt(new Random(commonCoords.size()), 0, commonCoords.size());
+                    this._layers.get(1).removeTileAtPosition(commonCoords.get(wall));
                     this._layers.get(0).addTile(new Ground("sprites/ground.png", 
                             commonCoords.get(wall).x, commonCoords.get(wall).y));*/
                     r1.addNeighboorRoom(r2);
@@ -285,6 +287,8 @@ public class GeneratorMap {
     }
     
     private void connectTwoRooms(Room r1, Room r2) {
+        System.out.println(r1.origin.x + ", " + r1.origin.y);
+        System.out.println(r2.origin.x + ", " + r2.origin.y);
         Dijkstra d = new Dijkstra(this._map);
         d.addRule(new Rule('#', '#', true, false));
         d.createNodes(false);
@@ -315,7 +319,6 @@ public class GeneratorMap {
             else if(p2.y + 1 < this._map.length && this._map[p2.y + 1][p2.x] == '#') p2.y += 1;
         } while(p2.x == tempPoint.x && p2.y == tempPoint.y);
 
-        System.out.println(p1 + " | " + p2);
         ArrayList<Point> corridor = d.shortestPathFromTo(p1, p2);
         for(int k = 0; k < corridor.size(); k++)
             this._map[corridor.get(k).y][corridor.get(k).x] = 'C';

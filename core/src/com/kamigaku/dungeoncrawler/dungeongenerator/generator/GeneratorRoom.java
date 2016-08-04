@@ -19,6 +19,7 @@ public class GeneratorRoom {
     private ArrayList<Point> _worldBorders;
     
     public GeneratorRoom(long seed) {
+        this.seed = seed;
         String seedString = String.valueOf(seed);
         this._random = new Random(seed);
         int height = Integer.parseInt("" + seedString.charAt(seedString.length() - 1)) + 
@@ -80,10 +81,8 @@ public class GeneratorRoom {
     }
     
     private void drawBetween2Points(char[][] map, Point p1, Point p2) {
-        int directionX = 1;
-        int directionY = 1;
-        directionY = (p2.y - p1.y) < 0 ? -1 : ((p2.y - p1.y) == 0 ? 0 : 1);
-        directionX = (p2.x - p1.x) < 0 ? -1 : ((p2.x - p1.x) == 0 ? 0 : 1);
+        int directionY = (p2.y - p1.y) < 0 ? -1 : ((p2.y - p1.y) == 0 ? 0 : 1);
+        int directionX = (p2.x - p1.x) < 0 ? -1 : ((p2.x - p1.x) == 0 ? 0 : 1);
         map[p1.y][p1.x] = 'W';
         while(directionX != 0 && directionY != 0) {
             int xOrY = Utility.nextInt(this._random, 0, 2);
@@ -140,28 +139,42 @@ public class GeneratorRoom {
     }
     
     private void clearMap(char[][] map) {
+        if(seed == 8386418694265284948l) {
+            Utility.displayEntity(map);
+            System.out.println("========" + this.seed);
+        }
         // Clear map from top to bottom
         for(int y = 0; y < map.length; y++) {
             for(int x = 0; x < map[y].length; x++) {
-                if(map[y][x] == ' ' && (Utility.checkXorYSurrondings(map, x, y, '#') || y  == 0 || y == map.length - 1))
-                    map[y][x] = '#';
+                if(map[y][x] == ' ' && (y == 0 || y == map.length - 1 || Utility.checkXorYSurrondings(map, x, y, '#')))
+                    map[y][x] = 'W';
             }
         }
-        
+        if(seed == 8386418694265284948l) {
+            Utility.displayEntity(map);
+            System.out.println("========" + this.seed);
+        }
         // Clear map from bottom to top
         for(int y = map.length - 1; y >= 0; y--) {
             for(int x = 0; x < map[y].length; x++) {
-                if(map[y][x] == ' ' && (Utility.checkXorYSurrondings(map, x, y, '#') || y == 0 || y == map.length - 1))
-                    map[y][x] = '#';
+                if(map[y][x] == ' ' && (y == 0 || y == map.length - 1 || Utility.checkXorYSurrondings(map, x, y, '#')))
+                    map[y][x] = 'W';
             }
         }
-        
+        if(seed == 8386418694265284948l) {
+            Utility.displayEntity(map);
+            System.out.println("========" + this.seed);
+        }
         // Clear walls that have no surrondings
         for(int y = map.length - 1; y >= 0; y--) {
             for(int x = 0; x < map[y].length; x++) {
                 if(map[y][x] == 'W' && !Utility.checkSquareSurrondings(map, x, y, ' '))
                     map[y][x] = '#';
             }
+        }
+        if(seed == 8386418694265284948l) {
+            Utility.displayEntity(map);
+            System.out.println("========" + this.seed);
         }
     }
     
@@ -178,7 +191,8 @@ public class GeneratorRoom {
                             map[y - 1][x + (-1 * result)] = map[y - 1][x + (-2 * result)] = 'W';
                             break;
                         case 2:
-                            throw new UnsupportedOperationException();
+                            //throw new UnsupportedOperationException();
+                            break;
                     }
                 }
             }
