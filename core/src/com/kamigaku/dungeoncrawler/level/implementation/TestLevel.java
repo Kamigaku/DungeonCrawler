@@ -55,7 +55,7 @@ public class TestLevel extends ALevel {
         this.camera.update();                                                   // Updating the camera position
         batch.setProjectionMatrix(this.camera.combined);
         this._entities.sort(new RenderingComparator());                         // Rendering on depthAxis
-        this.map.render(batch);                                                 // Map graphics
+        //this.map.render(batch);                                                 // Map graphics
         for(int i = 0; i < this._entities.size(); i++)                          // Entities graphics
             this._entities.get(i).updateGraphics(batch);
         batch.end();

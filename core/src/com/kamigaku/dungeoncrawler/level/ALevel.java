@@ -14,11 +14,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
-import com.kamigaku.dungeoncrawler.dungeongenerator.generator.GeneratorMap;
-import com.kamigaku.dungeoncrawler.dungeongenerator.Map;
 import com.kamigaku.dungeoncrawler.listener.WrapperContactListener;
 import com.kamigaku.dungeoncrawler.hud.HUD;
-//import com.kamigaku.dungeoncrawler.map.Map;
+import com.kamigaku.dungeoncrawler.utility.Utility;
+import com.kamigaku.dungeongenerator.Map;
+import com.kamigaku.dungeongenerator.generator.GeneratorMap;
 
 public abstract class ALevel implements ILevel {
     
@@ -77,7 +77,7 @@ public abstract class ALevel implements ILevel {
         int x = 1;
         int y = 15;
         this.map = new GeneratorMap(x * 1000 + y).getMap();
-        
+        Utility.displayEntity(map.getMap());
         this.world.setContactListener(new WrapperContactListener());
         this.hud = new HUD();
         this.multiplexer = new InputMultiplexer();        
