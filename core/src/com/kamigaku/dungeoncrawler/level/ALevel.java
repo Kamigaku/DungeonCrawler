@@ -16,11 +16,16 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
 import com.kamigaku.dungeoncrawler.listener.WrapperContactListener;
 import com.kamigaku.dungeoncrawler.hud.HUD;
-import com.kamigaku.dungeoncrawler.utility.Utility;
+import com.kamigaku.dungeoncrawler.tile.Layer;
 import com.kamigaku.dungeongenerator.Map;
 import com.kamigaku.dungeongenerator.generator.GeneratorMap;
+import java.util.ArrayList;
 
 public abstract class ALevel implements ILevel {
+    
+    /* @TODO 
+    Remplir la proprité Layer avec les différents tile grace à la MAP et ensutie la rendre dans le classe TestLevel
+    */
     
     protected ResolutionFileResolver fileResolver;
     protected World world;
@@ -31,6 +36,7 @@ public abstract class ALevel implements ILevel {
     protected Box2DDebugRenderer debugRenderer;
     private InputMultiplexer multiplexer;
     protected Map map;
+    protected ArrayList<Layer> layers;
     
     @Override
     public void dispose() {
@@ -77,7 +83,7 @@ public abstract class ALevel implements ILevel {
         int x = 1;
         int y = 15;
         this.map = new GeneratorMap(x * 1000 + y).getMap();
-        Utility.displayEntity(map.getMap());
+        this.layers = new ArrayList<Layer>();
         this.world.setContactListener(new WrapperContactListener());
         this.hud = new HUD();
         this.multiplexer = new InputMultiplexer();        

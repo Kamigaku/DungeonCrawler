@@ -1,3 +1,4 @@
+
 package com.kamigaku.dungeoncrawler.dijkstra;
 
 import java.awt.Point;
