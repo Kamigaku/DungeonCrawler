@@ -1,7 +1,6 @@
 package com.kamigaku.dungeoncrawler.entity.implementation;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -39,7 +38,6 @@ public class Player extends AEntity {
 
     @Override
     public void beginContact(Contact contact) {
-        System.out.println("the collision begin on the client side !");
     }
 
     @Override

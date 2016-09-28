@@ -7,14 +7,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.kamigaku.dungeoncrawler.comparator.RenderingComparator;
 import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
+import com.kamigaku.dungeoncrawler.entity.implementation.Mob;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
 import com.kamigaku.dungeoncrawler.level.ALevel;
+import com.kamigaku.dungeoncrawler.singleton.FightManager;
 import java.awt.Point;
 import java.util.ArrayList;
 
 public class TestLevel extends ALevel {
     
-    private ArrayList<IEntity> _entities;
     private Player _player;
 
     @Override
@@ -29,7 +30,10 @@ public class TestLevel extends ALevel {
         this._player = new Player(
                 new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 
                 randomTile.x, randomTile.y);
+        Point ra = this.map.getEntryRoom().getAllGround().get(5);
+        Mob mob = new Mob(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), ra.x + (96 / Constants.VIRTUAL_HEIGHT), ra.y);
         this._entities.add(this._player);
+        this._entities.add(mob);
     }
     
     
@@ -39,23 +43,42 @@ public class TestLevel extends ALevel {
         this.assetManager.load("sprites/wall.png", Texture.class);
         this.assetManager.load("sprites/ground.png", Texture.class);
         this.assetManager.load("sprites/door.png", Texture.class);
+        this.assetManager.load("sprites/walls.png", Texture.class);
+        this.assetManager.load("sprites/ground_selector.png", Texture.class);
         this.assetManager.finishLoading();
     }
     
     @Override
     public void render(SpriteBatch batch) {
-        this._player.updateInput();                                             // Input that impatct velocity
+        this._player.updateInput();                                             // Input that impact velocity
+        if(FightManager.getFightManager().getFightStatus() != 
+                FightManager.FightStatus.NONE) {                                 // Le combat à demarré
+            FightManager.getFightManager().update();
+        }
+        updatePhysics();
+        updateCamera(batch);
+        updateGraphics(batch);
+    }
+    
+    private void updatePhysics() {
         this.world.step(1/60f, 6, 2);                                           // World physics
         for(int i = 0; i < this._entities.size(); i++)                          // Update all the physics related bodies
-            this._entities.get(i).updatePhysics();
+            this._entities.get(i).updatePhysics();        
+    }
+    
+    private void updateCamera(SpriteBatch batch) {
         this.camera.position.set(
-                              this._player.getPhysicsComponent().getPosition().x,
-                              this._player.getPhysicsComponent().getPosition().y,
-                              this.camera.position.z);                          // Setting the camera position
-        this.camera.update();                                                   // Updating the camera position
+                  this._player.getPhysicsComponent().getPosition().x,
+                  this._player.getPhysicsComponent().getPosition().y,
+                  this.camera.position.z);                                      // Setting the camera position
+        this.camera.update();                          
         batch.setProjectionMatrix(this.camera.combined);
+    }
+    
+    private void updateGraphics(SpriteBatch batch) {
         this._entities.sort(new RenderingComparator());                         // Rendering on depthAxis
-        //this.map.render(batch);                                                 // Map graphics
+        for(int i = 0; i < this.layers.size(); i++)
+            this.layers.get(i).render(batch);
         for(int i = 0; i < this._entities.size(); i++)                          // Entities graphics
             this._entities.get(i).updateGraphics(batch);
         batch.end();

@@ -6,26 +6,22 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.kamigaku.dungeoncrawler.component.GraphicsComponent;
 
-public class Ground extends Tile {
-    
-    public Ground(Sprite sprite, int x, int y) {
+public class GroundSelector extends Tile {
+
+    public GroundSelector(Sprite sprite, int x, int y) {
         this._graphics = new GraphicsComponent(sprite, 0f, 0f);
         this.x = x;
         this.y = y;
         this.isCrossable = true;
     }
     
-    public Ground(String sprite, int x, int y) {
+    public GroundSelector(String sprite, int x, int y) {
         this._graphics = new GraphicsComponent(sprite, -0f, 0f);
         this.x = x;
         this.y = y;
         this.isCrossable = true;
     }
     
-    @Override
-    public void postSolve(Contact contact, ContactImpulse impulse) {
-    }
-
     @Override
     public void beginContact(Contact contact) {
     }
@@ -38,4 +34,8 @@ public class Ground extends Tile {
     public void preSolve(Contact contact, Manifold oldManifold) {
     }
 
+    @Override
+    public void postSolve(Contact contact, ContactImpulse impulse) {
+    }
+    
 }

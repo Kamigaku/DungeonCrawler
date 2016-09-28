@@ -6,7 +6,6 @@ import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
 import com.kamigaku.dungeoncrawler.listener.CollisionListener;
 
 
-// IN WORK => a mettre dans AMapEntity
 public abstract class Tile implements CollisionListener {
    
     protected PhysicsComponent _physics;

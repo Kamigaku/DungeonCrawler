@@ -13,13 +13,21 @@ public class Layer {
     
     public static final String WALL = "Wall";
     public static final String GROUND = "Ground";
+    public static final String GROUND_SELECTOR = "GroundSelector";
  
     private String _title;
     private final HashMap<Integer, Tile> _tiles;
+    public boolean render = true;
     
     public Layer(String title, int sizeX, int sizeY) {
         commonInit(title, sizeX, sizeY);
         this._tiles = new HashMap<Integer, Tile>();
+    }
+    
+    public Layer(String title, int sizeX, int sizeY, boolean render) {
+        commonInit(title, sizeX, sizeY);
+        this._tiles = new HashMap<Integer, Tile>();
+        this.render = render;
     }
     
     public Layer(String title, int sizeX, int sizeY, HashMap<Integer, Tile> tiles) {
@@ -34,10 +42,11 @@ public class Layer {
     }
     
     public void render(SpriteBatch batch) {
-        //System.out.println("Je suis le layer " + this._title + " et j'ai " + _tiles.size());
-        for(Integer key : this._tiles.keySet()) {
-            this._tiles.get(key).getGraphicsComponent().update(batch, 
-                this._tiles.get(key).x, this._tiles.get(key).y);
+        if(this.render) {
+            for(Integer key : this._tiles.keySet()) {
+                this._tiles.get(key).getGraphicsComponent().update(batch, 
+                    this._tiles.get(key).x, this._tiles.get(key).y);
+            }
         }
     }
     

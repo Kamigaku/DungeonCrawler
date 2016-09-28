@@ -46,12 +46,25 @@ public class PhysicsComponent implements Disposable {
         this._body.setLinearVelocity(this._forceX, this._forceY);
     }
     
-    public void setForceY(float forceY) { // @TODO : changer les valeurs par des constantes
+    public void addForceY(float forceY) {
         this._forceY = Math.min(Math.max(_forceY+forceY, -Constants.PLAYER_SPEED), Constants.PLAYER_SPEED);
     }
     
-    public void setForceX(float forceX) { // @TODO : changer les valeurs par des constantes    
+    public void addForceX(float forceX) {
         this._forceX = Math.min(Math.max(_forceX+forceX, -Constants.PLAYER_SPEED), Constants.PLAYER_SPEED);
+    }
+    
+    public void setForceY(float forceY) {
+        this._forceY = forceY;
+    }
+    
+    public void setForceX(float forceX) {
+        this._forceX = forceX;
+    }
+    
+    public void setForceXY(float forceX, float forceY) {
+        this.setForceX(forceX);
+        this.setForceY(forceY);
     }
     
     public Body getBody() {
