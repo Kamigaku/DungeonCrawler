@@ -12,7 +12,7 @@ import com.kamigaku.dungeoncrawler.singleton.FightManager;
 import com.kamigaku.dungeoncrawler.singleton.FightManager.FightStatus;
 
 public class Mob extends AEntity {
-    
+        
     public Mob(Sprite sprite, float x, float y) {
         super.baseLoading(sprite, 0, -0.25f, BodyDef.BodyType.KinematicBody, Constants.CATEGORY_MONSTER, 
                 (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_PLAYER),

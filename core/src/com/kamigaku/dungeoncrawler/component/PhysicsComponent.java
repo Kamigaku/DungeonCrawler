@@ -14,15 +14,13 @@ public class PhysicsComponent implements Disposable {
     
     private final Body _body;
     
-    private float _forceX;
-    private float _forceY;
+    public float _forceX;
+    public float _forceY;
     
     public PhysicsComponent(float x, float y, BodyType bodyType, short categoryBits, 
                             short maskBits, float width, float height) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = bodyType;
-        /*bodyDef.position.set(x + 1 - (width / Constants.TILE_WIDTH), 
-                            y + 1 - (height / Constants.TILE_HEIGHT));*/
         bodyDef.position.set(x, y);
         this._body = LevelManager.getLevelManager().getLevel().addBody(bodyDef);
         
