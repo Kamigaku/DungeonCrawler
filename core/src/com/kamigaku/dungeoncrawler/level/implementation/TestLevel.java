@@ -16,8 +16,6 @@ import java.util.ArrayList;
 
 public class TestLevel extends ALevel {
     
-    private Player _player;
-
     @Override
     public void init() {
                                                                                 
@@ -27,12 +25,12 @@ public class TestLevel extends ALevel {
        
         this._entities = new ArrayList<IEntity>();
         Point randomTile = this.map.getEntryRoom().getFirstFloorTilesPosition();
-        this._player = new Player(
+        this._mainPlayer = new Player(
                 new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 
                 randomTile.x, randomTile.y);
         Point ra = this.map.getEntryRoom().getAllGround().get(5);
         Mob mob = new Mob(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), ra.x + (96 / Constants.VIRTUAL_HEIGHT), ra.y);
-        this._entities.add(this._player);
+        this._entities.add(this._mainPlayer);
         this._entities.add(mob);
     }
     
@@ -49,8 +47,7 @@ public class TestLevel extends ALevel {
     }
     
     @Override
-    public void render(SpriteBatch batch) {
-        this._player.updateInput();                                             // Input that impact velocity
+    public void render(SpriteBatch batch) {                                            // Input that impact velocity
         if(FightManager.getFightManager().getFightStatus() != 
                 FightManager.FightStatus.NONE) {                                 // Le combat à demarré
             FightManager.getFightManager().update();
@@ -68,8 +65,8 @@ public class TestLevel extends ALevel {
     
     private void updateCamera(SpriteBatch batch) {
         this.camera.position.set(
-                  this._player.getPhysicsComponent().getPosition().x,
-                  this._player.getPhysicsComponent().getPosition().y,
+                  this._mainPlayer.getPhysicsComponent().getPosition().x,
+                  this._mainPlayer.getPhysicsComponent().getPosition().y,
                   this.camera.position.z);                                      // Setting the camera position
         this.camera.update();                          
         batch.setProjectionMatrix(this.camera.combined);

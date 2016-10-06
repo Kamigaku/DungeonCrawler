@@ -15,8 +15,10 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
+import com.kamigaku.dungeoncrawler.entity.implementation.Player;
 import com.kamigaku.dungeoncrawler.listener.WrapperContactListener;
 import com.kamigaku.dungeoncrawler.hud.HUD;
+import com.kamigaku.dungeoncrawler.singleton.FightManager;
 import com.kamigaku.dungeoncrawler.tile.Ground;
 import com.kamigaku.dungeoncrawler.tile.GroundSelector;
 import com.kamigaku.dungeoncrawler.tile.Layer;
@@ -24,6 +26,7 @@ import com.kamigaku.dungeoncrawler.tile.Tileset;
 import com.kamigaku.dungeoncrawler.tile.Wall;
 import com.kamigaku.dungeongenerator.Map;
 import com.kamigaku.dungeongenerator.generator.GeneratorMap;
+import com.kamigaku.libgdx.extension.InputMultiplexerToggle;
 import java.util.ArrayList;
 
 public abstract class ALevel implements ILevel {
@@ -35,10 +38,12 @@ public abstract class ALevel implements ILevel {
     protected AssetManager assetManager;
     protected OrthogonalTiledMapRenderer mapRenderer;
     protected Box2DDebugRenderer debugRenderer;
-    private InputMultiplexer multiplexer;
+    private InputMultiplexerToggle multiplexer;
     protected Map map;
     protected ArrayList<Layer> layers;
     protected ArrayList<IEntity> _entities;
+    
+    protected Player _mainPlayer;
     
     @Override
     public void dispose() {
@@ -50,9 +55,13 @@ public abstract class ALevel implements ILevel {
     }
 
     @Override
-    public void addInputProcessor(InputProcessor ip) {
-        this.multiplexer.addProcessor(ip);
-        Gdx.input.setInputProcessor(multiplexer);
+    public void addInputProcessor(InputProcessor ip, boolean activated) {
+        this.multiplexer.addProcessor(activated, ip);
+    }
+    
+    @Override
+    public void setInputProcessor(InputProcessor ip, boolean activated) {
+        this.multiplexer.setProcessor(activated, ip);
     }
 
     @Override
@@ -71,6 +80,11 @@ public abstract class ALevel implements ILevel {
     }
 
     @Override
+    public HUD getHUD() {
+        return this.hud;
+    }   
+    
+    @Override
     public Layer getLayer(String layerTitle) {
         for(int i = 0; i < this.layers.size(); i++) {
             if(this.layers.get(i).getTitle().equals(layerTitle))
@@ -83,7 +97,13 @@ public abstract class ALevel implements ILevel {
     public ArrayList<IEntity> getEntities() {
         return this._entities;
     }
+
+    @Override
+    public Player getMainPlayer() {
+        return this._mainPlayer;
+    }
     
+        
     @Override
     public Body addBody(BodyDef bodyDef) {
         return this.world.createBody(bodyDef);
@@ -198,9 +218,9 @@ public abstract class ALevel implements ILevel {
             }
         }
         //ts.dispose();
+        this.multiplexer = new InputMultiplexerToggle();
         this.world.setContactListener(new WrapperContactListener());
         this.hud = new HUD();
-        this.multiplexer = new InputMultiplexer();        
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera();
     }
