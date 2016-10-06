@@ -26,6 +26,7 @@ public class MainScreen implements Screen {
         defaultFont.setColor(new Color(255, 255, 255, 1));
         activeFont = new BitmapFont();
         activeFont.setColor(new Color(255, 0, 0, 1));
+        //Dungeon d = new Dungeon(30, 35);
     }
 
     @Override

@@ -18,12 +18,21 @@ import java.util.ArrayList;
 
 public abstract class AEntity implements IEntity {
     
+    //@TODO : création d'un collider pour la souris afin d'afficher les informations lors de la collision avec un joueur
+    
     protected GraphicsComponent _graphics;
     protected PhysicsComponent _physics;
     protected ArrayList<SensorComponent> _sensors;
+    protected Statistic _statistic;
     
     // Initiliasation de différentes informations communes
     protected void baseLoading(Sprite sprite, BodyType bodyType, short categoryBits, 
+                                short maskBits, float x, float y, float width, 
+                                float height) {
+        baseLoading(sprite, 0, 0, bodyType, categoryBits, maskBits, x, y, width, height);
+    }
+        
+    protected void baseLoading(String sprite, BodyType bodyType, short categoryBits, 
                                 short maskBits, float x, float y, float width, 
                                 float height) {
         baseLoading(sprite, 0, 0, bodyType, categoryBits, maskBits, x, y, width, height);
@@ -40,21 +49,19 @@ public abstract class AEntity implements IEntity {
         this._sensors = new ArrayList<SensorComponent>();
     }
     
-    protected void baseLoading(String sprite, BodyType bodyType, short categoryBits, 
-                                short maskBits, float x, float y, float width, 
-                                float height) {
-        baseLoading(sprite, 0, 0, bodyType, categoryBits, maskBits, x, y, width, height);
-    }
-    
     protected void baseLoading(String sprite, int offsetX, int offsetY,
                                 BodyType bodyType, short categoryBits, 
                                 short maskBits, float x, float y, float width, 
                                 float height) {
-        this._graphics = new GraphicsComponent(sprite);
+        this._graphics = new GraphicsComponent(sprite, offsetX, offsetY);
         this._physics = new PhysicsComponent(x, y, bodyType, categoryBits, 
                                             maskBits, width, height);
         this._physics.getBody().setUserData(this);
         this._sensors = new ArrayList<SensorComponent>();
+    }
+    
+    protected void initStatistic(int actionPoint, int healthPoint) {
+        this._statistic = new Statistic(actionPoint, healthPoint);
     }
     
     @Override
@@ -83,6 +90,11 @@ public abstract class AEntity implements IEntity {
     @Override
     public ArrayList<SensorComponent> getSensorsComponent() {
         return this._sensors;
+    }
+    
+    @Override
+    public Statistic getStatistic() {
+        return this._statistic;
     }
     
     @Override

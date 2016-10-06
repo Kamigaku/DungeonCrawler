@@ -9,10 +9,12 @@ import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 public class InputComponent {
     
     private final AEntity _entity;
+    public boolean updateInput = true;
+    private final InputProcessor _ip;
     
     public InputComponent(AEntity entity) {
         this._entity = entity;
-        LevelManager.getLevelManager().getLevel().addInputProcessor(new InputProcessor() {
+        this._ip = new InputProcessor() {
 			
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
@@ -46,13 +48,13 @@ public class InputComponent {
             @Override
             public boolean keyUp(int keycode) {
                 if(keycode == Keys.Z)
-                    _entity.getPhysicsComponent().setForceY(-Constants.PLAYER_SPEED);
+                    _entity.getPhysicsComponent().addForceY(-Constants.PLAYER_SPEED);
                 if(keycode == Keys.S)
-                    _entity.getPhysicsComponent().setForceY(Constants.PLAYER_SPEED);
+                    _entity.getPhysicsComponent().addForceY(Constants.PLAYER_SPEED);
                 if(keycode == Keys.Q)
-                    _entity.getPhysicsComponent().setForceX(Constants.PLAYER_SPEED);
+                    _entity.getPhysicsComponent().addForceX(Constants.PLAYER_SPEED);
                 if(keycode == Keys.D)
-                    _entity.getPhysicsComponent().setForceX(-Constants.PLAYER_SPEED);
+                    _entity.getPhysicsComponent().addForceX(-Constants.PLAYER_SPEED);
                 return false;
             }
 
@@ -64,20 +66,23 @@ public class InputComponent {
             @Override
             public boolean keyDown(int keycode) {
                 if(keycode == Keys.Z)
-                    _entity.getPhysicsComponent().setForceY(Constants.PLAYER_SPEED);
+                    _entity.getPhysicsComponent().addForceY(Constants.PLAYER_SPEED);
                 if(keycode == Keys.S)
-                    _entity.getPhysicsComponent().setForceY(-Constants.PLAYER_SPEED);
+                    _entity.getPhysicsComponent().addForceY(-Constants.PLAYER_SPEED);
                 if(keycode == Keys.Q)
-                    _entity.getPhysicsComponent().setForceX(-Constants.PLAYER_SPEED);
+                    _entity.getPhysicsComponent().addForceX(-Constants.PLAYER_SPEED);
                 if(keycode == Keys.D)
-                    _entity.getPhysicsComponent().setForceX(Constants.PLAYER_SPEED);
+                    _entity.getPhysicsComponent().addForceX(Constants.PLAYER_SPEED);
                 return false;
             }
             
-        });
+        };
+        
+        LevelManager.getLevelManager().getLevel().addInputProcessor(this._ip, true);
     }
 
-    public void update() {
+    public InputProcessor getInputProcessor() {
+        return _ip;
     }
     
 }

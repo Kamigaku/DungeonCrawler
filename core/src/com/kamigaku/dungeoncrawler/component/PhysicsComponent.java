@@ -9,20 +9,19 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Disposable;
 import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
+import java.awt.Point;
 
 public class PhysicsComponent implements Disposable {
     
     private final Body _body;
     
-    private float _forceX;
-    private float _forceY;
+    public float _forceX;
+    public float _forceY;
     
     public PhysicsComponent(float x, float y, BodyType bodyType, short categoryBits, 
                             short maskBits, float width, float height) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = bodyType;
-        /*bodyDef.position.set(x + 1 - (width / Constants.TILE_WIDTH), 
-                            y + 1 - (height / Constants.TILE_HEIGHT));*/
         bodyDef.position.set(x, y);
         this._body = LevelManager.getLevelManager().getLevel().addBody(bodyDef);
         
@@ -46,12 +45,25 @@ public class PhysicsComponent implements Disposable {
         this._body.setLinearVelocity(this._forceX, this._forceY);
     }
     
-    public void setForceY(float forceY) { // @TODO : changer les valeurs par des constantes
+    public void addForceY(float forceY) {
         this._forceY = Math.min(Math.max(_forceY+forceY, -Constants.PLAYER_SPEED), Constants.PLAYER_SPEED);
     }
     
-    public void setForceX(float forceX) { // @TODO : changer les valeurs par des constantes    
+    public void addForceX(float forceX) {
         this._forceX = Math.min(Math.max(_forceX+forceX, -Constants.PLAYER_SPEED), Constants.PLAYER_SPEED);
+    }
+    
+    public void setForceY(float forceY) {
+        this._forceY = forceY;
+    }
+    
+    public void setForceX(float forceX) {
+        this._forceX = forceX;
+    }
+    
+    public void setForceXY(float forceX, float forceY) {
+        this.setForceX(forceX);
+        this.setForceY(forceY);
     }
     
     public Body getBody() {
