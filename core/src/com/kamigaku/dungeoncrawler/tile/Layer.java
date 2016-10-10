@@ -14,6 +14,7 @@ public class Layer {
     public static final String WALL = "Wall";
     public static final String GROUND = "Ground";
     public static final String GROUND_SELECTOR = "GroundSelector";
+    public static final String SKILL_HIGHLIGHTER = "SkillHighlighter";
  
     private String _title;
     private final HashMap<Integer, Tile> _tiles;
@@ -69,6 +70,10 @@ public class Layer {
             }
             this._tiles.remove(key);
         }
+    }
+    
+    public void removeAllTiles() {
+        this._tiles.clear();
     }
     
     public HashMap<Integer, Tile> getTiles() {

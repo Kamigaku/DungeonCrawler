@@ -19,19 +19,21 @@ public class Mob extends AEntity {
     private final int HEALTHPOINT = 5;
         
     public Mob(Sprite sprite, float x, float y) {
-        super.baseLoading(sprite, 0, -0.25f, BodyDef.BodyType.KinematicBody, Constants.CATEGORY_MONSTER, 
-                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_PLAYER),
-                x, y, 8, 8);
-        super.initStatistic(ACTIONPOINT, HEALTHPOINT);
+        super.baseLoadGraphics(sprite, 0, -0.25f);
+        super.baseLoadPhysics(BodyDef.BodyType.KinematicBody, x, y, Constants.CATEGORY_MONSTER, 
+                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_PLAYER), 8, 8);
+        super.baseLoadSensor();
+        super.baseLoadStatistic(ACTIONPOINT, HEALTHPOINT);
         this._sensors.add(new SensorComponent(this, BodyDef.BodyType.DynamicBody, 
                 Constants.CATEGORY_MONSTER, Constants.CATEGORY_PLAYER, 30f));
     }
     
     public Mob(String sprite, float x, float y) {
-        super.baseLoading(sprite, BodyDef.BodyType.KinematicBody, Constants.CATEGORY_MONSTER, 
-                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_PLAYER),
-                x, y, 8, 8);
-        super.initStatistic(ACTIONPOINT, HEALTHPOINT);
+        super.baseLoadGraphics(sprite, 0, -0.25f);
+        super.baseLoadPhysics(BodyDef.BodyType.KinematicBody, x, y, Constants.CATEGORY_MONSTER, 
+                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_PLAYER), 8, 8);
+        super.baseLoadSensor();
+        super.baseLoadStatistic(ACTIONPOINT, HEALTHPOINT);
         this._sensors.add(new SensorComponent(this, BodyDef.BodyType.DynamicBody, 
                 Constants.CATEGORY_MONSTER, Constants.CATEGORY_PLAYER, 30f));
     }

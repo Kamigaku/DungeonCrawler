@@ -1,23 +1,19 @@
 package com.kamigaku.dungeoncrawler.hud;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kamigaku.dungeoncrawler.command.ICommand;
-import com.kamigaku.dungeoncrawler.singleton.FightManager;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
+import com.kamigaku.dungeoncrawler.skills.Skill;
 
 public class HUD {
 	
@@ -47,11 +43,12 @@ public class HUD {
             this.tbl_actionButtons.align(Align.center | Align.bottom);
             this.tbl_actionButtons.setPosition(stage.getWidth() - 70, 10);
             
-            AttackButton ab = new AttackButton("Attack", this.uiSkin);
+            //AttackButton ab = new AttackButton("Attack", this.uiSkin);
             EndTurnButton etb = new EndTurnButton("End Turn", this.uiSkin);
-            this.tbl_actionButtons.add(ab);
-            this.tbl_actionButtons.row();
+            //this.tbl_actionButtons.add(ab);
+            //this.tbl_actionButtons.row();
             this.tbl_actionButtons.add(etb);
+            this.tbl_actionButtons.row();
 
             Texture emptyT = new Texture(Gdx.files.internal("hud/empty2.png"));
             Texture fullT = new Texture(Gdx.files.internal("hud/full_health.png"));
@@ -91,6 +88,10 @@ public class HUD {
     public Stage getStage() {
         return this.stage;
     }
+    
+    public Skin getSkin() {
+        return this.uiSkin;
+    }
 
     public void addCommand(ICommand command, int index) {
         CommandButton cb = new CommandButton(command.toString() + " x ", uiSkin, index);
@@ -103,6 +104,14 @@ public class HUD {
             this.tbl_commandHistory.removeActor(this.tbl_commandHistory.getCells().get(i).getActor());
             this.tbl_commandHistory.getCells().removeIndex(i);
         }
+    }
+    
+    public void addActionCommand(Skill actionButton) {
+        this.tbl_actionButtons.add(actionButton.getTextButton());
+        this.tbl_actionButtons.row();
+    }
+    
+    public void removeActionCommand(Skill textButton) {
     }
 
 }

@@ -1,14 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.kamigaku.dungeoncrawler.entity;
 
-/**
- *
- * @author Kamigaku
- */
 public class Statistic {
     
     private int _actionPoint;
@@ -16,6 +7,8 @@ public class Statistic {
     
     private int _healthPoint;
     public int currentHealthPoint;
+    
+    private int _initiative;
     
     public Statistic(int actionPoint, int healthPoint) {
         this._actionPoint = actionPoint;

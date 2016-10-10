@@ -1,6 +1,7 @@
 package com.kamigaku.dungeoncrawler.entity.implementation;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -11,6 +12,7 @@ import com.kamigaku.dungeoncrawler.component.SensorComponent;
 import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.entity.AEntity;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
+import com.kamigaku.dungeoncrawler.skills.Skill;
 import java.util.ArrayList;
 
 public class Player extends AEntity {
@@ -24,25 +26,33 @@ public class Player extends AEntity {
     private final int HEALTHPOINT = 10;
 
     public Player(Sprite sprite, float x, float y) {
-        super.baseLoading(sprite, 0, -0.25f, BodyType.DynamicBody, Constants.CATEGORY_PLAYER,
-                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER),
-                x, y, 8, 8);
-        super.initStatistic(ACTIONPOINT, HEALTHPOINT);
+        super.baseLoadGraphics(sprite, 0, -0.25f);
+        super.baseLoadPhysics(BodyDef.BodyType.KinematicBody, x, y, Constants.CATEGORY_PLAYER,
+                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER), 8, 8);
+        super.baseLoadSensor();
+        super.baseLoadStatistic(ACTIONPOINT, HEALTHPOINT);
+        super.baseLoadItems();
+        super.baseLoadSkills();
         this._input = new InputComponent(this);
         this._sensors.add(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
                                                 Constants.CATEGORY_SCENERY, 20f));
         this._commands = new ArrayList<ICommand>();
+        //this._skills.add(new Skill("Attack", 1));
     }
     
     public Player(String sprite, float x, float y) {
-        super.baseLoading(sprite, 0, 0, BodyType.DynamicBody, Constants.CATEGORY_PLAYER,
-                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER),
-                x, y, 8, 8);
-        super.initStatistic(ACTIONPOINT, HEALTHPOINT);
+        super.baseLoadGraphics(sprite, 0, -0.25f);
+        super.baseLoadPhysics(BodyDef.BodyType.KinematicBody, x, y, Constants.CATEGORY_PLAYER,
+                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER), 8, 8);
+        super.baseLoadSensor();
+        super.baseLoadStatistic(ACTIONPOINT, HEALTHPOINT);
+        super.baseLoadItems();
+        super.baseLoadSkills();
         this._input = new InputComponent(this);
         this._sensors.add(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
                                                 Constants.CATEGORY_SCENERY, 20f));
         this._commands = new ArrayList<ICommand>();
+        //this._skills.add(new Skill("Attack", 1));
     }
     
     public void addCommand(ICommand command) {

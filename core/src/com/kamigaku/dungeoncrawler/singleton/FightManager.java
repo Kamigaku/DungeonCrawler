@@ -9,8 +9,10 @@ import com.kamigaku.dungeoncrawler.command.AttackCommand;
 import com.kamigaku.dungeoncrawler.command.MoveCommand;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
+import com.kamigaku.dungeoncrawler.skills.Skill;
 import com.kamigaku.dungeoncrawler.tile.Layer;
 import com.kamigaku.dungeoncrawler.tile.Tile;
+import com.kamigaku.dungeoncrawler.utility.Utility;
 import com.kamigaku.dungeongenerator.dijkstra.Dijkstra;
 import com.kamigaku.dungeongenerator.dijkstra.Rule;
 import java.awt.Point;
@@ -18,22 +20,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FightManager {
-    
+
+    public Skill selectedSkill;
+       
     public enum FightStatus {
         NONE, BEGIN, BEGIN_PICKING, PICKING, FIGHT, END_PICKING, END
     };
-        
+    
     private static FightManager _fightManager;                                  // Singleton
     
     private FightStatus _fightStatus;
     private final HashMap<Integer, Tile> _ptr_groundTiles;
     private final Layer _ptr_groundSelector;
+    private final Layer _ptr_skillHighlighter;
     private final ArrayList<IEntity> _ptr_entities;
     private final Player _ptr_mainPlayer;
     private final InputProcessor _ip;
     private final Dijkstra _dijkstra;
-    
-    public boolean entityAttackingPick = false;
     
     public static FightManager getFightManager() {
         if(_fightManager == null)
@@ -45,6 +48,7 @@ public class FightManager {
         this._fightStatus = FightStatus.NONE;
         this._ptr_groundTiles = LevelManager.getLevelManager().getLevel().getLayer(Layer.GROUND).getTiles();
         this._ptr_groundSelector = LevelManager.getLevelManager().getLevel().getLayer(Layer.GROUND_SELECTOR);
+        this._ptr_skillHighlighter = LevelManager.getLevelManager().getLevel().getLayer(Layer.SKILL_HIGHLIGHTER);
         this._ptr_entities = LevelManager.getLevelManager().getLevel().getEntities();
         this._ptr_mainPlayer = LevelManager.getLevelManager().getLevel().getMainPlayer();
         this._ip = new InputProcessor() {
@@ -70,15 +74,23 @@ public class FightManager {
                 Vector3 unprojected = LevelManager.getLevelManager().getCamera().unproject(new Vector3(screenX, screenY, 0));
                 Point pointerPosition = new Point(Math.round(unprojected.x), Math.round(unprojected.y));
                 if(button == Buttons.LEFT) {
-                    if(entityAttackingPick) {
+                    if(selectedSkill != null) {
                         for(int i = 0; i < _ptr_entities.size(); i++) {
                             IEntity current = _ptr_entities.get(i);
                             if(current != _ptr_mainPlayer &&
                                current.getPhysicsComponent().getPosition().x == pointerPosition.x &&
                                current.getPhysicsComponent().getPosition().y == pointerPosition.y) {
-                                _ptr_mainPlayer.addCommand(new AttackCommand(_ptr_mainPlayer, current, 1));
-                                System.out.println("Attacking");
-                                entityAttackingPick = false;
+                                if(!Utility.isInRange(
+                                        _ptr_mainPlayer.getPhysicsComponent().getPointPosition(),
+                                        current.getPhysicsComponent().getPointPosition(),
+                                        selectedSkill.getRange())) {
+                                    System.out.println("La cible est trop eloignée");
+                                }
+                                else {
+                                    _ptr_mainPlayer.addCommand(new AttackCommand(_ptr_mainPlayer, current, 1));
+                                    System.out.println("Attacking");
+                                    selectedSkill = null;
+                                }
                                 break;
                             }
                         }
@@ -102,8 +114,7 @@ public class FightManager {
                     }
                 }
                 else if(button == Buttons.RIGHT) {
-                    if(_fightManager.entityAttackingPick)
-                        _fightManager.entityAttackingPick = false;
+                    selectedSkill = selectedSkill != null ? null : selectedSkill;
                 }
                 return false;
             }
@@ -141,6 +152,7 @@ public class FightManager {
     public void setFightStatus(FightStatus fightStatus) {
         this._fightStatus = fightStatus;
         this._ptr_groundSelector.render = fightStatus != FightStatus.NONE;
+        this._ptr_skillHighlighter.render = fightStatus != FightStatus.NONE;
     }
     
     public FightStatus getFightStatus() {

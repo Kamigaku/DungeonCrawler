@@ -23,7 +23,7 @@ public class AttackButton extends TextButton {
             
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                FightManager.getFightManager().entityAttackingPick = true;
+                //FightManager.getFightManager().entityAttackingPick = true;
             }
             
         });

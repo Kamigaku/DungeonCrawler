@@ -23,6 +23,15 @@ public abstract class Utility {
         return v3;
     }
     
+    public static boolean isInRange(Point origin, Point destination, ArrayList<Point> points) {
+        for(int i = 0; i < points.size(); i++) {
+            if(origin.x + points.get(i).x == destination.x && 
+               origin.y + points.get(i).y == destination.y) 
+                return true;
+        }
+        return false;
+    }
+    
     /***
      * Permet de vérifier si les cases proches (haut, bas, gauche et droite) possède l'élément recherché.
      * @param map La carte

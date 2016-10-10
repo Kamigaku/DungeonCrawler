@@ -1,7 +1,5 @@
 package com.kamigaku.dungeoncrawler.level;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
@@ -18,7 +16,6 @@ import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
 import com.kamigaku.dungeoncrawler.listener.WrapperContactListener;
 import com.kamigaku.dungeoncrawler.hud.HUD;
-import com.kamigaku.dungeoncrawler.singleton.FightManager;
 import com.kamigaku.dungeoncrawler.tile.Ground;
 import com.kamigaku.dungeoncrawler.tile.GroundSelector;
 import com.kamigaku.dungeoncrawler.tile.Layer;
@@ -130,6 +127,8 @@ public abstract class ALevel implements ILevel {
         this.layers.add(new Layer(Layer.WALL, this.map.getMap()[0].length, 
                                   this.map.getMap().length));
         this.layers.add(new Layer(Layer.GROUND_SELECTOR, this.map.getMap()[0].length, 
+                                  this.map.getMap().length, false));
+        this.layers.add(new Layer(Layer.SKILL_HIGHLIGHTER, this.map.getMap()[0].length, 
                                   this.map.getMap().length, false));
         for(int _y = 0; _y < this.map.getMap().length; _y++) {
             for(int _x = 0; _x < this.map.getMap()[_y].length; _x++) {

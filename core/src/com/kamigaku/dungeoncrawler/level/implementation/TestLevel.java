@@ -43,6 +43,7 @@ public class TestLevel extends ALevel {
         this.assetManager.load("sprites/door.png", Texture.class);
         this.assetManager.load("sprites/walls.png", Texture.class);
         this.assetManager.load("sprites/ground_selector.png", Texture.class);
+        this.assetManager.load("sprites/ground_highlighter.png", Texture.class);
         this.assetManager.finishLoading();
     }
     
@@ -60,7 +61,7 @@ public class TestLevel extends ALevel {
     private void updatePhysics() {
         this.world.step(1/60f, 6, 2);                                           // World physics
         for(int i = 0; i < this._entities.size(); i++)                          // Update all the physics related bodies
-            this._entities.get(i).updatePhysics();        
+            this._entities.get(i).updatePhysics();
     }
     
     private void updateCamera(SpriteBatch batch) {
