@@ -37,4 +37,9 @@ public class AttackCommand extends ACommand {
     public String toString() {
         return "Attacking target at " + this._target.getPhysicsComponent().getPosition();
     }
+
+    @Override
+    public void simulate() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

@@ -31,6 +31,11 @@ public class MoveCommand extends ACommand {
     }
 
     @Override
+    public void simulate() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
     public String toString() {
         return "Deplacement de (" + _origin.x + ";" + _origin.y + ") vers (" + _destination.x + ";" + _destination.y + ")";
     }

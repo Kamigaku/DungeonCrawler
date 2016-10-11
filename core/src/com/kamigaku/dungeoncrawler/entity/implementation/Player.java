@@ -6,20 +6,13 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.kamigaku.dungeoncrawler.command.ICommand;
 import com.kamigaku.dungeoncrawler.component.InputComponent;
 import com.kamigaku.dungeoncrawler.component.SensorComponent;
 import com.kamigaku.dungeoncrawler.constants.Constants;
 import com.kamigaku.dungeoncrawler.entity.AEntity;
-import com.kamigaku.dungeoncrawler.singleton.LevelManager;
-import com.kamigaku.dungeoncrawler.skills.Skill;
-import java.util.ArrayList;
 
 public class Player extends AEntity {
-    
-    // A MODIFIER PLUS TARD ICI, test voir si cela fonctionne
-    public final ArrayList<ICommand> _commands;
-    
+        
     private final InputComponent _input;
     
     private final int ACTIONPOINT = 5;
@@ -33,11 +26,10 @@ public class Player extends AEntity {
         super.baseLoadStatistic(ACTIONPOINT, HEALTHPOINT);
         super.baseLoadItems();
         super.baseLoadSkills();
-        this._input = new InputComponent(this);
-        this._sensors.add(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
+        super.addSensor(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
                                                 Constants.CATEGORY_SCENERY, 20f));
-        this._commands = new ArrayList<ICommand>();
-        //this._skills.add(new Skill("Attack", 1));
+        super.baseLoadCommands();
+        this._input = new InputComponent(this);
     }
     
     public Player(String sprite, float x, float y) {
@@ -48,33 +40,10 @@ public class Player extends AEntity {
         super.baseLoadStatistic(ACTIONPOINT, HEALTHPOINT);
         super.baseLoadItems();
         super.baseLoadSkills();
-        this._input = new InputComponent(this);
-        this._sensors.add(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
+        super.addSensor(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
                                                 Constants.CATEGORY_SCENERY, 20f));
-        this._commands = new ArrayList<ICommand>();
-        //this._skills.add(new Skill("Attack", 1));
-    }
-    
-    public void addCommand(ICommand command) {
-        this._commands.add(command);
-        int index = this._commands.size() - 1;
-        LevelManager.getLevelManager().getLevel().getHUD().addCommand(command, index);
-        if(index > 0) {
-            command.setPrevious(this._commands.get(index - 1));
-            command.getPrevious().setNext(command);
-        }
-        command.execute();
-    }
-    
-    public void removeCommand(int index) {
-        for(int i = this._commands.size() - 1; i >= index; i--) {
-            this._commands.get(i).reverse();
-            this._commands.remove(i);
-        }
-        if(index > 0) {
-            this._commands.get(index - 1).setNext(null);
-        }
-        LevelManager.getLevelManager().getLevel().getHUD().removeCommand(index);
+        super.baseLoadCommands();
+        this._input = new InputComponent(this);
     }
 
     @Override

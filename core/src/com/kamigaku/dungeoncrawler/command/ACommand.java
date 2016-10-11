@@ -37,5 +37,12 @@ public abstract class ACommand implements ICommand {
     public ICommand getPrevious() {
         return this._previousCommand;
     }
+
+    @Override
+    public int getApCost() {
+        return this._ap;
+    }
+    
+    
     
 }

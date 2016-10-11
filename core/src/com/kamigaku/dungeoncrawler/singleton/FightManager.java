@@ -5,10 +5,11 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.kamigaku.dungeoncrawler.command.AttackCommand;
 import com.kamigaku.dungeoncrawler.command.MoveCommand;
+import com.kamigaku.dungeoncrawler.command.SkillCommand;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
+import com.kamigaku.dungeoncrawler.skills.ISkill;
 import com.kamigaku.dungeoncrawler.skills.Skill;
 import com.kamigaku.dungeoncrawler.tile.Layer;
 import com.kamigaku.dungeoncrawler.tile.Tile;
@@ -74,43 +75,36 @@ public class FightManager {
                 Vector3 unprojected = LevelManager.getLevelManager().getCamera().unproject(new Vector3(screenX, screenY, 0));
                 Point pointerPosition = new Point(Math.round(unprojected.x), Math.round(unprojected.y));
                 if(button == Buttons.LEFT) {
-                    if(selectedSkill != null) {
+                    if(selectedSkill != null) { // Un skill est sélectionné et j'ai cliqué
                         for(int i = 0; i < _ptr_entities.size(); i++) {
                             IEntity current = _ptr_entities.get(i);
-                            if(current != _ptr_mainPlayer &&
-                               current.getPhysicsComponent().getPosition().x == pointerPosition.x &&
-                               current.getPhysicsComponent().getPosition().y == pointerPosition.y) {
-                                if(!Utility.isInRange(
-                                        _ptr_mainPlayer.getPhysicsComponent().getPointPosition(),
-                                        current.getPhysicsComponent().getPointPosition(),
-                                        selectedSkill.getRange())) {
-                                    System.out.println("La cible est trop eloignée");
-                                }
+                            Point ptr_PositionCurEntity = current.getPhysicsComponent().getPointPosition();
+                            Point ptr_PositionCaster = selectedSkill.getCaster().getPhysicsComponent().getPointPosition();
+                            if(ptr_PositionCurEntity.equals(pointerPosition)) {
+                                if(!Utility.isInRange(ptr_PositionCaster,
+                                                      ptr_PositionCurEntity, selectedSkill.getRange()))
+                                    System.out.println("La cible est invalide");
                                 else {
-                                    _ptr_mainPlayer.addCommand(new AttackCommand(_ptr_mainPlayer, current, 1));
-                                    System.out.println("Attacking");
-                                    selectedSkill = null;
+                                    ArrayList<Point> path = _dijkstra.shortestPathFromTo(ptr_PositionCaster, ptr_PositionCurEntity);
+                                    if(path != null) {
+                                        selectedSkill.getCaster().addCommand(new SkillCommand(selectedSkill, current));
+                                        selectedSkill = null;
+                                    }
+                                    else
+                                        System.out.println("La cible est inaccessible");
                                 }
                                 break;
                             }
                         }
                     }
-                    else {
+                    else { // Aucun skill n'est sélectionné
                         Point playerPos = new Point(Math.round(_ptr_mainPlayer.getPhysicsComponent().getPosition().x), 
                                                     Math.round(_ptr_mainPlayer.getPhysicsComponent().getPosition().y));
-                        if((Math.abs(playerPos.x - pointerPosition.x) + Math.abs(playerPos.y - pointerPosition.y)) 
-                                <= _ptr_mainPlayer.getStatistic().currentActionPoint) {
-                            ArrayList<Point> path = _dijkstra.shortestPathFromTo(playerPos, pointerPosition);
-                            if(path != null && path.size() <= _ptr_mainPlayer.getStatistic().currentActionPoint) {
-                                _ptr_mainPlayer.addCommand(new MoveCommand(playerPos, pointerPosition, _ptr_mainPlayer, path.size()));
-                            }
-                            else {
-                                System.out.println("Le point est inacessible");
-                            }
-                        }
-                        else {
-                            System.out.println("Le point est trop eloigné");
-                        }
+                        ArrayList<Point> path = _dijkstra.shortestPathFromTo(playerPos, pointerPosition);
+                        if(path != null)
+                            _ptr_mainPlayer.addCommand(new MoveCommand(playerPos, pointerPosition, _ptr_mainPlayer, path.size()));
+                        else
+                            System.out.println("Le point est inaccessible");
                     }
                 }
                 else if(button == Buttons.RIGHT) {
@@ -162,13 +156,16 @@ public class FightManager {
     public void update() {
         switch(this._fightStatus) {
             case PICKING:
-                break;
-            case FIGHT:
-                System.out.println("Fetching all commands");
-                try {
-                Thread.sleep(10000);
-                } catch(Exception e) {                    
+                if(selectedSkill != null) {
+                    if(selectedSkill.getSkillTarget() != ISkill.SKILL_TARGET.ALLY &&
+                       selectedSkill.getSkillTarget() != ISkill.SKILL_TARGET.ENNEMY) {
+                        _ptr_mainPlayer.addCommand(new SkillCommand(selectedSkill));
+                        selectedSkill = null;
+                    }
                 }
+                break;
+            case FIGHT: // @TODO implementer
+                System.out.println("Fetching all commands");
                 this.setFightStatus(FightStatus.BEGIN_PICKING);
                 break;
             case END_PICKING:

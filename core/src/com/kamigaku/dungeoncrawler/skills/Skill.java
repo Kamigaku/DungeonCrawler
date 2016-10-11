@@ -13,23 +13,21 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 public class Skill implements ISkill {
-    
-    public enum SKILL_SHAPE {
-        CROSS, LEFT_LINE, RIGHT_LINE, FRONT_LINE, BACK_LINE, FRONT_AND_BACK_LINE, 
-        LEFT_AND_RIGHT_LINE, CIRCLE
-    }
-    
+       
     private final TextButton _textButton;
     
     private final String _skillName;
     private final int _apCost;
     private final IEntity _caster;
+    private final SKILL_TARGET _skillTarget;
     private ArrayList<Point> _range;
     
-    public Skill(IEntity caster, String skillName, int apCost, ArrayList<Point> range) {
+    public Skill(IEntity caster, String skillName, int apCost, SKILL_TARGET focusATarget,
+                 ArrayList<Point> range) {
         this._caster = caster;
         this._skillName = skillName;
         this._apCost = apCost;
+        this._skillTarget = focusATarget;
         this._textButton = new TextButton(skillName, LevelManager.getLevelManager().getLevel().getHUD().getSkin());
         this._textButton.addListener(new ClickListener() {            
             @Override
@@ -60,10 +58,11 @@ public class Skill implements ISkill {
         this._range = range;
     }
     
-    public Skill(IEntity caster, String skillName, int apCost) {
+    public Skill(IEntity caster, String skillName, int apCost, SKILL_TARGET focusATarget) {
         this._caster = caster;
         this._skillName = skillName;
         this._apCost = apCost;
+        this._skillTarget = focusATarget;
         this._textButton = new TextButton(skillName, LevelManager.getLevelManager().getLevel().getHUD().getSkin());
         this._textButton.addListener(new ClickListener() {            
             @Override
@@ -81,6 +80,26 @@ public class Skill implements ISkill {
     @Override
     public TextButton getTextButton() {
         return this._textButton;
+    }
+
+    @Override
+    public SKILL_TARGET getSkillTarget() {
+        return this._skillTarget;
+    }
+
+    @Override
+    public int getApCost() {
+        return this._apCost;
+    }
+
+    @Override
+    public String getSkillName() {
+        return this._skillName;
+    }
+
+    @Override
+    public IEntity getCaster() {
+        return this._caster;
     }
     
 }

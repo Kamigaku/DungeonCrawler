@@ -24,7 +24,7 @@ public class Mob extends AEntity {
                 (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_PLAYER), 8, 8);
         super.baseLoadSensor();
         super.baseLoadStatistic(ACTIONPOINT, HEALTHPOINT);
-        this._sensors.add(new SensorComponent(this, BodyDef.BodyType.DynamicBody, 
+        super.addSensor(new SensorComponent(this, BodyDef.BodyType.DynamicBody, 
                 Constants.CATEGORY_MONSTER, Constants.CATEGORY_PLAYER, 30f));
     }
     
@@ -34,7 +34,7 @@ public class Mob extends AEntity {
                 (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_PLAYER), 8, 8);
         super.baseLoadSensor();
         super.baseLoadStatistic(ACTIONPOINT, HEALTHPOINT);
-        this._sensors.add(new SensorComponent(this, BodyDef.BodyType.DynamicBody, 
+        super.addSensor(new SensorComponent(this, BodyDef.BodyType.DynamicBody, 
                 Constants.CATEGORY_MONSTER, Constants.CATEGORY_PLAYER, 30f));
     }
 

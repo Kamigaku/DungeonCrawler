@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.kamigaku.dungeoncrawler.command.ICommand;
 import com.kamigaku.dungeoncrawler.component.*;
 import com.kamigaku.dungeoncrawler.item.IItem;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
@@ -22,13 +23,17 @@ import org.json.simple.parser.*;
 public abstract class AEntity implements IEntity {
     
     //@TODO : création d'un collider pour la souris afin d'afficher les informations lors de la collision avec un joueur
+    //@TODO : ajouter d'une orientation de l'entité (NORD, SUD, EST, OUEST) :
+    //         > dans l'input manager
+    //         > dans le teleport pour l'autre
     
-    protected GraphicsComponent _graphics;
-    protected PhysicsComponent _physics;
-    protected ArrayList<SensorComponent> _sensors;
-    protected Statistic _statistic;
-    protected ArrayList<IItem> _items;
-    protected ArrayList<ISkill> _skills;
+    private GraphicsComponent _graphics;
+    private PhysicsComponent _physics;
+    private ArrayList<SensorComponent> _sensors;
+    private Statistic _statistic;
+    private ArrayList<IItem> _items;
+    private ArrayList<ISkill> _skills;
+    private ArrayList<ICommand> _commands;
     
     
     /* GRAPHICS LOADING */
@@ -111,6 +116,12 @@ public abstract class AEntity implements IEntity {
         }
     }
     
+    /* COMMANDS LOADING */
+    
+    protected void baseLoadCommands() {
+        this._commands = new ArrayList<ICommand>();
+    }
+    
     @Override
     public void updateGraphics(SpriteBatch batch) {
         this._graphics.update(batch, this.getPhysicsComponent().getBody().getTransform().getPosition().x, 
@@ -127,6 +138,40 @@ public abstract class AEntity implements IEntity {
     @Override
     public void addItem(IItem item) {
         this._items.add(item);
+    }
+    
+    @Override
+    public void addSensor(SensorComponent sensor) {
+        this._sensors.add(sensor);
+    }
+    
+    @Override
+    public void addCommand(ICommand command) {
+        if(command.getApCost() <= this._statistic.currentActionPoint) {
+            this._commands.add(command);
+            int index = this._commands.size() - 1;
+            LevelManager.getLevelManager().getLevel().getHUD().addCommand(command, index);
+            if(index > 0) {
+                command.setPrevious(this._commands.get(index - 1));
+                command.getPrevious().setNext(command);
+            }
+            command.execute();
+        }
+        else {
+            System.out.println("Pas assez d'AP");
+        }
+    }
+    
+    @Override
+    public void removeCommand(int index) {
+        for(int i = this._commands.size() - 1; i >= index; i--) {
+            this._commands.get(i).reverse();
+            this._commands.remove(i);
+        }
+        if(index > 0) {
+            this._commands.get(index - 1).setNext(null);
+        }
+        LevelManager.getLevelManager().getLevel().getHUD().removeCommand(index);
     }
 
     @Override
