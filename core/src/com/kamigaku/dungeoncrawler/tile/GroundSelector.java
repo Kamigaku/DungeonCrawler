@@ -1,6 +1,5 @@
 package com.kamigaku.dungeoncrawler.tile;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
@@ -8,13 +7,6 @@ import com.kamigaku.dungeoncrawler.component.GraphicsComponent;
 
 public class GroundSelector extends Tile {
 
-    public GroundSelector(Sprite sprite, int x, int y) {
-        this._graphics = new GraphicsComponent(sprite, 0f, 0f);
-        this.x = x;
-        this.y = y;
-        this.isCrossable = true;
-    }
-    
     public GroundSelector(String sprite, int x, int y) {
         this._graphics = new GraphicsComponent(sprite, -0f, 0f);
         this.x = x;

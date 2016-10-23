@@ -15,13 +15,6 @@ public class Ground extends Tile {
         this.isCrossable = true;
     }
     
-    public Ground(String sprite, int x, int y) {
-        this._graphics = new GraphicsComponent(sprite, -0f, 0f);
-        this.x = x;
-        this.y = y;
-        this.isCrossable = true;
-    }
-    
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
     }

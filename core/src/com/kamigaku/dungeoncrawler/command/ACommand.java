@@ -15,7 +15,7 @@ public abstract class ACommand implements ICommand {
 
     protected ICommand _previousCommand;
     protected ICommand _nextCommand;
-    protected IEntity _target;
+    protected IEntity _caller;
     protected int _ap;
     
     @Override
@@ -41,6 +41,11 @@ public abstract class ACommand implements ICommand {
     @Override
     public int getApCost() {
         return this._ap;
+    }
+    
+    @Override 
+    public IEntity getCaller() {
+        return this._caller;
     }
     
     

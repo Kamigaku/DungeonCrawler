@@ -1,0 +1,45 @@
+[
+    {
+        "name": "Gobelin",
+        "sprite": "sprites/default.png",
+        "level": 1,
+        "statistic": {
+            "actionPoint": 3,
+            "healthPoint": 2,
+            "initiative": 1,
+            "defense": 0
+        },
+        "skills": [
+            "Attack"
+        ],
+        "expGiven": 3
+    },
+    
+    {
+        "name": "Orc",
+        "statistic": {
+            "actionPoint": 4,
+            "healthPoint": 3,
+            "initiative": 2,
+            "defense": 1
+        },
+        "skills": [
+            "Attack"
+        ],
+        "expGiven": 6
+    },
+    
+    {
+        "name": "Giant Orc",
+        "statistic": {
+            "actionPoint": 6,
+            "healthPoint": 6,
+            "initiative": 4,
+            "defense": 2
+        },
+        "skills": [
+            "Attack", "Holy Cross"
+        ],
+        "expGiven": 10
+    }
+]

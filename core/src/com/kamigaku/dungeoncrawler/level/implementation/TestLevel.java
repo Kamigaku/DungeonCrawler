@@ -11,6 +11,7 @@ import com.kamigaku.dungeoncrawler.entity.implementation.Mob;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
 import com.kamigaku.dungeoncrawler.level.ALevel;
 import com.kamigaku.dungeoncrawler.singleton.FightManager;
+import com.kamigaku.dungeoncrawler.singleton.MobManager;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -29,14 +30,19 @@ public class TestLevel extends ALevel {
                 new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), 
                 randomTile.x, randomTile.y);
         Point ra = this.map.getEntryRoom().getAllGround().get(5);
-        Mob mob = new Mob(new Sprite((Texture)(this.assetManager.get("sprites/player.png", Texture.class))), ra.x + (96 / Constants.VIRTUAL_HEIGHT), ra.y);
+        Mob mob = new Mob(MobManager.getMobManager().getMob("Orc"), ra.x + (96 / Constants.VIRTUAL_HEIGHT), ra.y);
+        //Mob mob2 = new Mob(MobManager.getMobManager().getMob("Orc"), ra.x + ((6 * 32) / Constants.VIRTUAL_HEIGHT), ra.y);
+        Mob mob3 = new Mob(MobManager.getMobManager().getMob("Orc"), 0, 0);
         this._entities.add(this._mainPlayer);
         this._entities.add(mob);
+        //this._entities.add(mob2);
+        this._entities.add(mob3);
     }
     
     
     private void textureLoading() {
         this.assetManager = new AssetManager();
+        // @TODO : load un dossier complet
         this.assetManager.load("sprites/player.png", Texture.class);
         this.assetManager.load("sprites/wall.png", Texture.class);
         this.assetManager.load("sprites/ground.png", Texture.class);
@@ -44,6 +50,7 @@ public class TestLevel extends ALevel {
         this.assetManager.load("sprites/walls.png", Texture.class);
         this.assetManager.load("sprites/ground_selector.png", Texture.class);
         this.assetManager.load("sprites/ground_highlighter.png", Texture.class);
+        this.assetManager.load("sprites/default.png", Texture.class);
         this.assetManager.finishLoading();
     }
     

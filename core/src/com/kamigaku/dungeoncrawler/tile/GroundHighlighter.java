@@ -8,13 +8,6 @@ import com.kamigaku.dungeoncrawler.component.GraphicsComponent;
 
 public class GroundHighlighter extends Tile {
 
-    public GroundHighlighter(Sprite sprite, int x, int y) {
-        this._graphics = new GraphicsComponent(sprite, 0f, 0f);
-        this.x = x;
-        this.y = y;
-        this.isCrossable = true;
-    }
-    
     public GroundHighlighter(String sprite, int x, int y) {
         this._graphics = new GraphicsComponent(sprite, -0f, 0f);
         this.x = x;

@@ -134,6 +134,7 @@ public class PhysicsComponent implements Disposable {
     
     @Override
     public void dispose() {
+        LevelManager.getLevelManager().getLevel().removeBody(this._body);
     }
 
 }

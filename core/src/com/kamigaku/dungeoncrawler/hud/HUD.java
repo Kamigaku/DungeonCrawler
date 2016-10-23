@@ -7,11 +7,13 @@ import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kamigaku.dungeoncrawler.command.ICommand;
+import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 import com.kamigaku.dungeoncrawler.skills.Skill;
 
@@ -24,12 +26,13 @@ public class HUD {
     private final NinePatch empty, full, full_food;
     private final Table tbl_commandHistory;
     private final Table tbl_actionButtons;
+    private final Table tbl_entityStats;
 
     public HUD() {
             this.stage = new Stage(new ScreenViewport());
             LevelManager.getLevelManager().getLevel().addInputProcessor(stage, true);
             this.uiSkin = new Skin(Gdx.files.internal("hud/uiskin.json"));
-            
+                        
             this.atlas = new TextureAtlas(Gdx.files.internal("hud/uiskin.atlas"));
             this.font = new BitmapFont(Gdx.files.internal("hud/futura_white.fnt"));
 
@@ -43,10 +46,12 @@ public class HUD {
             this.tbl_actionButtons.align(Align.center | Align.bottom);
             this.tbl_actionButtons.setPosition(stage.getWidth() - 70, 10);
             
-            //AttackButton ab = new AttackButton("Attack", this.uiSkin);
+            this.tbl_entityStats = new Table();
+            this.tbl_entityStats.setWidth(stage.getWidth());
+            this.tbl_entityStats.align(Align.top | Align.left);
+            this.tbl_entityStats.setPosition(10, stage.getHeight() - 10);            
+            
             EndTurnButton etb = new EndTurnButton("End Turn", this.uiSkin);
-            //this.tbl_actionButtons.add(ab);
-            //this.tbl_actionButtons.row();
             this.tbl_actionButtons.add(etb);
             this.tbl_actionButtons.row();
 
@@ -60,7 +65,8 @@ public class HUD {
             
             this.stage.addActor(tbl_commandHistory);
             this.stage.addActor(tbl_actionButtons);
-
+            this.stage.addActor(this.tbl_entityStats);
+            
             //Inventory inv = new Inventory("coucou", uiSkin, false);
             this.displayFightTables(false);
     }
@@ -112,6 +118,17 @@ public class HUD {
     }
     
     public void removeActionCommand(Skill textButton) {
+    }
+
+    public void displayEntityStats(IEntity currentOverlaps) {
+        this.tbl_entityStats.clear();
+        if(currentOverlaps != null) {
+            Label entityName = new Label(currentOverlaps.getName() + " - (x: " + currentOverlaps.getPhysicsComponent().getPosition().x + "; y: " + currentOverlaps.getPhysicsComponent().getPosition().y + ")", this.uiSkin);
+            Label stats = new Label(currentOverlaps.getStatistic().toString(), this.uiSkin);
+            this.tbl_entityStats.add(entityName).left();
+            this.tbl_entityStats.row();
+            this.tbl_entityStats.add(stats).left();
+        }
     }
 
 }

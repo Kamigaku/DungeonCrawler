@@ -12,27 +12,29 @@ public class MoveCommand extends ACommand {
     public MoveCommand(Point origin, Point destination, IEntity entity, int ap) {
         this._destination = destination;
         this._origin = origin;
-        this._target = entity;
+        this._caller = entity;
         this._ap = ap;
     }
     
     @Override
     public void execute() {
         Vector2 tmpVector = new Vector2(_destination.x, _destination.y);
-        this._target.getStatistic().removeAP(this._ap);
-        this._target.getPhysicsComponent().getBody().setTransform(tmpVector, 0);
+        this._caller.getStatistic().removeAP(this._ap);
+        this._caller.getPhysicsComponent().getBody().setTransform(tmpVector, 0);
     }
     
     @Override
     public void reverse() {
         Vector2 tmpVector = new Vector2(_origin.x, _origin.y);
-        this._target.getPhysicsComponent().getBody().setTransform(tmpVector, 0);
-        this._target.getStatistic().addAP(this._ap);
+        this._caller.getPhysicsComponent().getBody().setTransform(tmpVector, 0);
+        this._caller.getStatistic().addAP(this._ap);
     }
 
     @Override
     public void simulate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Vector2 tmpVector = new Vector2(_destination.x, _destination.y);
+        this._caller.getStatistic().removeAP(this._ap);
+        this._caller.getPhysicsComponent().getBody().setTransform(tmpVector, 0);
     }
     
     @Override

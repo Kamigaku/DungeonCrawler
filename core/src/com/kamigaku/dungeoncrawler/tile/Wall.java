@@ -21,16 +21,6 @@ public class Wall extends Tile {
         this.isCrossable = false;
     }
     
-    public Wall(String sprite, int x, int y) {
-        this._graphics = new GraphicsComponent(sprite, -0f, 0f);
-        this._physics = new PhysicsComponent(x, y, BodyType.StaticBody, Constants.CATEGORY_SCENERY,
-                        (short) (Constants.CATEGORY_PLAYER | Constants.CATEGORY_MONSTER), 16f, 16f);
-        this._physics.getBody().setUserData(this);
-        this.x = x;
-        this.y = y;
-        this.isCrossable = false;
-    }
-    
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.    

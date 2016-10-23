@@ -1,5 +1,7 @@
 package com.kamigaku.dungeoncrawler.command;
 
+import com.kamigaku.dungeoncrawler.entity.IEntity;
+
 public interface ICommand {
     
     void execute();
@@ -10,5 +12,6 @@ public interface ICommand {
     ICommand getPrevious();
     ICommand getNext();
     int getApCost();
+    IEntity getCaller();
     
 }

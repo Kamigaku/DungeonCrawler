@@ -88,7 +88,8 @@ public class SensorComponent {
         this._body.setTransform(x, y, 0);
     }
     
-    
-    
+    public void dispose() {
+        LevelManager.getLevelManager().getLevel().removeBody(this._body);
+    }       
 
 }

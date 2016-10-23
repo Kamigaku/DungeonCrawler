@@ -10,6 +10,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.QueryCallback;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.kamigaku.dungeoncrawler.component.PhysicsComponent;
 import com.kamigaku.dungeoncrawler.entity.IEntity;
@@ -107,8 +109,8 @@ public abstract class ALevel implements ILevel {
     }
 
     @Override
-    public void removeBody(PhysicsComponent physics) {
-        this.world.destroyBody(physics.getBody());
+    public void removeBody(Body body) {
+        this.world.destroyBody(body);
     }
     
     public void baseLoading() {
@@ -223,5 +225,17 @@ public abstract class ALevel implements ILevel {
         this.debugRenderer = new Box2DDebugRenderer();
         this.camera = new OrthographicCamera();
     }
+
+    @Override
+    public void queryWorld(QueryCallback callback, Vector2 bottomLeft, Vector2 topRight) {
+        this.world.QueryAABB(callback, bottomLeft.x, bottomLeft.y, topRight.x, topRight.y);
+    }
+    
+    @Override
+    public void raycastWorld(RayCastCallback callback, Vector2 p1, Vector2 p2) {
+        this.world.rayCast(callback, p1, p2);
+    }
+    
+    
 
 }

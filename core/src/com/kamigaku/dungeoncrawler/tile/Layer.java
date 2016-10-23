@@ -66,7 +66,7 @@ public class Layer {
         Tile t = this._tiles.get(key);
         if(t != null) {
             if(t.getPhysicsComponent() != null) {
-                LevelManager.getLevelManager().getLevel().removeBody(t.getPhysicsComponent());
+                LevelManager.getLevelManager().getLevel().removeBody(t.getPhysicsComponent().getBody());
             }
             this._tiles.remove(key);
         }

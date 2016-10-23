@@ -17,33 +17,24 @@ public class Player extends AEntity {
     
     private final int ACTIONPOINT = 5;
     private final int HEALTHPOINT = 10;
+    private final int INITIATIVE = 5;
 
     public Player(Sprite sprite, float x, float y) {
         super.baseLoadGraphics(sprite, 0, -0.25f);
         super.baseLoadPhysics(BodyDef.BodyType.KinematicBody, x, y, Constants.CATEGORY_PLAYER,
                 (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER), 8, 8);
         super.baseLoadSensor();
-        super.baseLoadStatistic(ACTIONPOINT, HEALTHPOINT);
+        super.baseLoadStatistic(1, ACTIONPOINT, HEALTHPOINT, INITIATIVE, 1);
         super.baseLoadItems();
         super.baseLoadSkills();
         super.addSensor(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
                                                 Constants.CATEGORY_SCENERY, 20f));
         super.baseLoadCommands();
         this._input = new InputComponent(this);
-    }
-    
-    public Player(String sprite, float x, float y) {
-        super.baseLoadGraphics(sprite, 0, -0.25f);
-        super.baseLoadPhysics(BodyDef.BodyType.KinematicBody, x, y, Constants.CATEGORY_PLAYER,
-                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER), 8, 8);
-        super.baseLoadSensor();
-        super.baseLoadStatistic(ACTIONPOINT, HEALTHPOINT);
-        super.baseLoadItems();
-        super.baseLoadSkills();
-        super.addSensor(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
-                                                Constants.CATEGORY_SCENERY, 20f));
-        super.baseLoadCommands();
-        this._input = new InputComponent(this);
+        
+        this.addSkill("Attack", true);
+        this.addSkill("Holy Cross", true);
+        this.setName("Player");
     }
 
     @Override

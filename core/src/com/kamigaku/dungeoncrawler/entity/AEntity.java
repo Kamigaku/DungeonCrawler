@@ -1,6 +1,5 @@
 package com.kamigaku.dungeoncrawler.entity;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -8,24 +7,16 @@ import com.kamigaku.dungeoncrawler.command.ICommand;
 import com.kamigaku.dungeoncrawler.component.*;
 import com.kamigaku.dungeoncrawler.item.IItem;
 import com.kamigaku.dungeoncrawler.singleton.LevelManager;
+import com.kamigaku.dungeoncrawler.singleton.SkillManager;
 import com.kamigaku.dungeoncrawler.skills.ISkill;
 import com.kamigaku.dungeoncrawler.skills.Skill;
-import com.kamigaku.dungeoncrawler.skills.SkillBuilder;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.json.simple.*;
-import org.json.simple.parser.*;
 
 
 
 public abstract class AEntity implements IEntity {
     
     //@TODO : création d'un collider pour la souris afin d'afficher les informations lors de la collision avec un joueur
-    //@TODO : ajouter d'une orientation de l'entité (NORD, SUD, EST, OUEST) :
-    //         > dans l'input manager
-    //         > dans le teleport pour l'autre
     
     private GraphicsComponent _graphics;
     private PhysicsComponent _physics;
@@ -35,6 +26,8 @@ public abstract class AEntity implements IEntity {
     private ArrayList<ISkill> _skills;
     private ArrayList<ICommand> _commands;
     
+    private String _entityName;
+    
     
     /* GRAPHICS LOADING */
     
@@ -42,36 +35,28 @@ public abstract class AEntity implements IEntity {
         this._graphics = new GraphicsComponent(sprite, offsetX, offsetY);
     }
     
-    protected void baseLoadGraphics(String sprite) {
-        baseLoadGraphics(sprite, 0, 0);
-    }
-    
     protected void baseLoadGraphics(Sprite sprite, float offsetX, float offsetY) {
         this._graphics = new GraphicsComponent(sprite, offsetX, offsetY);
-    }
-    
-    protected void baseLoadGraphics(Sprite sprite) {
-        this._graphics = new GraphicsComponent(sprite, 0, 0);
     }
     
     /* PHYSICS LOADING */
     
     protected void baseLoadPhysics(BodyType bodyType, float x, float y, short category,
-                                   short collideWith, float width, float height) {
+                                   short collideWith, float width, float height) { // Box
         this._physics = new PhysicsComponent(x, y, bodyType, category, collideWith, 
                                             width, height);
         this._physics.getBody().setUserData(this);
     }
     
     protected void baseLoadPhysics(BodyType bodyType, float x, float y, short category,
-                                   short collideWith, float[] vertices) {
+                                   short collideWith, float[] vertices) {       // Polygon
         this._physics = new PhysicsComponent(x, y, bodyType, category, collideWith, 
                                             vertices);
         this._physics.getBody().setUserData(this);
     }
     
     protected void baseLoadPhysics(BodyType bodyType, float x, float y, short category,
-                                   short collideWith, float radius) {
+                                   short collideWith, float radius) {           // Circle
         this._physics = new PhysicsComponent(x, y, bodyType, category, collideWith, 
                                             radius);
         this._physics.getBody().setUserData(this);
@@ -85,8 +70,14 @@ public abstract class AEntity implements IEntity {
     
     /* STATISTIC LOADING */
     
-    protected void baseLoadStatistic(int actionPoint, int healthPoint) {
-        this._statistic = new Statistic(actionPoint, healthPoint);
+    protected void baseLoadStatistic(int level, int actionPoint, int healthPoint,
+                                     int initiative, int defense) {
+        this._statistic = new Statistic(level, actionPoint, healthPoint, 
+                                        initiative, defense);
+    }
+    
+    protected void baseLoadStatistic(Statistic s) {
+        this._statistic = new Statistic(s);
     }
     
     /* ITEM LOADING */
@@ -99,27 +90,23 @@ public abstract class AEntity implements IEntity {
     
     protected void baseLoadSkills() {
         this._skills = new ArrayList<ISkill>();
-        JSONParser jParser = new JSONParser();
-        try {
-            JSONArray array = (JSONArray) jParser.parse(Gdx.files.internal("skills/skills.json").reader());
-            System.out.println("There is right now " + array.size() + " skills.");
-            for(int i = 0; i < array.size(); i++) {
-                Skill s = SkillBuilder.createSkill((JSONObject) array.get(i), this);
-                this._skills.add(s);
-                LevelManager.getLevelManager().getLevel().getHUD().addActionCommand(s);
-                
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(AEntity.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(AEntity.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
     
     /* COMMANDS LOADING */
     
     protected void baseLoadCommands() {
         this._commands = new ArrayList<ICommand>();
+    }
+
+    /* NAME */
+    
+    protected void setName(String name) {
+        this._entityName = name;
+    }
+    
+    @Override
+    public String getName() {
+        return this._entityName;
     }
     
     @Override
@@ -155,11 +142,19 @@ public abstract class AEntity implements IEntity {
                 command.setPrevious(this._commands.get(index - 1));
                 command.getPrevious().setNext(command);
             }
-            command.execute();
+            command.simulate();
         }
         else {
             System.out.println("Pas assez d'AP");
         }
+    }
+
+    @Override
+    public void addSkill(String name, boolean addToHUD) {
+        Skill s = new Skill(SkillManager.getSkillManager().getSkill(name), this, addToHUD);
+        this._skills.add(s);
+        if(addToHUD)
+            LevelManager.getLevelManager().getLevel().getHUD().addActionCommand(s);
     }
     
     @Override
@@ -168,11 +163,20 @@ public abstract class AEntity implements IEntity {
             this._commands.get(i).reverse();
             this._commands.remove(i);
         }
-        if(index > 0) {
+        if(index > 0)
             this._commands.get(index - 1).setNext(null);
-        }
         LevelManager.getLevelManager().getLevel().getHUD().removeCommand(index);
     }
+
+    @Override
+    public void popCommand() {
+        if(this._commands.size() > 0) {
+            if(this._commands.get(0).getNext() != null)
+                this._commands.get(0).getNext().setPrevious(null);
+            this._commands.remove(0);
+            LevelManager.getLevelManager().getLevel().getHUD().removeCommand(0);
+        }
+    }    
 
     @Override
     public GraphicsComponent getGraphicsComponent() {
@@ -188,16 +192,34 @@ public abstract class AEntity implements IEntity {
     public ArrayList<SensorComponent> getSensorsComponent() {
         return this._sensors;
     }
+
+    @Override
+    public ArrayList<ISkill> getSkills() {
+        return this._skills;
+    }    
     
     @Override
     public Statistic getStatistic() {
         return this._statistic;
     }
+
+    @Override
+    public ArrayList<ICommand> getCommands() {
+        return this._commands;
+    }
     
     @Override
     public void dispose() {
         this._physics.dispose();
+        for (int i = 0; i < _sensors.size(); i++) {
+            _sensors.get(i).dispose();
+        }
         this._graphics.dispose();
+    }
+    
+    @Override
+    public boolean isDead() {
+        return this._statistic.currentHealthPoint <= 0;
     }
     
 }
