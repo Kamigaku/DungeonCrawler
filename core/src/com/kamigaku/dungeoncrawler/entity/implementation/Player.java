@@ -21,14 +21,14 @@ public class Player extends AEntity {
 
     public Player(Sprite sprite, float x, float y) {
         super.baseLoadGraphics(sprite, 0, -0.25f);
-        super.baseLoadPhysics(BodyDef.BodyType.KinematicBody, x, y, Constants.CATEGORY_PLAYER,
-                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_MONSTER), 8, 8);
+        super.baseLoadPhysics(BodyDef.BodyType.DynamicBody, x, y, Constants.CATEGORY_PLAYER,
+                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_SENSOR), 8, 8);
         super.baseLoadSensor();
         super.baseLoadStatistic(1, ACTIONPOINT, HEALTHPOINT, INITIATIVE, 1);
         super.baseLoadItems();
         super.baseLoadSkills();
-        super.addSensor(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
-                                                Constants.CATEGORY_SCENERY, 20f));
+        /*super.addSensor(new SensorComponent(this, BodyType.DynamicBody, Constants.CATEGORY_PLAYER, 
+                                                Constants.CATEGORY_SCENERY, 20f));*/
         super.baseLoadCommands();
         this._input = new InputComponent(this);
         

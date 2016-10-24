@@ -16,10 +16,12 @@ import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.entity.implementation.Mob;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
 import com.kamigaku.dungeoncrawler.skills.ISkill;
+import com.kamigaku.dungeoncrawler.skills.ISkill.SKILL_TARGET;
 import com.kamigaku.dungeoncrawler.skills.Skill;
 import com.kamigaku.dungeoncrawler.tile.Layer;
 import com.kamigaku.dungeoncrawler.tile.Tile;
 import com.kamigaku.dungeoncrawler.utility.Timer;
+import com.kamigaku.dungeoncrawler.utility.Utility;
 import com.kamigaku.dungeongenerator.dijkstra.Dijkstra;
 import com.kamigaku.dungeongenerator.dijkstra.Rule;
 import java.awt.Point;
@@ -85,28 +87,13 @@ public class FightManager {
 
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                Vector3 unprojected = LevelManager.getLevelManager().getCamera().unproject(new Vector3(screenX, screenY, 0));
-                Point pointerPosition = new Point(Math.round(unprojected.x), Math.round(unprojected.y));
+                Point mousePosition = Utility.getMousePosition(screenX, screenY);
                 if(button == Buttons.LEFT) {
-                    if(selectedSkill != null) { // Un skill est sélectionné et j'ai cliqué
-                        selectedSkill.getCaster().addCommand(new SkillCommand(selectedSkill));
-                        selectedSkill = null;
-                        LevelManager.getLevelManager().getLevel().getLayer(Layer.SKILL_HIGHLIGHTER).removeAllTiles();
+                    if(selectedSkill != null) {                                 // 1 - Un skill est sélectionné et j'ai cliqué
+                        skillCommand(mousePosition);
                     }
                     else { // Aucun skill n'est sélectionné
-                        Point playerPos = new Point(Math.round(_ptr_mainPlayer.getPhysicsComponent().getPosition().x), 
-                                                    Math.round(_ptr_mainPlayer.getPhysicsComponent().getPosition().y));
-                        ArrayList<Point> path = _dijkstra.shortestPathFromTo(playerPos, pointerPosition);
-                        if(path != null) {
-                            for(int i = path.size() - 1; i >= 0; i--) {
-                                if(i == path.size() - 1)
-                                    _ptr_mainPlayer.addCommand(new MoveCommand(playerPos, path.get(i), _ptr_mainPlayer, 1));
-                                else
-                                    _ptr_mainPlayer.addCommand(new MoveCommand(path.get(i + 1), path.get(i), _ptr_mainPlayer, 1));
-                            }
-                        }
-                        else
-                            System.out.println("Le point est inaccessible");
+                        moveCommand(mousePosition);
                     }
                 }
                 else if(button == Buttons.RIGHT) {
@@ -114,6 +101,49 @@ public class FightManager {
                     LevelManager.getLevelManager().getLevel().getLayer(Layer.SKILL_HIGHLIGHTER).removeAllTiles();
                 }
                 return false;
+            }
+            
+            private void skillCommand(Point mousePosition) {
+                if(selectedSkill.getSkillTarget() == SKILL_TARGET.TARGET) {     // Le skill nécessite une cible
+                    if(Utility.isInRange(
+                            selectedSkill.getCaster().getPhysicsComponent().getPointPosition(),
+                            mousePosition, 
+                            selectedSkill.getRange(selectedSkill.getSkillOrientation()))) {
+                        for(int i = 0; i < _fighters.size(); i++) {
+                            Point fighterPos = _fighters.get(i).getPhysicsComponent().getPointPosition();
+                            if(fighterPos.x == mousePosition.x && fighterPos.y == mousePosition.y) {
+                                selectedSkill.getCaster().addCommand(new SkillCommand(selectedSkill, _fighters.get(i)));
+                                selectedSkill = null;
+                                LevelManager.getLevelManager().getLevel().getLayer(Layer.SKILL_HIGHLIGHTER).removeAllTiles();
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        System.out.println("Trop loin !");
+                    }
+                }
+                else {                                                          // Le skill ne nécessite pas de cible
+                    selectedSkill.getCaster().addCommand(new SkillCommand(selectedSkill));
+                    selectedSkill = null;
+                    LevelManager.getLevelManager().getLevel().getLayer(Layer.SKILL_HIGHLIGHTER).removeAllTiles();
+                }
+            }
+            
+            private void moveCommand(Point mousePosition) {
+                Point playerPos = new Point(Math.round(_ptr_mainPlayer.getPhysicsComponent().getPosition().x), 
+                                            Math.round(_ptr_mainPlayer.getPhysicsComponent().getPosition().y));
+                ArrayList<Point> path = _dijkstra.shortestPathFromTo(playerPos, mousePosition);
+                if(path != null) {
+                    for(int i = path.size() - 1; i >= 0; i--) {
+                        if(i == path.size() - 1)
+                            _ptr_mainPlayer.addCommand(new MoveCommand(playerPos, path.get(i), _ptr_mainPlayer, 1));
+                        else
+                            _ptr_mainPlayer.addCommand(new MoveCommand(path.get(i + 1), path.get(i), _ptr_mainPlayer, 1));
+                    }
+                }
+                else
+                    System.out.println("Le point est inaccessible");
             }
 
             @Override

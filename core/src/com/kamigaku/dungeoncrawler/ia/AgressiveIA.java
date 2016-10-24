@@ -31,11 +31,14 @@ public class AgressiveIA implements IA {
             for(int i = 0; i < this._origin.getSkills().size(); i++) {
                 ISkill curSkill = this._origin.getSkills().get(i);
                 for(ISkill.SKILL_ORIENTATION so : ISkill.SKILL_ORIENTATION.values()) {
-                    if(curSkill.getRange(so) != null) { // @TODO : fetch toutes les orientations et tester
+                    if(curSkill.getRange(so) != null) {
                         if(Utility.isInRange(originPos, closestPos, curSkill.getRange(so))) {
-                            if(curSkill.getApCost() >= this._origin.getStatistic().currentActionPoint) {
+                            if(curSkill.getApCost() <= this._origin.getStatistic().currentActionPoint) {
                                 curSkill.setSkillOrientation(so);
-                                this._origin.addCommand(new SkillCommand(curSkill));
+                                if(curSkill.getSkillTarget() == ISkill.SKILL_TARGET.TARGET)
+                                    this._origin.addCommand(new SkillCommand(curSkill, closestEntity)); // @TODO faire qqchose de mieux
+                                else
+                                    this._origin.addCommand(new SkillCommand(curSkill));
                                 return;
                             }
                         }

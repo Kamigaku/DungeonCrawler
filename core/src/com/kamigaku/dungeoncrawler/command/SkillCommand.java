@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.kamigaku.dungeoncrawler.command;
 
 import com.kamigaku.dungeoncrawler.entity.IEntity;
@@ -12,22 +7,28 @@ import com.kamigaku.dungeoncrawler.skills.ISkill.*;
 import com.kamigaku.dungeoncrawler.utility.Utility;
 import java.util.ArrayList;
 
-/**
- *
- * @author Kamigaku
- */
 public class SkillCommand extends ACommand {
 
     private final ISkill _skill;
     private final SKILL_ORIENTATION _orientation;
+    private final IEntity _target;
 
     public SkillCommand(ISkill skill) {
         this._skill = skill;
         this._ap = skill.getApCost();
         this._orientation = _skill.getSkillOrientation();
         this._caller = this._skill.getCaster();
-        
+        this._target = null;
     }
+    
+    public SkillCommand(ISkill skill, IEntity target) {
+        this._skill = skill;
+        this._ap = skill.getApCost();
+        this._orientation = _skill.getSkillOrientation();
+        this._caller = this._skill.getCaster();
+        this._target = target;
+    }
+    
     
     @Override
     public void execute() {
@@ -42,20 +43,6 @@ public class SkillCommand extends ACommand {
                 for(int i = 0; i < this._skill.getSkillEffects().size(); i++)
                     this._skill.getSkillEffects().get(i).execute(this._skill.getCaster());
                 break;
-            case ALLIES: // @TODO : à implementer
-                break;
-            case ENNEMIES:
-                for(IEntity entity : allEntities) {
-                    if(entity != this._skill.getCaster()) {
-                        if(Utility.isInRange(this._skill.getCaster().getPhysicsComponent().getPointPosition(),
-                                             entity.getPhysicsComponent().getPointPosition(),
-                                             this._skill.getRange(_orientation))) {
-                            for(int i = 0; i < this._skill.getSkillEffects().size(); i++)
-                                this._skill.getSkillEffects().get(i).execute(entity);
-                        }
-                    }
-                }
-                break;
             case EVERYONE:
                 for(IEntity entity : allEntities) {
                     if(Utility.isInRange(this._skill.getCaster().getPhysicsComponent().getPointPosition(),
@@ -65,6 +52,10 @@ public class SkillCommand extends ACommand {
                             this._skill.getSkillEffects().get(i).execute(entity);
                     }
                 }
+                break;
+            case TARGET:
+                for(int i = 0; i < this._skill.getSkillEffects().size(); i++)
+                    this._skill.getSkillEffects().get(i).execute(_target);
                 break;
             default:
                 throw new AssertionError(_skill.getSkillTarget().name());

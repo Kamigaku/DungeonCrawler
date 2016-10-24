@@ -5,6 +5,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -18,6 +20,7 @@ import com.kamigaku.dungeoncrawler.entity.IEntity;
 import com.kamigaku.dungeoncrawler.entity.implementation.Player;
 import com.kamigaku.dungeoncrawler.listener.WrapperContactListener;
 import com.kamigaku.dungeoncrawler.hud.HUD;
+import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 import com.kamigaku.dungeoncrawler.tile.Ground;
 import com.kamigaku.dungeoncrawler.tile.GroundSelector;
 import com.kamigaku.dungeoncrawler.tile.Layer;
@@ -132,11 +135,12 @@ public abstract class ALevel implements ILevel {
                                   this.map.getMap().length, false));
         this.layers.add(new Layer(Layer.SKILL_HIGHLIGHTER, this.map.getMap()[0].length, 
                                   this.map.getMap().length, false));
+        
         for(int _y = 0; _y < this.map.getMap().length; _y++) {
             for(int _x = 0; _x < this.map.getMap()[_y].length; _x++) {
                 if(this.map.getMap()[_y][_x] == 'W') {
                     
-                    char top = this.map.getMap()[_y + 1][_x];
+                    /*char top = this.map.getMap()[_y + 1][_x];
                     char bot = this.map.getMap()[_y - 1][_x];
                     char left = this.map.getMap()[_y][_x - 1];
                     char right = this.map.getMap()[_y][_x + 1];
@@ -147,7 +151,7 @@ public abstract class ALevel implements ILevel {
                     
                     if(top == 'W' && bot == 'W' && left != 'W' && right != 'W' && left != 'D' && right != 'D') { // |                        
                         if(left == ' ' && right == ' ') {
-                            
+                            this.layers.get(1).addTile(new Wall(ts.sprites[4], _x, _y));
                         }
                         else if(right == ' ')
                             this.layers.get(1).addTile(new Wall(ts.sprites[4], _x, _y));
@@ -157,7 +161,7 @@ public abstract class ALevel implements ILevel {
                     else if(left == 'W' && right == 'W' && bot != 'W' && top != 'W' && bot != 'D' && top != 'D') { // -
                         if(top == ' ' && bot == ' ') {
                             
-                        }
+                        }                            
                         else if(top == ' ')
                             this.layers.get(1).addTile(new Wall(ts.sprites[9], _x, _y));
                         else if(bot == ' ')
@@ -206,7 +210,8 @@ public abstract class ALevel implements ILevel {
                         else if(botRight == ' ') {
                             this.layers.get(1).addTile(new Wall(ts.sprites[14], _x, _y));
                         }
-                    }
+                    }*/
+                    this.layers.get(1).addTile(new Wall(ts.sprites[14], _x, _y));
                     //this.layers.get(1).addTile(new Wall("sprites/wall.png", _x, _y)); break;
                 }
                 else if(this.map.getMap()[_y][_x] == ' ') {

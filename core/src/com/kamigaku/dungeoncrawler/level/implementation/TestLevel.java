@@ -55,7 +55,7 @@ public class TestLevel extends ALevel {
     }
     
     @Override
-    public void render(SpriteBatch batch) {                                            // Input that impact velocity
+    public void render(SpriteBatch batch) {                                     // Input that impact velocity
         if(FightManager.getFightManager().getFightStatus() != 
                 FightManager.FightStatus.NONE) {                                 // Le combat à demarré
             FightManager.getFightManager().update();

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
@@ -31,8 +32,6 @@ public class PhysicsComponent implements Disposable {
     public PhysicsComponent(float x, float y, BodyType bodyType, short category,
                             short collideWith, float[] vertices) {
         this.bodyDefinition(bodyType, x, y);
-        /*for(int i = 0; i < vertices.length; i++)
-            vertices[i] = vertices[i] / Constants.TILE_WIDTH;*/
         PolygonShape collider = new PolygonShape();
         collider.set(vertices);
         this.bodyFixture(collider, category, collideWith);
@@ -56,6 +55,22 @@ public class PhysicsComponent implements Disposable {
         collider.setAsBox(width / Constants.TILE_WIDTH, height / Constants.TILE_HEIGHT);
         this.bodyFixture(collider, category, collideWith);
         collider.dispose();
+        /*BodyDef bodyDef = new BodyDef();
+        bodyDef.type = bodyType;
+        bodyDef.position.set(x, y);
+
+        _body = LevelManager.getLevelManager().getLevel().addBody(bodyDef);
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(0.5f, 0.5f);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 1f;
+
+        Fixture fixture = _body.createFixture(fixtureDef);
+        shape.dispose();
+        
+        _body.setUserData(this);*/
     }
     
     /**

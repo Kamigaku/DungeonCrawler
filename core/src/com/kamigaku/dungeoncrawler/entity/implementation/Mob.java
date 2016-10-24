@@ -49,12 +49,12 @@ public class Mob extends AEntity {
     public Mob(Mob m, int x, int y) {
         this.setName(m.getName());
         super.baseLoadGraphics(m.getGraphicsComponent().getSprite(), 0, -0.25f);
-        super.baseLoadPhysics(BodyDef.BodyType.KinematicBody, x, y, Constants.CATEGORY_MONSTER, 
-                (short) (Constants.CATEGORY_SCENERY | Constants.CATEGORY_PLAYER), 8, 8);
+        super.baseLoadPhysics(BodyDef.BodyType.DynamicBody, x, y, Constants.CATEGORY_MONSTER, 
+                (short) (Constants.CATEGORY_SCENERY), 8, 8);
         super.baseLoadSensor();
         super.baseLoadStatistic(m.getStatistic());
         super.addSensor(new SensorComponent(this, BodyDef.BodyType.DynamicBody, 
-                Constants.CATEGORY_MONSTER, Constants.CATEGORY_PLAYER, 30f));
+                Constants.CATEGORY_SENSOR, Constants.CATEGORY_PLAYER, 30f));
         this._ia = new AgressiveIA(this);
         super.baseLoadSkills();
         super.baseLoadCommands();

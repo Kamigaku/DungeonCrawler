@@ -1,5 +1,8 @@
 package com.kamigaku.dungeoncrawler.utility;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector3;
+import com.kamigaku.dungeoncrawler.singleton.LevelManager;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -12,6 +15,18 @@ public abstract class Utility {
                 return true;
         }
         return false;
+    }
+    
+    public static Point getMousePosition() {
+        int mouseX = Gdx.input.getX();
+        int mouseY = Gdx.input.getY();
+        Vector3 unprojected = LevelManager.getLevelManager().getCamera().unproject(new Vector3(mouseX, mouseY, 0));
+        return new Point(Math.round(unprojected.x), Math.round(unprojected.y));
+    }
+    
+    public static Point getMousePosition(int x, int y) {
+        Vector3 unprojected = LevelManager.getLevelManager().getCamera().unproject(new Vector3(x, y, 0));
+        return new Point(Math.round(unprojected.x), Math.round(unprojected.y));
     }
     
 }

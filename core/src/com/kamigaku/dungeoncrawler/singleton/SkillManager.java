@@ -54,6 +54,7 @@ public class SkillManager {
                 JSONObject skillJson = (JSONObject) array.get(i);
                 String name = (String) skillJson.get("name");
                 int apCost = ((Long)skillJson.get("apCost")).intValue();
+                boolean needTarget = false;
                 ISkill.SKILL_TARGET skillTarget = ISkill.SKILL_TARGET.valueOf((String) skillJson.get("skillTarget"));
                 ArrayList<Point> points = null;
                 ArrayList<SkillEffect> skillEffects = new ArrayList<SkillEffect>();

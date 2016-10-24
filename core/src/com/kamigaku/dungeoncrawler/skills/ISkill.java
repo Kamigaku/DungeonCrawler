@@ -13,7 +13,7 @@ public interface ISkill {
     }
     
     public enum SKILL_TARGET {
-        NONE, ME, ALLIES, ENNEMIES, EVERYONE
+        NONE, ME, EVERYONE, TARGET
     }
     
     public enum SKILL_EFFECT {

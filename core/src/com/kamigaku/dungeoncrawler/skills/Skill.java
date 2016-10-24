@@ -1,6 +1,5 @@
 package com.kamigaku.dungeoncrawler.skills;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -60,7 +59,6 @@ public class Skill implements ISkill {
             this._orientedRange[SKILL_ORIENTATION.BOT.ordinal()].add(new Point(-range.get(i).x, -range.get(i).y));
             this._orientedRange[SKILL_ORIENTATION.LEFT.ordinal()].add(new Point(-range.get(i).y, -range.get(i).x));
         }
-        
     }
     
     public Skill(IEntity caster, String skillName, int apCost, SKILL_TARGET focusATarget,
